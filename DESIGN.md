@@ -315,7 +315,271 @@ struct UserStats: Codable {
 
 ---
 
-## 8. Keycap Catalog (MVP: 120개)
+## 8. Art Style & Asset Pipeline
+
+### 8.1 Art Direction: Isometric Pixel Art
+
+키캡을 **아이소메트릭(등각투영) 도트 아트**로 표현합니다. 위에서 내려다보는 평면이 아니라, 대각선 위에서 바라보는 입체적인 도트 스타일입니다.
+
+- 키캡의 **윗면 + 앞면 + 옆면**이 동시에 보여 입체감 있음
+- 프로필별 높이 차이가 시각적으로 드러남 (Cherry는 낮고, SA는 높고)
+- 등급별 이펙트 표현이 풍부 (광택, 투명 레진, 빛남 등)
+- 키보드 조립 화면에서 실제 키보드처럼 보임
+
+**스프라이트 크기**: 32x32 또는 48x48 픽셀
+
+### 8.2 Asset Creation Tools
+
+#### Pixel Art 에디터
+
+| 도구 | 가격 | 플랫폼 | 아이소메트릭 지원 | 비고 |
+|------|------|--------|------------------|------|
+| **Aseprite** | $19.99 (1회) | Win/Mac/Linux | Pixthic 확장으로 지원 | 업계 표준, 커뮤니티 활발 |
+| **Pixelorama** | 무료 (오픈소스) | Win/Mac/Linux | 네이티브 타일맵 지원 | 무료 대안으로 우수 |
+| **Pixaki** | $24.99 | iPad 전용 | 네이티브 각도 잠금 | iPad 있으면 최적 |
+| **GraphicsGale** | 무료 | Win/Mac | 일반 | 애니메이션 특화 |
+
+**추천**: Aseprite ($19.99) + Pixthic 확장 (아이소메트릭 그리드 지원)
+
+#### AI 보조 생성
+
+| 도구 | 가격 | 용도 |
+|------|------|------|
+| **PixelLab** | $9~50/월 | Aseprite 플러그인, 4/8방향 스프라이트 자동 생성 |
+| **Midjourney** | $10/월~ | 아이소메트릭 레퍼런스 생성 (프롬프트: `isometric pixel art keycap, 32x32, --v 4`) |
+| **Stable Diffusion + Pixel Art XL LoRA** | 무료 (로컬) | 로컬에서 일관된 픽셀아트 생성, 트리거 워드 불필요 |
+| **8bitdiffuser** | 무료 (로컬) | 레트로 8비트 스타일 특화 |
+
+**추천 워크플로우**:
+1. Midjourney/SD로 10~15개 레퍼런스 생성
+2. Aseprite에서 수동 보정 및 스타일 통일
+3. PixelLab 배치 생성으로 변형 대량 생산
+
+#### 프로그래밍 기반 생성
+
+| 도구/라이브러리 | 언어 | 용도 |
+|----------------|------|------|
+| **ProceduralPixelArt** | Python | 아이소메트릭 픽셀아트 절차적 생성 |
+| **Sprite-Generator** | Python | 템플릿 마스크 기반 변형 생성 (색상, 밝기, 채도 파라미터) |
+| **Pillow (PIL)** | Python | 이미지 조작, 픽셀 단위 제어 |
+| **Lospec Palettes** | 웹 | 검증된 픽셀아트 색상 팔레트 모음 |
+
+### 8.3 Template-Based Production Pipeline
+
+120개 이상의 키캡을 효율적으로 생산하기 위한 템플릿 시스템:
+
+**Step 1: 프로필별 베이스 템플릿 제작 (6개)**
+- Cherry, SA, DSA, OEM, XDA, MT3 프로필
+- 각 템플릿은 아이소메트릭 도트로 윗면/앞면/옆면 영역 분리
+- 수작업으로 Aseprite에서 제작
+
+**Step 2: 등급별 색상 팔레트 정의**
+- Common: 무채색, 단색
+- Uncommon: 파스텔 투톤
+- Rare: 채도 높은 컬러 + 테두리 하이라이트
+- Epic: 그라데이션 + 광택 픽셀
+- Legendary: 특수 이펙트 (투명, 빛남, 애니메이션 프레임)
+
+**Step 3: Python 스크립트로 조합 생성**
+
+```python
+# 의사 코드
+base = load_template("cherry_mx_base.png")
+palette = load_palette("neon_pastel")
+legend = render_legend("A", font="pixel_5x5")
+keycap = composite(base, palette, legend)
+save_sprite(keycap, "cherry-neon-A.png")
+```
+
+**Step 4: Legendary급은 수작업으로 특별 제작**
+
+#### 예상 제작 기간 (솔로 개발자)
+
+| 방식 | 비용 | 시간 | 품질 |
+|------|------|------|------|
+| 전부 수작업 | $20 | 480~960시간 | 최고 일관성 |
+| AI + 수동 보정 | $120~520 | 120~200시간 | 보정 필요 |
+| 템플릿 + 배치 생성 | $120~220 | 40~80시간 | 높은 일관성 |
+| **하이브리드 (AI + 템플릿)** | **$220~520** | **60~120시간** | **추천** |
+
+#### 에셋 폴더 구조
+
+```
+assets/
+├── keycaps/
+│   ├── templates/            # 프로필별 베이스 템플릿 (6개)
+│   │   ├── cherry_mx_base.aseprite
+│   │   ├── sa_profile_base.aseprite
+│   │   └── ...
+│   ├── palettes/             # 등급별 색상 팔레트
+│   │   ├── common.json
+│   │   ├── legendary.json
+│   │   └── ...
+│   ├── generated/            # AI/스크립트 생성 결과
+│   │   ├── batch_midjourney/
+│   │   └── batch_pixellab/
+│   ├── final/                # 최종 스프라이트
+│   │   ├── keycaps_32x32.png   (스프라이트 시트)
+│   │   └── keycaps.json        (메타데이터)
+│   └── scripts/              # 생성 스크립트
+│       ├── generate_sprites.py
+│       └── apply_palette.py
+├── keyboards/                # 키보드 조립 에셋
+│   ├── boards/               # 키보드 보드 베이스
+│   └── layouts/              # 레이아웃 정의 JSON
+└── sounds/                   # 등급별 효과음
+```
+
+### 8.4 3D Voxel Art & Rotation (리서치 결과)
+
+키캡을 3D 복셀로 만들어 여러 각도에서 돌려볼 수 있는지 조사한 결과입니다.
+
+#### Voxel Art 제작 도구
+
+| 도구 | 가격 | 내보내기 형식 | 비고 |
+|------|------|-------------|------|
+| **MagicaVoxel** | 무료 | OBJ, PLY, ISO 스프라이트 | 업계 표준, 키캡에 적합 |
+| **Goxel** | 무료 (오픈소스) | glTF2, OBJ, PLY | 가벼움, macOS 지원 |
+| **Blockbench** | 무료 | OBJ, glTF | 웹 기반, Minecraft 스타일 |
+
+#### macOS에서 3D 렌더링 옵션
+
+| 프레임워크 | 상태 | 적합도 |
+|-----------|------|--------|
+| **RealityKit + RealityView** | 현재 Apple 추천 | SwiftUI 통합, glTF2/USDZ 로드 가능 |
+| **SceneKit** | WWDC 2025부터 deprecated | 기존 코드 참고용, 신규 비추천 |
+| **Model3D** | visionOS 전용 | macOS에서 사용 불가 |
+| **Metal** | 저수준 GPU | 커스텀 복셀 렌더링 가능하나 오버킬 |
+
+#### 3D 회전 구현 방식 비교
+
+| 방식 | 실현 가능성 | 리소스 부하 | 개발 난이도 |
+|------|-----------|------------|------------|
+| **프리렌더 스프라이트 (8~16각도)** | ★★★★★ | 최소 | 낮음 |
+| **실시간 3D 그리드** | ★★ | 높음 | 높음 |
+| **하이브리드 (스프라이트 + 상세 3D)** | ★★★★ | 낮음~중간 | 중간 |
+
+#### 추천: 하이브리드 방식
+
+**평소 (그리드/목록)**:
+- 프리렌더된 아이소메트릭 스프라이트로 표시
+- GPU 부하 제로, 메뉴바 앱에 적합
+
+**상세 보기 (키캡 클릭 시)**:
+- RealityView로 3D 복셀 모델 로드
+- 드래그로 360도 회전 가능
+- Lazy 로딩으로 필요할 때만 렌더링
+
+#### 3D 에셋 파이프라인
+
+```
+MagicaVoxel (.vox)
+    │
+    ├──▶ ISO 내보내기 → 8~16각도 스프라이트 PNG (그리드용)
+    │
+    └──▶ OBJ 내보내기
+            │
+            ▼
+        Blender (OBJ → glTF2 변환 + 최적화)
+            │
+            ▼
+        .glb 파일 (상세 보기 3D 회전용)
+```
+
+#### IsoVoxel 도구
+- `.vox` 파일을 자동으로 아이소메트릭 PNG 스프라이트로 변환
+- 배치 처리 가능 → 120개 키캡을 한번에 다각도 렌더링
+
+#### 파일 크기 예상
+
+| 에셋 유형 | 키캡 1개당 | 120개 합계 |
+|-----------|-----------|-----------|
+| 스프라이트 (8각도) | ~50KB | ~6MB |
+| 3D 모델 (.glb) | ~200KB | ~24MB |
+| **합계** | | **~30MB** |
+
+메뉴바 앱으로서 충분히 가벼운 크기입니다.
+
+---
+
+## 9. Keyboard Assembly System
+
+### 9.1 Concept
+
+모은 키캡을 키보드 보드에 배치하여 **나만의 커스텀 키보드를 완성**하는 시스템입니다. 수집에 목적을 부여하고, 완성된 키보드를 공유할 수 있습니다.
+
+### 9.2 Keyboard Board Types
+
+| 보드 | 키 수 | 난이도 | 해금 조건 |
+|------|-------|--------|----------|
+| 40% | 40키 | 입문 | 기본 제공 |
+| 60% | 61키 | 중급 | 총 30개 키캡 수집 |
+| TKL (80%) | 87키 | 고급 | 총 60개 키캡 수집 |
+| Full (100%) | 104키 | 하드코어 | 총 100개 키캡 수집 |
+
+### 9.3 Assembly Rules
+
+- 각 슬롯에 맞는 키캡을 배치 (A키 슬롯에는 A 각인 키캡)
+- 동일 세트로 채우면 **세트 보너스** (특수 시각 이펙트, 칭호)
+- 동일 등급으로 채우면 **등급 보너스** (테두리 빛남 등)
+- 빈 슬롯은 회색 실루엣으로 표시 → 키캡을 모을수록 키보드 완성
+- 여러 키보드를 만들어서 컬렉션 가능
+
+### 9.4 Assembly UI
+
+아이소메트릭 도트 스타일로 키보드 전체를 표현:
+
+```
+  ╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲
+ ╱ ~ ╲╱ 1 ╲╱ 2 ╲╱ 3 ╲╱ 4 ╲╱ 5 ╲╱ 6 ╲╱ 7 ╲╱ 8 ╲╱ 9 ╲
+│    ││    ││    ││░░░░││    ││    ││    ││    ││░░░░││    │
+ ╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱
+  ╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲╱──╲
+ ╱Tab╲╱ Q ╲╱ W ╲╱ E ╲╱ R ╲╱ T ╲╱ Y ╲╱ U ╲╱ I ╲
+│    ││    ││    ││░░░░││    ││    ││    ││    ││    │
+ ╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱╲──╱
+
+░░░░ = 빈 슬롯 (미수집)
+```
+
+### 9.5 Sharing
+
+- 완성된 키보드를 **프로필 카드 이미지**로 저장/공유
+- SNS 공유용 이미지 자동 생성 (아이소메트릭 키보드 렌더링)
+- 나중에 유저 간 키보드 구경 기능 추가 가능
+
+### 9.6 Data Model
+
+```swift
+struct KeyboardBuild: Identifiable, Codable {
+    let id: UUID
+    var name: String                     // "My Daily Driver"
+    let layout: KeyboardLayout           // forty, sixty, tkl, full
+    var slots: [KeySlot]                 // 레이아웃별 슬롯 배열
+    let createdAt: Date
+    var completionRate: Double           // 0.0 ~ 1.0
+}
+
+struct KeySlot: Identifiable, Codable {
+    let id: String                       // "key-A", "key-Esc" 등
+    let position: SlotPosition           // 아이소메트릭 좌표
+    let expectedLegend: String           // 이 슬롯에 들어갈 문자
+    var assignedKeycap: CollectedKeycap? // nil이면 빈 슬롯
+}
+
+enum KeyboardLayout: String, Codable {
+    case forty      // 40%
+    case sixty      // 60%
+    case tkl        // 80% (TKL)
+    case full       // 100% (Full)
+
+    var slotCount: Int { ... }
+}
+```
+
+---
+
+## 10. Keycap Catalog (MVP: 120개)
 
 | 세트 이름 | Common | Uncommon | Rare | Epic | Legendary | 합계 |
 |-----------|--------|----------|------|------|-----------|------|
@@ -329,7 +593,7 @@ struct UserStats: Codable {
 
 ---
 
-## 9. Persistence
+## 11. Persistence
 
 - 저장 위치: `~/Library/Application Support/TypeCollect/`
 - 파일: `collection.json`, `stats.json`, `settings.json`
@@ -338,7 +602,7 @@ struct UserStats: Codable {
 
 ---
 
-## 10. App Configuration
+## 12. App Configuration
 
 - `LSUIElement = YES`: Dock, Cmd-Tab에서 숨김
 - Deployment Target: macOS 13.0
@@ -347,7 +611,7 @@ struct UserStats: Codable {
 
 ---
 
-## 11. Known Challenges & Mitigations
+## 13. Known Challenges & Mitigations
 
 | 문제 | 대응 |
 |------|------|
@@ -359,7 +623,7 @@ struct UserStats: Codable {
 
 ---
 
-## 12. Implementation Phases
+## 14. Implementation Phases
 
 ### Phase 1 — MVP (현재)
 - 메뉴바 앱 + 글로벌 키 카운팅
