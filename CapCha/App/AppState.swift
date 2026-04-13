@@ -44,7 +44,9 @@ final class AppState: ObservableObject {
 
         if keystrokeMonitor.isRunning {
             isMonitoring = true
+            #if DEBUG
             print("[AppState] Monitoring started.")
+            #endif
 
             sessionTracker = SessionTracker(keystrokeMonitor: keystrokeMonitor) { [weak self] keycap, keystrokeNumber in
                 self?.handleDrop(keycap: keycap, keystrokeNumber: keystrokeNumber)
@@ -54,7 +56,9 @@ final class AppState: ObservableObject {
             }
         } else {
             isMonitoring = false
+            #if DEBUG
             print("[AppState] No permission. Polling...")
+            #endif
             startPermissionPolling()
         }
     }
@@ -68,7 +72,9 @@ final class AppState: ObservableObject {
                 timer.invalidate()
                 self.permissionPollTimer = nil
                 self.isMonitoring = true
+                #if DEBUG
                 print("[AppState] Permission granted. Monitoring started.")
+                #endif
 
                 self.sessionTracker = SessionTracker(keystrokeMonitor: self.keystrokeMonitor) { [weak self] keycap, keystrokeNumber in
                     self?.handleDrop(keycap: keycap, keystrokeNumber: keystrokeNumber)
@@ -81,7 +87,9 @@ final class AppState: ObservableObject {
     }
 
     private func handleDrop(keycap: Keycap, keystrokeNumber: Int) {
+        #if DEBUG
         print("[AppState] DROP! \(keycap.name) (\(keycap.rarity.displayName)) at keystroke #\(keystrokeNumber)")
+        #endif
         let collected = CollectedKeycap(
             id: UUID(),
             keycap: keycap,
@@ -106,6 +114,13 @@ final class AppState: ObservableObject {
     }
 
     func saveOnExit() {
+        reEnableTimer?.invalidate()
+        permissionPollTimer?.invalidate()
+        saveTimer?.invalidate()
+        reEnableTimer = nil
+        permissionPollTimer = nil
+        saveTimer = nil
+
         StorageManager.shared.saveCollection(collection)
         saveStats()
         keystrokeMonitor.stop()

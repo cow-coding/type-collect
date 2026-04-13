@@ -67,6 +67,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
         appState.saveOnExit()
     }
 
@@ -75,12 +79,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let bundlePath = Bundle.main.bundlePath
         guard bundlePath.hasPrefix("/Volumes/") else { return }
 
-        // Extract volume name (e.g. /Volumes/CapCha)
         let components = bundlePath.split(separator: "/")
         guard components.count >= 2 else { return }
-        let volumePath = "/Volumes/\(components[1])"
+        let volumeName = String(components[1])
+        let volumePath = "/Volumes/\(volumeName)"
+
+        // Validate: path must exist, must be a mount point, and name must be safe
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: volumePath),
+              volumeName.allSatisfy({ $0.isLetter || $0.isNumber || $0 == " " || $0 == "-" || $0 == "_" || $0 == "." })
+        else { return }
 
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 2) {
+            // Re-check the volume still exists right before ejecting
+            guard fm.fileExists(atPath: volumePath) else { return }
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/diskutil")
             process.arguments = ["eject", volumePath]
