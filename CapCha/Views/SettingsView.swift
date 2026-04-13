@@ -40,7 +40,7 @@ struct SettingsView: View {
             }
         }
         .padding(24)
-        .frame(width: 360, height: 320)
+        .frame(width: 400, height: 400)
     }
 
     private func infoRow(_ label: String, value: String) -> some View {

@@ -64,7 +64,7 @@ struct KeycapDetailView: View {
             .controlSize(.regular)
         }
         .padding(24)
-        .frame(width: 300, height: 380)
+        .frame(width: 320, height: 440)
     }
 
     private func detailRow(_ label: String, value: String) -> some View {
