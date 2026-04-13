@@ -53,7 +53,9 @@ final class DropNotificationManager {
 
     private func presentBubble(keycap: Keycap) {
         guard let button = anchorButton else {
+            #if DEBUG
             print("[DropNotification] No anchor button")
+            #endif
             return
         }
 

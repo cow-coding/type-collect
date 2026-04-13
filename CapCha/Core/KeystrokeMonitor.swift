@@ -8,6 +8,11 @@ final class KeystrokeMonitor: ObservableObject {
 
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
+    private var retainedSelf: Unmanaged<KeystrokeMonitor>?
+
+    deinit {
+        stop()
+    }
 
     func start() {
         guard eventTap == nil else { return }
@@ -26,13 +31,13 @@ final class KeystrokeMonitor: ObservableObject {
             }
 
             let monitor = Unmanaged<KeystrokeMonitor>.fromOpaque(refcon).takeUnretainedValue()
-            DispatchQueue.main.async {
-                monitor.totalCount += 1
-            }
+            monitor.totalCount += 1
             return Unmanaged.passUnretained(event)
         }
 
-        let selfPtr = Unmanaged.passUnretained(self).toOpaque()
+        let retained = Unmanaged.passRetained(self)
+        retainedSelf = retained
+        let selfPtr = retained.toOpaque()
 
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -42,7 +47,11 @@ final class KeystrokeMonitor: ObservableObject {
             callback: callback,
             userInfo: selfPtr
         ) else {
+            #if DEBUG
             print("[KeystrokeMonitor] Failed to create event tap.")
+            #endif
+            retainedSelf?.release()
+            retainedSelf = nil
             isRunning = false
             return
         }
@@ -52,20 +61,24 @@ final class KeystrokeMonitor: ObservableObject {
 
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
         runLoopSource = source
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
+        #if DEBUG
         print("[KeystrokeMonitor] Event tap started successfully.")
+        #endif
     }
 
     func stop() {
         if let source = runLoopSource {
-            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .commonModes)
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
             runLoopSource = nil
         }
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: false)
             eventTap = nil
         }
+        retainedSelf?.release()
+        retainedSelf = nil
         isRunning = false
     }
 
@@ -73,7 +86,9 @@ final class KeystrokeMonitor: ObservableObject {
         guard let tap = eventTap else { return }
         if !CGEvent.tapIsEnabled(tap: tap) {
             CGEvent.tapEnable(tap: tap, enable: true)
+            #if DEBUG
             print("[KeystrokeMonitor] Re-enabled event tap.")
+            #endif
         }
     }
 }

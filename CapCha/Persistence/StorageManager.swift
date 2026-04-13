@@ -13,7 +13,11 @@ final class StorageManager {
     private init() {
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         directory = appSupport.appendingPathComponent("CapCha", isDirectory: true)
-        try? fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        try? fileManager.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true,
+            attributes: [.posixPermissions: 0o700]
+        )
     }
 
     private var collectionURL: URL {
@@ -31,7 +35,9 @@ final class StorageManager {
             let data = try JSONEncoder().encode(items)
             try data.write(to: collectionURL, options: .atomic)
         } catch {
+            #if DEBUG
             print("[StorageManager] Save collection failed: \(error)")
+            #endif
         }
     }
 
@@ -47,7 +53,9 @@ final class StorageManager {
             let data = try JSONEncoder().encode(stats)
             try data.write(to: statsURL, options: .atomic)
         } catch {
+            #if DEBUG
             print("[StorageManager] Save stats failed: \(error)")
+            #endif
         }
     }
 

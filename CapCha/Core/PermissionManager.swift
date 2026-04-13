@@ -15,7 +15,7 @@ final class PermissionManager: ObservableObject {
         let eventMask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
         if let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
-            place: .headInsertEventTap,
+            place: .tailAppendEventTap,
             options: .listenOnly,
             eventsOfInterest: eventMask,
             callback: { _, _, event, _ in Unmanaged.passUnretained(event) },
