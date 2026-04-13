@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="CapCha Icon">
+  <img src="CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="256" height="256" alt="CapCha Icon">
 </p>
 
 <h1 align="center">CapCha</h1>
