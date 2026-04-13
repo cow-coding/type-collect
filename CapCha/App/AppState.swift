@@ -31,6 +31,7 @@ final class AppState: ObservableObject {
     }
 
     private var sessionTracker: SessionTracker?
+    private var savedPityCount: Int = 0
     private var reEnableTimer: Timer?
     private var permissionPollTimer: Timer?
     private var saveTimer: Timer?
@@ -43,6 +44,7 @@ final class AppState: ObservableObject {
 
         let stats = StorageManager.shared.loadStats()
         keystrokeMonitor.totalCount = stats.totalKeystrokes
+        savedPityCount = stats.keystrokesSinceLastDrop
 
         // Forward keystroke count changes to AppState for SwiftUI binding
         keystrokeMonitor.$totalCount
@@ -68,7 +70,7 @@ final class AppState: ObservableObject {
             print("[AppState] Monitoring started.")
             #endif
 
-            sessionTracker = SessionTracker(keystrokeMonitor: keystrokeMonitor) { [weak self] keycap, keystrokeNumber in
+            sessionTracker = SessionTracker(keystrokeMonitor: keystrokeMonitor, initialKeystrokesSinceLastDrop: savedPityCount) { [weak self] keycap, keystrokeNumber in
                 self?.handleDrop(keycap: keycap, keystrokeNumber: keystrokeNumber)
             }
             reEnableTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
@@ -110,15 +112,35 @@ final class AppState: ObservableObject {
         #if DEBUG
         print("[AppState] DROP! \(keycap.name) (\(keycap.rarity.displayName)) at keystroke #\(keystrokeNumber)")
         #endif
-        let collected = CollectedKeycap(
-            id: UUID(),
+        let now = Date()
+
+        if let index = collection.firstIndex(where: { $0.id == keycap.id }) {
+            // Duplicate — increment count
+            collection[index].count += 1
+            collection[index].lastCollectedAt = now
+        } else {
+            // New keycap
+            let collected = CollectedKeycap(
+                id: keycap.id,
+                keycap: keycap,
+                count: 1,
+                firstCollectedAt: now,
+                lastCollectedAt: now,
+                keystrokeNumber: keystrokeNumber
+            )
+            collection.append(collected)
+        }
+
+        // Recent drops: show keycap regardless of duplicate
+        let recentEntry = CollectedKeycap(
+            id: "\(keycap.id)-\(now.timeIntervalSince1970)",
             keycap: keycap,
-            collectedAt: Date(),
+            count: 1,
+            firstCollectedAt: now,
+            lastCollectedAt: now,
             keystrokeNumber: keystrokeNumber
         )
-
-        collection.append(collected)
-        recentDrops.insert(collected, at: 0)
+        recentDrops.insert(recentEntry, at: 0)
         if recentDrops.count > 6 {
             recentDrops = Array(recentDrops.prefix(6))
         }
@@ -129,7 +151,10 @@ final class AppState: ObservableObject {
     }
 
     private func saveStats() {
-        let stats = UserStats(totalKeystrokes: keystrokeMonitor.totalCount)
+        let stats = UserStats(
+            totalKeystrokes: keystrokeMonitor.totalCount,
+            keystrokesSinceLastDrop: sessionTracker?.currentPityCount ?? 0
+        )
         StorageManager.shared.saveStats(stats)
     }
 

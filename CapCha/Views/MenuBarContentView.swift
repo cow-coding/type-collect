@@ -39,7 +39,7 @@ struct MenuBarContentView: View {
                         Text("Collected")
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("\(appState.collection.count) / \(KeycapCatalog.all.count)")
+                        Text("\(appState.collection.count) / \(KeycapCatalog.totalCombinations)")
                             .font(.system(.body, design: .monospaced))
                             .fontWeight(.medium)
                     }
@@ -103,7 +103,7 @@ struct MenuBarContentView: View {
                     Image(systemName: "square.grid.2x2")
                     Text("Open Collection")
                     Spacer()
-                    Text("\(appState.uniqueCollectedCount)/\(KeycapCatalog.all.count)")
+                    Text("\(appState.uniqueCollectedCount)/\(KeycapCatalog.totalCombinations)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

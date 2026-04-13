@@ -1,56 +1,187 @@
 import Foundation
 
+struct KeyDefinition {
+    let legend: String
+    let displayName: String
+    let row: Int
+}
+
+struct KeycapSet {
+    let name: String
+    let prefix: String
+    let palette: [Rarity: [String]]
+}
+
 struct KeycapCatalog {
-    static let all: [Keycap] = [
-        // MARK: - Common (12)
-        Keycap(id: "mech-cherry-red-c01", name: "Cherry Red", rarity: .common, legendCharacter: "A", primaryColor: "#CC3333", setName: "Mechanical Classics"),
-        Keycap(id: "mech-cherry-blue-c02", name: "Cherry Blue", rarity: .common, legendCharacter: "S", primaryColor: "#3366CC", setName: "Mechanical Classics"),
-        Keycap(id: "mech-cherry-brown-c03", name: "Cherry Brown", rarity: .common, legendCharacter: "D", primaryColor: "#8B6914", setName: "Mechanical Classics"),
-        Keycap(id: "mech-cherry-black-c04", name: "Cherry Black", rarity: .common, legendCharacter: "F", primaryColor: "#2D2D2D", setName: "Mechanical Classics"),
-        Keycap(id: "retro-beige-c05", name: "IBM Beige", rarity: .common, legendCharacter: "G", primaryColor: "#D4C5A9", setName: "Retro Computing"),
-        Keycap(id: "retro-gray-c06", name: "Terminal Gray", rarity: .common, legendCharacter: "H", primaryColor: "#808080", setName: "Retro Computing"),
-        Keycap(id: "retro-cream-c07", name: "Apple Cream", rarity: .common, legendCharacter: "J", primaryColor: "#FFFDD0", setName: "Retro Computing"),
-        Keycap(id: "nature-leaf-c08", name: "Forest Leaf", rarity: .common, legendCharacter: "K", primaryColor: "#228B22", setName: "Nature Elements"),
-        Keycap(id: "nature-stone-c09", name: "River Stone", rarity: .common, legendCharacter: "L", primaryColor: "#A0A0A0", setName: "Nature Elements"),
-        Keycap(id: "nature-sand-c10", name: "Desert Sand", rarity: .common, legendCharacter: "Q", primaryColor: "#C2B280", setName: "Nature Elements"),
-        Keycap(id: "space-dust-c11", name: "Star Dust", rarity: .common, legendCharacter: "W", primaryColor: "#B0C4DE", setName: "Space Theme"),
-        Keycap(id: "space-iron-c12", name: "Meteor Iron", rarity: .common, legendCharacter: "E", primaryColor: "#4A4A4A", setName: "Space Theme"),
 
-        // MARK: - Uncommon (8)
-        Keycap(id: "mech-gateron-u01", name: "Gateron Yellow", rarity: .uncommon, legendCharacter: "R", primaryColor: "#FFD700", setName: "Mechanical Classics"),
-        Keycap(id: "mech-kailh-u02", name: "Kailh Box White", rarity: .uncommon, legendCharacter: "T", primaryColor: "#F0F0F0", setName: "Mechanical Classics"),
-        Keycap(id: "retro-c64-u03", name: "C64 Brown", rarity: .uncommon, legendCharacter: "Y", primaryColor: "#6B4226", setName: "Retro Computing"),
-        Keycap(id: "retro-amiga-u04", name: "Amiga White", rarity: .uncommon, legendCharacter: "U", primaryColor: "#E8E8E8", setName: "Retro Computing"),
-        Keycap(id: "nature-ocean-u05", name: "Deep Ocean", rarity: .uncommon, legendCharacter: "I", primaryColor: "#006994", setName: "Nature Elements"),
-        Keycap(id: "nature-sunset-u06", name: "Sunset Glow", rarity: .uncommon, legendCharacter: "O", primaryColor: "#FF6347", setName: "Nature Elements"),
-        Keycap(id: "space-mars-u07", name: "Mars Red", rarity: .uncommon, legendCharacter: "P", primaryColor: "#CD5C5C", setName: "Space Theme"),
-        Keycap(id: "space-neptune-u08", name: "Neptune Blue", rarity: .uncommon, legendCharacter: "Z", primaryColor: "#4169E1", setName: "Space Theme"),
+    // MARK: - TKL 87 Keys
 
-        // MARK: - Rare (5)
-        Keycap(id: "mech-holypanda-r01", name: "Holy Panda", rarity: .rare, legendCharacter: "X", primaryColor: "#FF8C00", setName: "Mechanical Classics"),
-        Keycap(id: "retro-model-m-r02", name: "Model M Buckling", rarity: .rare, legendCharacter: "C", primaryColor: "#D3D3D3", setName: "Retro Computing"),
-        Keycap(id: "nature-aurora-r03", name: "Aurora Borealis", rarity: .rare, legendCharacter: "V", primaryColor: "#00FF7F", setName: "Nature Elements"),
-        Keycap(id: "space-nebula-r04", name: "Nebula Pink", rarity: .rare, legendCharacter: "B", primaryColor: "#FF69B4", setName: "Space Theme"),
-        Keycap(id: "artisan-sakura-r05", name: "Sakura Blossom", rarity: .rare, legendCharacter: "N", primaryColor: "#FFB7C5", setName: "Artisan Collection"),
-
-        // MARK: - Epic (3)
-        Keycap(id: "artisan-dragon-e01", name: "Dragon Scale", rarity: .epic, legendCharacter: "M", primaryColor: "#8B0000", setName: "Artisan Collection"),
-        Keycap(id: "space-blackhole-e02", name: "Black Hole", rarity: .epic, legendCharacter: "Esc", primaryColor: "#0D0D0D", setName: "Space Theme"),
-        Keycap(id: "artisan-crystal-e03", name: "Crystal Ice", rarity: .epic, legendCharacter: "Tab", primaryColor: "#B0E0E6", setName: "Artisan Collection"),
-
-        // MARK: - Legendary (2)
-        Keycap(id: "artisan-galaxy-l01", name: "Galaxy Resin", rarity: .legendary, legendCharacter: "Space", primaryColor: "#191970", setName: "Artisan Collection"),
-        Keycap(id: "milestone-million-l02", name: "The Millionaire", rarity: .legendary, legendCharacter: "Enter", primaryColor: "#FFD700", setName: "Milestone Specials"),
-
-        // MARK: - Eternal (1)
-        Keycap(id: "eternal-prisma-et01", name: "Prismatic Core", rarity: .eternal, legendCharacter: "★", primaryColor: "#FF69B4", setName: "Eternal Collection"),
+    static let keys: [KeyDefinition] = [
+        // Row 0: Function
+        KeyDefinition(legend: "Esc", displayName: "Escape", row: 0),
+        KeyDefinition(legend: "F1", displayName: "F1", row: 0),
+        KeyDefinition(legend: "F2", displayName: "F2", row: 0),
+        KeyDefinition(legend: "F3", displayName: "F3", row: 0),
+        KeyDefinition(legend: "F4", displayName: "F4", row: 0),
+        KeyDefinition(legend: "F5", displayName: "F5", row: 0),
+        KeyDefinition(legend: "F6", displayName: "F6", row: 0),
+        KeyDefinition(legend: "F7", displayName: "F7", row: 0),
+        KeyDefinition(legend: "F8", displayName: "F8", row: 0),
+        KeyDefinition(legend: "F9", displayName: "F9", row: 0),
+        KeyDefinition(legend: "F10", displayName: "F10", row: 0),
+        KeyDefinition(legend: "F11", displayName: "F11", row: 0),
+        KeyDefinition(legend: "F12", displayName: "F12", row: 0),
+        // Row 1: Numbers
+        KeyDefinition(legend: "`", displayName: "Grave", row: 1),
+        KeyDefinition(legend: "1", displayName: "1", row: 1),
+        KeyDefinition(legend: "2", displayName: "2", row: 1),
+        KeyDefinition(legend: "3", displayName: "3", row: 1),
+        KeyDefinition(legend: "4", displayName: "4", row: 1),
+        KeyDefinition(legend: "5", displayName: "5", row: 1),
+        KeyDefinition(legend: "6", displayName: "6", row: 1),
+        KeyDefinition(legend: "7", displayName: "7", row: 1),
+        KeyDefinition(legend: "8", displayName: "8", row: 1),
+        KeyDefinition(legend: "9", displayName: "9", row: 1),
+        KeyDefinition(legend: "0", displayName: "0", row: 1),
+        KeyDefinition(legend: "-", displayName: "Minus", row: 1),
+        KeyDefinition(legend: "=", displayName: "Equal", row: 1),
+        KeyDefinition(legend: "BS", displayName: "Backspace", row: 1),
+        // Row 2: QWERTY
+        KeyDefinition(legend: "Tab", displayName: "Tab", row: 2),
+        KeyDefinition(legend: "Q", displayName: "Q", row: 2),
+        KeyDefinition(legend: "W", displayName: "W", row: 2),
+        KeyDefinition(legend: "E", displayName: "E", row: 2),
+        KeyDefinition(legend: "R", displayName: "R", row: 2),
+        KeyDefinition(legend: "T", displayName: "T", row: 2),
+        KeyDefinition(legend: "Y", displayName: "Y", row: 2),
+        KeyDefinition(legend: "U", displayName: "U", row: 2),
+        KeyDefinition(legend: "I", displayName: "I", row: 2),
+        KeyDefinition(legend: "O", displayName: "O", row: 2),
+        KeyDefinition(legend: "P", displayName: "P", row: 2),
+        KeyDefinition(legend: "[", displayName: "Left Bracket", row: 2),
+        KeyDefinition(legend: "]", displayName: "Right Bracket", row: 2),
+        KeyDefinition(legend: "\\", displayName: "Backslash", row: 2),
+        // Row 3: Home
+        KeyDefinition(legend: "Caps", displayName: "CapsLock", row: 3),
+        KeyDefinition(legend: "A", displayName: "A", row: 3),
+        KeyDefinition(legend: "S", displayName: "S", row: 3),
+        KeyDefinition(legend: "D", displayName: "D", row: 3),
+        KeyDefinition(legend: "F", displayName: "F", row: 3),
+        KeyDefinition(legend: "G", displayName: "G", row: 3),
+        KeyDefinition(legend: "H", displayName: "H", row: 3),
+        KeyDefinition(legend: "J", displayName: "J", row: 3),
+        KeyDefinition(legend: "K", displayName: "K", row: 3),
+        KeyDefinition(legend: "L", displayName: "L", row: 3),
+        KeyDefinition(legend: ";", displayName: "Semicolon", row: 3),
+        KeyDefinition(legend: "'", displayName: "Quote", row: 3),
+        KeyDefinition(legend: "Enter", displayName: "Enter", row: 3),
+        // Row 4: Bottom
+        KeyDefinition(legend: "Shift", displayName: "Left Shift", row: 4),
+        KeyDefinition(legend: "Z", displayName: "Z", row: 4),
+        KeyDefinition(legend: "X", displayName: "X", row: 4),
+        KeyDefinition(legend: "C", displayName: "C", row: 4),
+        KeyDefinition(legend: "V", displayName: "V", row: 4),
+        KeyDefinition(legend: "B", displayName: "B", row: 4),
+        KeyDefinition(legend: "N", displayName: "N", row: 4),
+        KeyDefinition(legend: "M", displayName: "M", row: 4),
+        KeyDefinition(legend: ",", displayName: "Comma", row: 4),
+        KeyDefinition(legend: ".", displayName: "Period", row: 4),
+        KeyDefinition(legend: "/", displayName: "Slash", row: 4),
+        KeyDefinition(legend: "Shift", displayName: "Right Shift", row: 4),
+        // Row 5: Space
+        KeyDefinition(legend: "Ctrl", displayName: "Left Ctrl", row: 5),
+        KeyDefinition(legend: "Alt", displayName: "Left Alt", row: 5),
+        KeyDefinition(legend: "Cmd", displayName: "Left Cmd", row: 5),
+        KeyDefinition(legend: "Space", displayName: "Space", row: 5),
+        KeyDefinition(legend: "Cmd", displayName: "Right Cmd", row: 5),
+        KeyDefinition(legend: "Alt", displayName: "Right Alt", row: 5),
+        KeyDefinition(legend: "Fn", displayName: "Fn", row: 5),
+        KeyDefinition(legend: "Ctrl", displayName: "Right Ctrl", row: 5),
+        // Navigation
+        KeyDefinition(legend: "Ins", displayName: "Insert", row: 0),
+        KeyDefinition(legend: "Home", displayName: "Home", row: 0),
+        KeyDefinition(legend: "PgUp", displayName: "Page Up", row: 0),
+        KeyDefinition(legend: "Del", displayName: "Delete", row: 1),
+        KeyDefinition(legend: "End", displayName: "End", row: 1),
+        KeyDefinition(legend: "PgDn", displayName: "Page Down", row: 1),
+        // Arrows
+        KeyDefinition(legend: "↑", displayName: "Up", row: 4),
+        KeyDefinition(legend: "←", displayName: "Left", row: 5),
+        KeyDefinition(legend: "↓", displayName: "Down", row: 5),
+        KeyDefinition(legend: "→", displayName: "Right", row: 5),
+        // Top right
+        KeyDefinition(legend: "PrtSc", displayName: "Print Screen", row: 0),
+        KeyDefinition(legend: "ScrLk", displayName: "Scroll Lock", row: 0),
+        KeyDefinition(legend: "Pause", displayName: "Pause", row: 0),
     ]
 
-    static func keycaps(for rarity: Rarity) -> [Keycap] {
-        all.filter { $0.rarity == rarity }
-    }
+    // MARK: - Sets
+
+    static let sets: [KeycapSet] = [
+        KeycapSet(name: "Mechanical Classics", prefix: "mech", palette: [
+            .common:    ["#CC3333", "#B22222", "#8B1A1A", "#CD5555", "#A52A2A"],
+            .uncommon:  ["#FF4444", "#E8352E", "#D44A3C", "#DC143C"],
+            .rare:      ["#FF6B6B", "#FF5252", "#FF4500"],
+            .epic:      ["#FF1744", "#E91E63"],
+            .legendary: ["#FF0000"],
+            .eternal:   ["#FF2060"],
+        ]),
+        KeycapSet(name: "Retro Computing", prefix: "retro", palette: [
+            .common:    ["#D4C5A9", "#C2B280", "#BDB76B", "#D2B48C", "#CDBA96"],
+            .uncommon:  ["#DEB887", "#D2691E", "#BC8F8F", "#A0522D"],
+            .rare:      ["#8B7355", "#6B4226", "#8B6914"],
+            .epic:      ["#8B4513", "#654321"],
+            .legendary: ["#3D2B1F"],
+            .eternal:   ["#FFD700"],
+        ]),
+        KeycapSet(name: "Artisan Collection", prefix: "artisan", palette: [
+            .common:    ["#9370DB", "#8A2BE2", "#9B59B6", "#8E44AD", "#7E57C2"],
+            .uncommon:  ["#7B68EE", "#6A5ACD", "#663399", "#5C6BC0"],
+            .rare:      ["#4B0082", "#551A8B", "#4527A0"],
+            .epic:      ["#800080", "#6A0DAD"],
+            .legendary: ["#4A0070"],
+            .eternal:   ["#E040FB"],
+        ]),
+        KeycapSet(name: "Nature Elements", prefix: "nature", palette: [
+            .common:    ["#228B22", "#2E8B57", "#3CB371", "#66CDAA", "#4CAF50"],
+            .uncommon:  ["#006400", "#008B45", "#00C853", "#00897B"],
+            .rare:      ["#00FF7F", "#00FA9A", "#1DE9B6"],
+            .epic:      ["#00E676", "#00BFA5"],
+            .legendary: ["#004D40"],
+            .eternal:   ["#76FF03"],
+        ]),
+        KeycapSet(name: "Space Theme", prefix: "space", palette: [
+            .common:    ["#191970", "#1C1C5E", "#2F2F6E", "#4169E1", "#3949AB"],
+            .uncommon:  ["#0000CD", "#0000FF", "#1E90FF", "#2979FF"],
+            .rare:      ["#00BFFF", "#00CED1", "#40C4FF"],
+            .epic:      ["#7DF9FF", "#18FFFF"],
+            .legendary: ["#E0FFFF"],
+            .eternal:   ["#B388FF"],
+        ]),
+    ]
+
+    // MARK: - Dynamic Generation
 
     static func randomKeycap(for rarity: Rarity) -> Keycap? {
-        keycaps(for: rarity).randomElement()
+        guard let set = sets.randomElement(),
+              let key = keys.randomElement(),
+              let colors = set.palette[rarity],
+              let color = colors.randomElement()
+        else { return nil }
+
+        let id = "\(set.prefix)-\(key.displayName.lowercased().replacingOccurrences(of: " ", with: "-"))-\(rarity.rawValue)"
+
+        return Keycap(
+            id: id,
+            name: key.displayName,
+            rarity: rarity,
+            legendCharacter: key.legend,
+            primaryColor: color,
+            setName: set.name
+        )
+    }
+
+    static var totalCombinations: Int {
+        keys.count * sets.count * Rarity.allCases.count
     }
 }

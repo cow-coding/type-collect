@@ -9,6 +9,7 @@ struct DropBubbleContent: View {
             KeycapShapeView(
                 primaryColor: keycap.primaryColor,
                 legendCharacter: keycap.legendCharacter,
+                rarity: keycap.rarity,
                 isCollected: true,
                 size: 44
             )

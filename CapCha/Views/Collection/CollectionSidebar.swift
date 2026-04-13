@@ -4,29 +4,22 @@ struct CollectionSidebar: View {
     @ObservedObject var appState: AppState
     @Binding var selectedFilter: CollectionFilter
 
-    private var collectedIDs: Set<String> {
-        appState.collectedKeycapIDs
-    }
-
     var body: some View {
         List(selection: $selectedFilter) {
             Section("Collection") {
                 sidebarRow(
                     label: "All",
-                    count: appState.uniqueCollectedCount,
-                    total: KeycapCatalog.all.count,
+                    count: appState.collection.count,
                     filter: .all
                 )
             }
 
             Section("Rarity") {
                 ForEach(Rarity.allCases, id: \.self) { rarity in
-                    let keycaps = KeycapCatalog.keycaps(for: rarity)
-                    let collected = keycaps.filter { collectedIDs.contains($0.id) }.count
+                    let count = appState.collection.filter { $0.keycap.rarity == rarity }.count
                     sidebarRow(
                         label: rarity.displayName,
-                        count: collected,
-                        total: keycaps.count,
+                        count: count,
                         filter: .rarity(rarity),
                         color: rarity.color
                     )
@@ -35,12 +28,10 @@ struct CollectionSidebar: View {
 
             Section("Sets") {
                 ForEach(setNames, id: \.self) { setName in
-                    let keycaps = KeycapCatalog.all.filter { $0.setName == setName }
-                    let collected = keycaps.filter { collectedIDs.contains($0.id) }.count
+                    let count = appState.collection.filter { $0.keycap.setName == setName }.count
                     sidebarRow(
                         label: setName,
-                        count: collected,
-                        total: keycaps.count,
+                        count: count,
                         filter: .set(setName)
                     )
                 }
@@ -50,18 +41,12 @@ struct CollectionSidebar: View {
     }
 
     private var setNames: [String] {
-        var seen = Set<String>()
-        return KeycapCatalog.all.compactMap { keycap in
-            if seen.contains(keycap.setName) { return nil }
-            seen.insert(keycap.setName)
-            return keycap.setName
-        }
+        KeycapCatalog.sets.map { $0.name }
     }
 
     private func sidebarRow(
         label: String,
         count: Int,
-        total: Int,
         filter: CollectionFilter,
         color: Color? = nil
     ) -> some View {
@@ -74,7 +59,7 @@ struct CollectionSidebar: View {
             Text(label)
                 .lineLimit(1)
             Spacer()
-            Text("\(count)/\(total)")
+            Text("\(count)")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

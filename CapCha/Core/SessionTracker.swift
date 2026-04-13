@@ -4,12 +4,14 @@ import Combine
 final class SessionTracker: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var lastCheckedCount: Int = 0
+    private var keystrokesSinceLastDrop: Int = 0
 
     private let keystrokeMonitor: KeystrokeMonitor
     private let onDrop: (Keycap, Int) -> Void
 
-    init(keystrokeMonitor: KeystrokeMonitor, onDrop: @escaping (Keycap, Int) -> Void) {
+    init(keystrokeMonitor: KeystrokeMonitor, initialKeystrokesSinceLastDrop: Int = 0, onDrop: @escaping (Keycap, Int) -> Void) {
         self.keystrokeMonitor = keystrokeMonitor
+        self.keystrokesSinceLastDrop = initialKeystrokesSinceLastDrop
         self.onDrop = onDrop
 
         // Start from current count to avoid re-evaluating persisted keystrokes
@@ -25,12 +27,17 @@ final class SessionTracker: ObservableObject {
     }
 
     private func evaluate(currentCount: Int) {
-        // Evaluate drop for each keystroke
         while lastCheckedCount < currentCount {
             lastCheckedCount += 1
-            if let keycap = DropEngine.executeDrop() {
+            keystrokesSinceLastDrop += 1
+            if let keycap = DropEngine.executeDrop(keystrokesSinceLastDrop: keystrokesSinceLastDrop) {
+                keystrokesSinceLastDrop = 0
                 onDrop(keycap, lastCheckedCount)
             }
         }
+    }
+
+    var currentPityCount: Int {
+        keystrokesSinceLastDrop
     }
 }

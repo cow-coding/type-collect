@@ -3,68 +3,74 @@ import SwiftUI
 struct CollectionGrid: View {
     @ObservedObject var appState: AppState
     let filter: CollectionFilter
-    @State private var selectedKeycap: Keycap?
+    @State private var selectedCollected: CollectedKeycap?
 
-    private var filteredKeycaps: [Keycap] {
+    private var filteredCollection: [CollectedKeycap] {
         switch filter {
         case .all:
-            return KeycapCatalog.all
+            return appState.collection
         case .rarity(let rarity):
-            return KeycapCatalog.keycaps(for: rarity)
+            return appState.collection.filter { $0.keycap.rarity == rarity }
         case .set(let setName):
-            return KeycapCatalog.all.filter { $0.setName == setName }
+            return appState.collection.filter { $0.keycap.setName == setName }
         }
-    }
-
-    private var progressText: String {
-        let keycaps = filteredKeycaps
-        let collected = keycaps.filter { appState.isCollected($0) }.count
-        return "\(collected) / \(keycaps.count)"
-    }
-
-    private var progressValue: Double {
-        let keycaps = filteredKeycaps
-        guard !keycaps.isEmpty else { return 0 }
-        let collected = keycaps.filter { appState.isCollected($0) }.count
-        return Double(collected) / Double(keycaps.count)
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 100), spacing: 12)],
-                    spacing: 12
-                ) {
-                    ForEach(filteredKeycaps) { keycap in
-                        KeycapCardView(
-                            keycap: keycap,
-                            isCollected: appState.isCollected(keycap)
-                        )
-                        .onTapGesture {
-                            selectedKeycap = keycap
+            if filteredCollection.isEmpty {
+                Spacer()
+                VStack(spacing: 8) {
+                    Image(systemName: "keyboard")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text("No keycaps yet")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Text("Keep typing to collect!")
+                        .font(.caption)
+                        .foregroundColor(.secondary.opacity(0.7))
+                }
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 100), spacing: 12)],
+                        spacing: 12
+                    ) {
+                        ForEach(filteredCollection) { collected in
+                            KeycapCardView(
+                                keycap: collected.keycap,
+                                isCollected: true,
+                                count: collected.count
+                            )
+                            .onTapGesture {
+                                selectedCollected = collected
+                            }
                         }
                     }
+                    .padding(16)
                 }
-                .padding(16)
             }
 
-            // Progress bar
-            VStack(spacing: 4) {
-                ProgressView(value: progressValue)
-                    .tint(.accentColor)
-                Text(progressText)
+            // Stats bar
+            HStack {
+                Text("\(filteredCollection.count) keycaps")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                Spacer()
+                Text("\(KeycapCatalog.totalCombinations) possible combinations")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.6))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(.bar)
         }
-        .sheet(item: $selectedKeycap) { keycap in
+        .sheet(item: $selectedCollected) { collected in
             KeycapDetailView(
-                keycap: keycap,
-                collected: appState.collectedInstance(of: keycap)
+                keycap: collected.keycap,
+                collected: collected
             )
         }
     }

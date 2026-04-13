@@ -8,21 +8,13 @@ struct KeycapDetailView: View {
     var body: some View {
         VStack(spacing: 20) {
             // Keycap preview
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(collected != nil ? Color(hex: keycap.primaryColor) : Color.gray.opacity(0.3))
-                    .frame(width: 120, height: 100)
-
-                if collected != nil {
-                    Text(keycap.legendCharacter)
-                        .font(.system(size: 40, weight: .bold, design: .monospaced))
-                        .foregroundColor(DropBubbleContent.legendColor(for: keycap.primaryColor))
-                } else {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 32))
-                        .foregroundColor(.gray.opacity(0.5))
-                }
-            }
+            KeycapShapeView(
+                primaryColor: keycap.primaryColor,
+                legendCharacter: keycap.legendCharacter,
+                rarity: keycap.rarity,
+                isCollected: collected != nil,
+                size: 140
+            )
 
             // Info
             VStack(spacing: 8) {
@@ -49,7 +41,11 @@ struct KeycapDetailView: View {
                     .padding(.horizontal, 40)
 
                 VStack(spacing: 6) {
-                    detailRow("Collected", value: formatted(date: collected.collectedAt))
+                    detailRow("Owned", value: "\u{00D7}\(collected.count)")
+                    detailRow("First Drop", value: formatted(date: collected.firstCollectedAt))
+                    if collected.count > 1 {
+                        detailRow("Last Drop", value: formatted(date: collected.lastCollectedAt))
+                    }
                     detailRow("Keystroke #", value: "\(collected.keystrokeNumber)")
                 }
             } else {
