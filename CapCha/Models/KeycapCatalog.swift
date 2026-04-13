@@ -18,6 +18,7 @@ struct KeycapSet {
     let name: String
     let prefix: String
     let palette: [Rarity: [String]]
+    let tintColor: (hue: Double, saturation: Double, brightness: Double)
 }
 
 struct KeycapCatalog {
@@ -133,7 +134,7 @@ struct KeycapCatalog {
             .epic:      ["#FF1744", "#E91E63"],
             .legendary: ["#FF0000"],
             .eternal:   ["#FF2060"],
-        ]),
+        ], tintColor: (hue: 0.0, saturation: 0.75, brightness: 1.0)),
         KeycapSet(name: "Retro Computing", prefix: "retro", palette: [
             .common:    ["#D4C5A9", "#C2B280", "#BDB76B", "#D2B48C", "#CDBA96"],
             .uncommon:  ["#DEB887", "#D2691E", "#BC8F8F", "#A0522D"],
@@ -141,7 +142,7 @@ struct KeycapCatalog {
             .epic:      ["#8B4513", "#654321"],
             .legendary: ["#3D2B1F"],
             .eternal:   ["#FFD700"],
-        ]),
+        ], tintColor: (hue: 0.08, saturation: 0.45, brightness: 1.2)),
         KeycapSet(name: "Artisan Collection", prefix: "artisan", palette: [
             .common:    ["#9370DB", "#8A2BE2", "#9B59B6", "#8E44AD", "#7E57C2"],
             .uncommon:  ["#7B68EE", "#6A5ACD", "#663399", "#5C6BC0"],
@@ -149,7 +150,7 @@ struct KeycapCatalog {
             .epic:      ["#800080", "#6A0DAD"],
             .legendary: ["#4A0070"],
             .eternal:   ["#E040FB"],
-        ]),
+        ], tintColor: (hue: 0.75, saturation: 0.65, brightness: 1.0)),
         KeycapSet(name: "Nature Elements", prefix: "nature", palette: [
             .common:    ["#228B22", "#2E8B57", "#3CB371", "#66CDAA", "#4CAF50"],
             .uncommon:  ["#006400", "#008B45", "#00C853", "#00897B"],
@@ -157,7 +158,7 @@ struct KeycapCatalog {
             .epic:      ["#00E676", "#00BFA5"],
             .legendary: ["#004D40"],
             .eternal:   ["#76FF03"],
-        ]),
+        ], tintColor: (hue: 0.35, saturation: 0.70, brightness: 1.0)),
         KeycapSet(name: "Space Theme", prefix: "space", palette: [
             .common:    ["#191970", "#1C1C5E", "#2F2F6E", "#4169E1", "#3949AB"],
             .uncommon:  ["#0000CD", "#0000FF", "#1E90FF", "#2979FF"],
@@ -165,7 +166,7 @@ struct KeycapCatalog {
             .epic:      ["#7DF9FF", "#18FFFF"],
             .legendary: ["#E0FFFF"],
             .eternal:   ["#B388FF"],
-        ]),
+        ], tintColor: (hue: 0.60, saturation: 0.75, brightness: 0.9)),
     ]
 
     // MARK: - Dynamic Generation
@@ -192,5 +193,18 @@ struct KeycapCatalog {
 
     static var totalCombinations: Int {
         keys.count * sets.count * Rarity.allCases.count
+    }
+
+    static func tintColor(for setName: String) -> (hue: Double, saturation: Double, brightness: Double) {
+        sets.first { $0.name == setName }?.tintColor ?? (hue: 0, saturation: 0, brightness: 1.0)
+    }
+
+    /// Asset name for a given widthUnit
+    static func assetName(for widthUnit: CGFloat) -> String {
+        if widthUnit >= 5.0 { return "keycap_space" }
+        if widthUnit >= 2.5 { return "keycap_2_75u" }
+        if widthUnit >= 2.0 { return "keycap_2u" }
+        if widthUnit >= 1.25 { return "keycap_1_5u" }
+        return "keycap_1u"
     }
 }

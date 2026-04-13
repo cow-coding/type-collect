@@ -12,7 +12,7 @@ struct KeycapCardView: View {
     }
 
     private var cardSize: CGFloat {
-        keycap.widthUnit >= 5.0 ? 50 : 70
+        keycap.widthUnit >= 5.0 ? 70 : 70
     }
 
     var body: some View {
@@ -24,7 +24,8 @@ struct KeycapCardView: View {
                     rarity: keycap.rarity,
                     isCollected: isCollected,
                     size: cardSize,
-                    widthUnit: cardWidthUnit
+                    widthUnit: cardWidthUnit,
+                    setName: keycap.setName
                 )
 
                 // Duplicate count badge

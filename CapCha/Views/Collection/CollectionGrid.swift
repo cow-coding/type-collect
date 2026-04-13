@@ -125,7 +125,7 @@ struct CollectionGrid: View {
         case .wide:
             return [GridItem(.adaptive(minimum: 140), spacing: 10)]
         case .space:
-            return [GridItem(.flexible())]
+            return [GridItem(.adaptive(minimum: 200), spacing: 10)]
         }
     }
 }

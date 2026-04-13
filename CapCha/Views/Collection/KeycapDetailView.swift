@@ -14,7 +14,8 @@ struct KeycapDetailView: View {
                 rarity: keycap.rarity,
                 isCollected: collected != nil,
                 size: 140,
-                widthUnit: keycap.widthUnit
+                widthUnit: keycap.widthUnit,
+                setName: keycap.setName
             )
 
             // Info
