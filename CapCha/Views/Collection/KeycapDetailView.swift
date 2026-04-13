@@ -41,7 +41,11 @@ struct KeycapDetailView: View {
                     .padding(.horizontal, 40)
 
                 VStack(spacing: 6) {
-                    detailRow("Collected", value: formatted(date: collected.collectedAt))
+                    detailRow("Owned", value: "\u{00D7}\(collected.count)")
+                    detailRow("First Drop", value: formatted(date: collected.firstCollectedAt))
+                    if collected.count > 1 {
+                        detailRow("Last Drop", value: formatted(date: collected.lastCollectedAt))
+                    }
                     detailRow("Keystroke #", value: "\(collected.keystrokeNumber)")
                 }
             } else {

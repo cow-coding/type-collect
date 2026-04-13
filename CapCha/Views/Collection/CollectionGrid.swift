@@ -41,7 +41,8 @@ struct CollectionGrid: View {
                         ForEach(filteredCollection) { collected in
                             KeycapCardView(
                                 keycap: collected.keycap,
-                                isCollected: true
+                                isCollected: true,
+                                count: collected.count
                             )
                             .onTapGesture {
                                 selectedCollected = collected

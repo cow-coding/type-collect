@@ -3,20 +3,34 @@ import SwiftUI
 struct KeycapCardView: View {
     let keycap: Keycap
     let isCollected: Bool
+    var count: Int = 1
 
     @State private var isHovering = false
 
     var body: some View {
         VStack(spacing: 4) {
-            KeycapShapeView(
-                primaryColor: keycap.primaryColor,
-                legendCharacter: keycap.legendCharacter,
-                rarity: keycap.rarity,
-                isCollected: isCollected,
-                size: 80
-            )
+            ZStack(alignment: .topTrailing) {
+                KeycapShapeView(
+                    primaryColor: keycap.primaryColor,
+                    legendCharacter: keycap.legendCharacter,
+                    rarity: keycap.rarity,
+                    isCollected: isCollected,
+                    size: 80
+                )
 
-            // Name
+                // Duplicate count badge
+                if isCollected && count > 1 {
+                    Text("\u{00D7}\(count)")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Color.black.opacity(0.6)))
+                        .offset(x: -2, y: 4)
+                }
+            }
+
+            // Name + Set
             Text(isCollected ? keycap.name : "???")
                 .font(.system(size: 11, weight: .medium))
                 .lineLimit(1)
