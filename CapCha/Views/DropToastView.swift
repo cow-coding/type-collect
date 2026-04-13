@@ -4,46 +4,64 @@ import AppKit
 struct DropBubbleContent: View {
     let keycap: Keycap
 
+    private var isEternal: Bool { keycap.rarity.isRainbow }
+
     var body: some View {
         HStack(spacing: 10) {
-            KeycapShapeView(
-                primaryColor: keycap.primaryColor,
-                legendCharacter: keycap.legendCharacter,
-                rarity: keycap.rarity,
-                isCollected: true,
-                size: 44,
-                widthUnit: keycap.widthUnit,
-                setName: keycap.setName
-            )
+            // Keycap preview in tinted box
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(keycap.rarity.color.opacity(isEternal ? 0.05 : 0.1))
 
-            VStack(alignment: .leading, spacing: 2) {
+                KeycapShapeView(
+                    primaryColor: keycap.primaryColor,
+                    legendCharacter: keycap.legendCharacter,
+                    rarity: keycap.rarity,
+                    isCollected: true,
+                    size: 36,
+                    widthUnit: min(keycap.widthUnit, 1.5),
+                    setName: keycap.setName
+                )
+
+                // Rainbow tint overlay for Eternal
+                if isEternal {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(
+                            LinearGradient(
+                                colors: [.red, .blue, .purple, .orange],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .opacity(0.15)
+                        .allowsHitTesting(false)
+                }
+            }
+            .frame(width: 44, height: 44)
+
+            // Text stack
+            VStack(alignment: .leading, spacing: 1) {
                 Text("New Drop!")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+
                 Text(keycap.name)
                     .font(.system(size: 13, weight: .semibold))
-                if keycap.rarity.isRainbow {
-                    RainbowText(keycap.rarity.displayName)
+                    .tracking(-0.3)
+
+                if isEternal {
+                    RainbowText(
+                        keycap.rarity.displayName.uppercased(),
+                        font: .system(size: 11, weight: .bold)
+                    )
                 } else {
                     Text(keycap.rarity.displayName)
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(keycap.rarity.color)
+                        .foregroundStyle(keycap.rarity.color)
                 }
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-    }
-
-    static func legendColor(for hex: String) -> Color {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let r = Double((int >> 16) & 0xFF) / 255.0
-        let g = Double((int >> 8) & 0xFF) / 255.0
-        let b = Double(int & 0xFF) / 255.0
-        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        return luminance > 0.5 ? .black : .white
+        .padding(8)
     }
 }
 
