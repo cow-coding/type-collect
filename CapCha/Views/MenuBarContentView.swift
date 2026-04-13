@@ -25,24 +25,45 @@ struct MenuBarContentView: View {
             Divider()
 
             // Stats
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 if appState.isMonitoring {
                     HStack {
-                        Text("Keystrokes")
+                        Text("Today")
                             .foregroundColor(.secondary)
+                            .font(.system(size: 12))
                         Spacer()
-                        Text("\(appState.keystrokeCount)")
+                        Text("\(appState.todayKeystrokeCount.formatted())")
                             .font(.system(.body, design: .monospaced))
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
+                        Text("keystrokes")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack {
+                        Text("Total")
+                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+                        Spacer()
+                        Text("\(appState.keystrokeCount.formatted())")
+                            .font(.system(.body, design: .monospaced))
+                            .fontWeight(.semibold)
+                        Text("keystrokes")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
                     }
 
                     HStack {
                         Text("Collected")
                             .foregroundColor(.secondary)
+                            .font(.system(size: 12))
                         Spacer()
-                        Text("\(appState.collection.count) / \(KeycapCatalog.totalCombinations)")
+                        Text("\(appState.uniqueCollectedCount)")
                             .font(.system(.body, design: .monospaced))
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
+                        Text("keycaps")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
                     }
                 } else {
                     VStack(spacing: 8) {

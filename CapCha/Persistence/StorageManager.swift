@@ -3,6 +3,8 @@ import Foundation
 struct UserStats: Codable {
     var totalKeystrokes: Int = 0
     var keystrokesSinceLastDrop: Int = 0
+    var todayKeystrokes: Int = 0
+    var todayDate: String = ""  // "yyyy-MM-dd" format
 }
 
 final class StorageManager {

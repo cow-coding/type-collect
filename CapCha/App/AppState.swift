@@ -9,6 +9,7 @@ final class AppState: ObservableObject {
     @Published var recentDrops: [CollectedKeycap] = []
     @Published var isMonitoring: Bool = false
     @Published var keystrokeCount: Int = 0
+    @Published var todayKeystrokeCount: Int = 0
 
     /// Set of unique keycap IDs the user has collected
     var collectedKeycapIDs: Set<String> {
@@ -32,10 +33,17 @@ final class AppState: ObservableObject {
 
     private var sessionTracker: SessionTracker?
     private var savedPityCount: Int = 0
+    private var lastKnownTotal: Int = 0
     private var reEnableTimer: Timer?
     private var permissionPollTimer: Timer?
     private var saveTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
+
+    static func todayString() -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: Date())
+    }
 
     init() {
         // Restore persisted data
@@ -46,10 +54,32 @@ final class AppState: ObservableObject {
         keystrokeMonitor.totalCount = stats.totalKeystrokes
         savedPityCount = stats.keystrokesSinceLastDrop
 
+        // Restore today's keystrokes (reset if date changed)
+        let today = Self.todayString()
+        if stats.todayDate == today {
+            todayKeystrokeCount = stats.todayKeystrokes
+        } else {
+            todayKeystrokeCount = 0
+        }
+        lastKnownTotal = keystrokeMonitor.totalCount
+
         // Forward keystroke count changes to AppState for SwiftUI binding
         keystrokeMonitor.$totalCount
             .receive(on: DispatchQueue.main)
             .assign(to: &$keystrokeCount)
+
+        // Track today's keystrokes separately
+        keystrokeMonitor.$totalCount
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newTotal in
+                guard let self = self else { return }
+                let delta = newTotal - self.lastKnownTotal
+                if delta > 0 {
+                    self.todayKeystrokeCount += delta
+                    self.lastKnownTotal = newTotal
+                }
+            }
+            .store(in: &cancellables)
 
         tryStartMonitoring()
 
@@ -155,7 +185,9 @@ final class AppState: ObservableObject {
     private func saveStats() {
         let stats = UserStats(
             totalKeystrokes: keystrokeMonitor.totalCount,
-            keystrokesSinceLastDrop: sessionTracker?.currentPityCount ?? 0
+            keystrokesSinceLastDrop: sessionTracker?.currentPityCount ?? 0,
+            todayKeystrokes: todayKeystrokeCount,
+            todayDate: Self.todayString()
         )
         StorageManager.shared.saveStats(stats)
     }
