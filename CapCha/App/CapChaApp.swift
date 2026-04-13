@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var appState: AppState!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        ejectDMGIfNeeded()
         appState = AppState()
 
         // Create menu bar icon
@@ -51,5 +52,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         appState.saveOnExit()
+    }
+
+    /// If the app was launched from a DMG, eject it
+    private func ejectDMGIfNeeded() {
+        let bundlePath = Bundle.main.bundlePath
+        guard bundlePath.hasPrefix("/Volumes/") else { return }
+
+        // Extract volume name (e.g. /Volumes/CapCha)
+        let components = bundlePath.split(separator: "/")
+        guard components.count >= 2 else { return }
+        let volumePath = "/Volumes/\(components[1])"
+
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 2) {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/sbin/diskutil")
+            process.arguments = ["eject", volumePath]
+            try? process.run()
+        }
     }
 }
