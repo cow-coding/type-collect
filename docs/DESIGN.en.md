@@ -625,19 +625,31 @@ enum KeyboardLayout: String, Codable {
 
 ## 14. Implementation Phases
 
-### Phase 1 -- MVP (Current)
-- Menu bar app + global keystroke counting
-- Gacha drop system + pity
-- Keycap collection UI
-- Local JSON persistence
+### Phase 1 — MVP ✅
+- Menu bar app + global keystroke counting (CGEvent tap, tailAppend, listenOnly)
+- Dynamic keycap generation (87 TKL keys × 5 sets × 6 rarities = 2,610 combinations)
+- Gacha drop system + pity system
+- Rarity visual effects (glow, outline, shine, Eternal prismatic animation)
+- Collection window (sidebar + isometric keycap grid)
+- Duplicate counting + optimized storage
+- Settings screen (Launch at Login, notification toggle)
+- Local JSON persistence + data migration
+- GitHub Actions DMG release
+- Security audit completed
+- Apache 2.0 license
 
-### Phase 2 -- Social
+### Phase 2 — Contents
+- Keyboard assembly system (build custom keyboards with collected keycaps)
+- Special key designs (Space, Shift, Enter with different shapes)
+- Unowned keycap priority selection (duplicate prevention)
+- Seasonal/limited keycaps (time-limited sets)
+- Demo GIF (app walkthrough for README)
+
+### Phase 3 — Business
 - Item trading/sharing between users
-- Evaluate in-house trade server or Steam integration
-- Friend system, collection sharing links
-
-### Phase 3 -- Expansion
-- Seasonal keycaps (limited-time)
-- Custom keycap design (user-created)
-- Statistics dashboard (daily/weekly typing analysis)
+- In-house trade server
+- JSON integrity verification (HMAC/checksum)
+- ID hash system (tamper prevention)
+- Apple Developer signing + notarization (Gatekeeper/permission fix)
 - Achievement system
+- Statistics dashboard (daily/weekly typing analysis)

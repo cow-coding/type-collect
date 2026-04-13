@@ -625,19 +625,31 @@ enum KeyboardLayout: String, Codable {
 
 ## 14. Implementation Phases
 
-### Phase 1 — MVP (현재)
-- 메뉴바 앱 + 글로벌 키 카운팅
-- 가챠 드롭 시스템 + 천장
-- 키캡 컬렉션 UI
-- 로컬 JSON 저장
+### Phase 1 — MVP ✅
+- 메뉴바 앱 + 글로벌 키 카운팅 (CGEvent tap, tailAppend, listenOnly)
+- 동적 키캡 생성 (87 TKL키 × 5세트 × 6등급 = 2,610 조합)
+- 가챠 드롭 시스템 + 천장(Pity) 시스템
+- 등급별 시각 효과 (글로우, 테두리, 광택, Eternal 프리즘 애니메이션)
+- 키캡 컬렉션 윈도우 (사이드바 + 아이소메트릭 키캡 그리드)
+- 중복 카운팅 + 저장 최적화
+- 설정 화면 (Launch at Login, 알림 토글)
+- 로컬 JSON 저장 + 데이터 마이그레이션
+- GitHub Actions DMG 릴리즈
+- 보안 감사 완료
+- Apache 2.0 라이선스
 
-### Phase 2 — Social
+### Phase 2 — Contents
+- 키보드 조립 시스템 (모은 키캡으로 커스텀 키보드 완성)
+- 특수키 키캡 디자인 (Space, Shift, Enter 등 다른 Shape)
+- 미보유 키캡 우선 선택 (중복 방지)
+- 시즌/한정 키캡 (기간 한정 세트)
+- 데모 GIF (README용 앱 시연 영상)
+
+### Phase 3 — Business
 - 유저 간 아이템 거래/공유
-- 자체 거래 서버 또는 Steam 연동 검토
-- 친구 시스템, 컬렉션 공유 링크
-
-### Phase 3 — Expansion
-- 시즌 키캡 (기간 한정)
-- 커스텀 키캡 디자인 (유저 제작)
-- 통계 대시보드 (일별/주별 타이핑 분석)
+- 자체 거래 서버
+- JSON 무결성 검증 (HMAC/체크섬)
+- ID 해시 방식 전환 (위변조 방지)
+- Apple Developer 서명 + 공증 (Gatekeeper/권한 문제 해결)
 - 업적 시스템
+- 통계 대시보드 (일별/주별 타이핑 분석)
