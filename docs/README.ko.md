@@ -1,142 +1,168 @@
-# CapCha
+<p align="center">
+  <img src="../CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="CapCha Icon">
+</p>
 
-타이핑하면 키캡이 모이는 macOS 메뉴바 앱
+<h1 align="center">CapCha</h1>
 
-[English](../README.md)
+<p align="center">
+  <strong>타이핑하면 키캡이 모입니다. 모든 키 입력이 수집이 됩니다.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/cow-coding/CapCha/releases/latest"><img src="https://img.shields.io/github/v/release/cow-coding/CapCha?style=flat-square&color=6C5CE7&labelColor=2D3436&label=release" alt="Release"></a>
+  <a href="https://github.com/cow-coding/CapCha/releases"><img src="https://img.shields.io/github/downloads/cow-coding/CapCha/total?style=flat-square&color=00B894&labelColor=2D3436" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/platform-macOS%2013%2B-0984E3?style=flat-square&labelColor=2D3436" alt="Platform">
+  <img src="https://img.shields.io/badge/swift-5.9-F97F51?style=flat-square&labelColor=2D3436" alt="Swift">
+</p>
+
+<p align="center">
+  <a href="../README.md">English</a> · <a href="https://github.com/cow-coding/CapCha/releases/latest">다운로드</a> · <a href="DESIGN.en.md">설계 문서</a>
+</p>
+
+---
 
 ## CapCha란?
 
-평소처럼 개발하고, 업무하고, 글을 쓰세요.
-CapCha는 메뉴바에서 조용히 실행되며, 타이핑할수록 가상 키캡 아이템이 랜덤으로 드롭됩니다.
+CapCha는 일상적인 타이핑을 가상 키캡 가챠 게임으로 바꿔주는 macOS 메뉴바 앱입니다. 개발하고, 업무하고, 글 쓰면서 — 키캡을 모으세요.
 
-- 백그라운드에서 조용히 동작하는 메뉴바 앱
-- **키 입력 내용은 절대 수집하지 않음** — 카운트만 측정
-- 6단계 등급 시스템: Common → Uncommon → Rare → Epic → Legendary → Eternal
-- 2,610가지 키캡 조합 (87키 × 5세트 × 6등급)
-- 천장(Pity) 시스템으로 드롭 가뭄 방지
-- 컬렉션 윈도우에서 수집한 키캡 한눈에 보기
+> **🔒 프라이버시 최우선** — CapCha는 입력 내용을 절대 읽지 않습니다. `CGEvent tap` listen-only 모드로 카운트만 합니다. 네트워크 접근 없음, 모든 데이터는 로컬에 저장.
+
+### 주요 기능
+
+- 🎲 **2,610가지 키캡 조합** — 87 TKL키 × 5 테마 세트 × 6 등급
+- 🌈 **6단계 등급** — Common → Uncommon → Rare → Epic → **Legendary** → ***Eternal***
+- 🎯 **천장(Pity) 시스템** — 2,000타 내 확정 드롭, 가뭄 걱정 없음
+- 🔔 **드롭 알림** — 메뉴바 아이콘 아래 말풍선 팝업
+- 📦 **컬렉션 윈도우** — 아이소메트릭 3D 카드로 키캡 탐색
+- ⚙️ **설정** — 로그인 시 자동 실행, 알림 토글
+- 🔐 **보안 감사 완료** — 키 내용 미접근, 네트워크 없음, 데이터 수집 없음
+
+---
 
 ## 설치 방법
 
 ### 1. 다운로드
 
-[Releases](https://github.com/cow-coding/CapCha/releases) 페이지에서 최신 `CapCha-vX.X.X.dmg`를 다운로드하세요.
+> **[최신 DMG 다운로드](https://github.com/cow-coding/CapCha/releases/latest)**
 
 ### 2. 설치
 
-DMG를 열고 **CapCha**를 **Applications** 폴더로 드래그하세요.
+DMG 열기 → **CapCha**를 **Applications**로 드래그
 
-### 3. 첫 실행 — Gatekeeper 경고
+### 3. 첫 실행
 
-CapCha는 Apple Developer ID로 서명되지 않았기 때문에 첫 실행 시 macOS가 차단합니다.
+Apple Developer ID로 서명되지 않아 macOS가 차단합니다:
 
-1. Applications에서 **CapCha**를 실행하면 경고 다이얼로그가 나타납니다
-2. **시스템 설정 → 개인정보 보호 및 보안**으로 이동하세요
-3. **보안** 섹션까지 스크롤하세요
-4. *"CapCha"은(는) 확인되지 않은 개발자가 배포했기 때문에 차단되었습니다.* 라는 메시지가 보입니다
-5. **확인 없이 열기(Open Anyway)** 를 클릭하세요
-6. 확인 다이얼로그에서 **열기**를 클릭하세요
+```
+시스템 설정 → 개인정보 보호 및 보안 → 확인 없이 열기 → 열기
+```
 
-> 이 과정은 최초 1회만 필요합니다. 이후에는 정상적으로 실행됩니다.
+### 4. 권한 부여
 
-### 4. Input Monitoring 권한 부여
+```
+시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링 → CapCha → 켜기
+```
 
-CapCha는 키스트로크를 카운트하기 위해 Input Monitoring 권한이 필요합니다.
+> **💡 업데이트 시** 기존 CapCha 항목을 입력 모니터링에서 먼저 삭제하고, 새 버전에 권한을 다시 부여하세요.
 
-1. 첫 실행 시 Input Monitoring 접근 요청이 나타납니다
-2. 시스템 다이얼로그가 나타나면 **시스템 설정 열기**를 클릭하세요
-3. **시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링**으로 이동하세요
-4. 목록에서 **CapCha**를 찾아 **켜기**로 전환하세요
-5. 권한 부여 후 CapCha를 재시작해야 할 수 있습니다
+---
 
-### 새 버전으로 업데이트 시
+## 작동 원리
 
-업데이트하면 이전 항목이 입력 모니터링 목록에 남아있을 수 있습니다:
+```
+⌨️ 키 입력 → 🎲 드롭 판정 (0.25%) → 🎰 등급 결정 → 🎁 키캡 획득! → 🔔 알림
+```
 
-1. **시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링**으로 이동하세요
-2. 이전 **CapCha** 항목을 **−** 버튼으로 삭제하세요
-3. 새 버전을 설치하고 권한을 다시 부여하세요
+### 드롭 시스템
 
-> **개인정보**: CapCha는 `CGEvent tap`을 listen-only 모드로 사용합니다. 키를 누를 때마다 카운터만 1 증가시킬 뿐, 어떤 키를 눌렀는지 읽거나 저장하거나 전송하지 않습니다.
-
-## 사용법
-
-실행하면 메뉴바에 키캡 아이콘이 나타납니다.
-
-- **아이콘 클릭** — 키스트로크 수와 최근 드롭 확인
-- **타이핑** — 기본 0.25% 확률로 키캡 드롭
-- **드롭 알림** — 키캡 획득 시 메뉴바 아이콘 아래에 말풍선 표시
-- **컬렉션 열기** — 수집한 키캡을 그리드 뷰로 탐색
-- **설정** — 로그인 시 자동 실행, 드롭 알림 토글
+매 키 입력마다 **0.25% 기본 확률**로 판정합니다. 성공하면 랜덤 **등급 → 세트 → 키** 조합으로 키캡이 생성됩니다.
 
 ### 등급 시스템
 
-| 등급 | 드롭 가중치 | 시각 효과 |
-|------|----------|----------|
-| Common | 59.4% | 기본 |
-| Uncommon | 25% | 초록 글로우 |
-| Rare | 10% | 파란 글로우 + 두꺼운 테두리 |
-| Epic | 4% | 보라 글로우 + 내부 광택 |
-| Legendary | 1% | 골드 글로우 + 내부 광택 |
-| Eternal | 0.6% | 무지개 애니메이션 글로우 |
+| 등급 | 가중치 | 시각 효과 |
+|:-----|:-----:|:---------|
+| ⚪ Common | 59.4% | 기본 키캡 |
+| 🟢 Uncommon | 25% | 초록 글로우 + 테두리 |
+| 🔵 Rare | 10% | 파란 글로우 + 두꺼운 테두리 |
+| 🟣 Epic | 4% | 보라 글로우 + 내부 광택 |
+| 🟠 Legendary | 1% | 골드 글로우 + 내부 광택 |
+| 🌈 Eternal | 0.6% | 프리즘 무지개 애니메이션 |
 
 ### 천장(Pity) 시스템
 
-드롭 없이 오래 타이핑하면 확률이 자동으로 올라갑니다:
+운이 나빠도 걱정 없습니다. 드롭 확률이 자동으로 올라갑니다:
 
-| 마지막 드롭 이후 키스트로크 | 드롭 확률 |
-|--------------------------|---------|
-| 0 ~ 499 | 0.25% (기본) |
-| 500 ~ 999 | 0.25% → 0.5% (선형 증가) |
-| 1,000 ~ 1,999 | 0.5% → 1.0% (선형 증가) |
-| 2,000+ | **확정 드롭** |
+| 드롭 없이 지난 키스트로크 | 드롭 확률 |
+|:----------------------|:---------|
+| 0 – 499 | 0.25% (기본) |
+| 500 – 999 | 0.25% → 0.5% |
+| 1,000 – 1,999 | 0.5% → 1.0% |
+| 2,000+ | **100% 확정** |
 
-신규 사용자는 첫 100타 안에 Common 키캡 1개가 보장됩니다.
+> 🎁 **첫 드롭 보장** — 신규 사용자는 100타 안에 Common 키캡 1개가 확정됩니다.
 
 ### 키캡 세트
 
-| 세트 | 테마 |
-|------|------|
-| Mechanical Classics | 체리 레드 계열 |
-| Retro Computing | 빈티지 베이지/브라운 |
-| Artisan Collection | 딥 퍼플 |
-| Nature Elements | 포레스트 그린 |
-| Space Theme | 코스믹 블루 |
+| 세트 | 테마 | 색상 |
+|:----|:-----|:---:|
+| Mechanical Classics | 체리 스위치 계열 | 🔴 |
+| Retro Computing | 빈티지 터미널 | 🟤 |
+| Artisan Collection | 아티산 키캡 | 🟣 |
+| Nature Elements | 자연과 숲 | 🟢 |
+| Space Theme | 우주 | 🔵 |
 
-각 세트는 TKL 87키 전체를 포함하며, 모든 키가 모든 등급으로 나올 수 있습니다.
-중복 키캡은 수량으로 쌓입니다 — 나중에 거래에 활용하세요!
+각 세트에 **TKL 87키** 전체가 포함됩니다. 같은 키가 모든 등급으로 나올 수 있어요!
 
-## 기술 스택
+중복 키캡은 수량으로 쌓입니다. 나중에 거래에 활용하세요!
 
-- **Swift + SwiftUI** (macOS 13.0+)
-- **CGEvent tap** (Listen-Only, tailAppend) 글로벌 키스트로크 카운팅
-- **Combine** 리액티브 데이터 흐름
-- **Canvas** 아이소메트릭 키캡 렌더링
-- **JSON** 로컬 저장 (`~/Library/Application Support/CapCha/`)
+---
 
 ## 소스에서 빌드
 
 ```bash
-# xcodegen 설치
+# 사전 설치
 brew install xcodegen
 
-# Xcode 프로젝트 생성
+# 생성 & 빌드
 xcodegen generate
-
-# 빌드
 xcodebuild -project CapCha.xcodeproj -scheme CapCha -configuration Release build
 ```
 
+---
+
+## 기술 스택
+
+| | 기술 |
+|:--|:-----|
+| **언어** | Swift 5.9 |
+| **UI** | SwiftUI + Canvas (아이소메트릭 키캡 렌더링) |
+| **입력** | CGEvent tap (listen-only, tailAppend) |
+| **리액티브** | Combine |
+| **저장** | JSON (`~/Library/Application Support/CapCha/`) |
+| **CI/CD** | GitHub Actions + create-dmg |
+
+---
+
 ## 문서
 
-- [DESIGN.md](../DESIGN.md) — 아키텍처 설계 문서 (한국어)
-- [docs/DESIGN.en.md](./DESIGN.en.md) — 아키텍처 설계 문서 (영어)
+| | |
+|:--|:--|
+| 📄 [설계 문서 (EN)](DESIGN.en.md) | Architecture, data models, drop engine |
+| 📄 [설계 문서 (KR)](../DESIGN.md) | 아키텍처, 데이터 모델, 드롭 엔진 |
+
+---
 
 ## 개인정보 보호
 
-CapCha는 키스트로크를 카운트하기 위해 macOS Input Monitoring 권한을 사용합니다.
-**입력한 내용을 절대 읽거나 저장하거나 전송하지 않습니다.** 키스트로크 횟수만 추적합니다.
+CapCha는 macOS 입력 모니터링으로 키스트로크를 카운트합니다.
+
+- ✅ 키 입력 횟수만 측정 — 내용은 절대 읽지 않음
+- ✅ 네트워크 접근 없음 — 모든 데이터 로컬 저장
+- ✅ 오픈소스 — 직접 확인 가능
+- ✅ 보안 감사 완료 — [감사 보고서 보기](https://github.com/cow-coding/CapCha/pull/3)
+
+---
 
 ## 라이선스
 
-TBD
+Apache License 2.0 — [LICENSE](../LICENSE) 참조.
