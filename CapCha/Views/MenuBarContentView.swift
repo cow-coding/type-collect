@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarContentView: View {
     @ObservedObject var appState: AppState
     @State private var isCollectionHovering = false
+    @State private var isSettingsHovering = false
     @State private var isQuitHovering = false
 
     var body: some View {
@@ -120,6 +121,27 @@ struct MenuBarContentView: View {
             }
             .padding(.horizontal, 6)
             .padding(.top, 6)
+
+            // Settings
+            Button(action: {
+                NotificationCenter.default.post(name: .openSettings, object: nil)
+            }) {
+                HStack {
+                    Image(systemName: "gearshape")
+                    Text("Settings")
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(isSettingsHovering ? Color.primary.opacity(0.08) : Color.clear)
+                .cornerRadius(6)
+            }
+            .buttonStyle(.plain)
+            .onHover { hovering in
+                isSettingsHovering = hovering
+            }
+            .padding(.horizontal, 6)
 
             // Footer
             Button(action: {

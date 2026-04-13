@@ -147,7 +147,9 @@ final class AppState: ObservableObject {
 
         StorageManager.shared.saveCollection(collection)
         saveStats()
-        DropNotificationManager.shared.show(keycap: keycap)
+        if AppSettings.shared.showDropNotifications {
+            DropNotificationManager.shared.show(keycap: keycap)
+        }
     }
 
     private func saveStats() {

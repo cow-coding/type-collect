@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 @main
 struct CapChaApp: App {
@@ -41,18 +42,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Pass status item button to drop notification manager
         DropNotificationManager.shared.anchorButton = statusItem.button
 
-        // Register for collection window open notification
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(openCollectionWindow),
-            name: .openCollectionWindow,
-            object: nil
-        )
+        // Register notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(openCollectionWindow), name: .openCollectionWindow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openSettingsWindow), name: .openSettings, object: nil)
     }
 
     @objc private func openCollectionWindow() {
         popover.performClose(nil)
         CollectionWindowController.shared.showWindow(appState: appState)
+    }
+
+    private var settingsWindow: NSWindow?
+
+    @objc private func openSettingsWindow() {
+        popover.performClose(nil)
+
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 320),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "CapCha Settings"
+        window.contentViewController = NSHostingController(rootView: SettingsView())
+        window.isReleasedWhenClosed = false
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow = window
     }
 
     @objc private func togglePopover() {
@@ -91,6 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension Notification.Name {
     static let openCollectionWindow = Notification.Name("openCollectionWindow")
+    static let openSettings = Notification.Name("openSettings")
 }
 
 extension AppDelegate {
