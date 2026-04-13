@@ -6,14 +6,12 @@ struct DropBubbleContent: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color(hex: keycap.primaryColor))
-                .frame(width: 36, height: 36)
-                .overlay(
-                    Text(keycap.legendCharacter)
-                        .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
-                )
+            KeycapShapeView(
+                primaryColor: keycap.primaryColor,
+                legendCharacter: keycap.legendCharacter,
+                isCollected: true,
+                size: 44
+            )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("New Drop!")
@@ -32,6 +30,17 @@ struct DropBubbleContent: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+    }
+
+    static func legendColor(for hex: String) -> Color {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r = Double((int >> 16) & 0xFF) / 255.0
+        let g = Double((int >> 8) & 0xFF) / 255.0
+        let b = Double(int & 0xFF) / 255.0
+        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        return luminance > 0.5 ? .black : .white
     }
 }
 

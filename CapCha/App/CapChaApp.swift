@@ -40,6 +40,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Pass status item button to drop notification manager
         DropNotificationManager.shared.anchorButton = statusItem.button
+
+        // Register for collection window open notification
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(openCollectionWindow),
+            name: .openCollectionWindow,
+            object: nil
+        )
+    }
+
+    @objc private func openCollectionWindow() {
+        popover.performClose(nil)
+        CollectionWindowController.shared.showWindow(appState: appState)
     }
 
     @objc private func togglePopover() {
@@ -74,6 +87,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         appState.saveOnExit()
     }
 
+}
+
+extension Notification.Name {
+    static let openCollectionWindow = Notification.Name("openCollectionWindow")
+}
+
+extension AppDelegate {
     /// If the app was launched from a DMG, eject it
     private func ejectDMGIfNeeded() {
         let bundlePath = Bundle.main.bundlePath

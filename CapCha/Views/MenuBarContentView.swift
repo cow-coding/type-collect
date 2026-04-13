@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarContentView: View {
     @ObservedObject var appState: AppState
+    @State private var isCollectionHovering = false
     @State private var isQuitHovering = false
 
     var body: some View {
@@ -93,6 +94,32 @@ struct MenuBarContentView: View {
             }
 
             Divider()
+
+            // Collection button
+            Button(action: {
+                NotificationCenter.default.post(name: .openCollectionWindow, object: nil)
+            }) {
+                HStack {
+                    Image(systemName: "square.grid.2x2")
+                    Text("Open Collection")
+                    Spacer()
+                    Text("\(appState.uniqueCollectedCount)/\(KeycapCatalog.all.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(isCollectionHovering ? Color.accentColor.opacity(0.12) : Color.clear)
+                .cornerRadius(6)
+                .foregroundColor(isCollectionHovering ? .accentColor : .primary)
+            }
+            .buttonStyle(.plain)
+            .onHover { hovering in
+                isCollectionHovering = hovering
+            }
+            .padding(.horizontal, 6)
+            .padding(.top, 6)
 
             // Footer
             Button(action: {
