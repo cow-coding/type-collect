@@ -29,8 +29,7 @@ jobs:
             -scheme CapCha \
             -configuration Release \
             -derivedDataPath build \
-            CODE_SIGN_IDENTITY="-" \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGN_IDENTITY="-"
 
       - name: Create DMG
         run: |
@@ -64,13 +63,10 @@ jobs:
             ### Install
             1. Download `CapCha-${{ github.ref_name }}.dmg`
             2. Open the DMG and drag **CapCha** to **Applications**
-            3. Run this command in Terminal before first launch:
-               ```
-               xattr -cr /Applications/CapCha.app
-               ```
-            4. Open **CapCha** from Applications
+            3. Open **CapCha** — macOS will show an "unidentified developer" warning
+            4. Go to **System Settings → Privacy & Security** and click **Open Anyway**
             5. Grant **Input Monitoring** permission when prompted
 
-            ### Why do I need the terminal command?
-            This app is not code-signed with an Apple Developer ID.
-            macOS Gatekeeper will show "CapCha is damaged" without clearing the quarantine attribute first.
+            ### Note
+            This app is ad-hoc signed (not notarized with Apple Developer ID).
+            You only need to allow it once via "Open Anyway" on first launch.
