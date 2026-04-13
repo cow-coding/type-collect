@@ -16,8 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install xcodegen
-        run: brew install xcodegen
+      - name: Install tools
+        run: |
+          brew install xcodegen create-dmg
 
       - name: Generate Xcode project
         run: xcodegen generate
@@ -36,16 +37,17 @@ jobs:
           APP_PATH="build/Build/Products/Release/CapCha.app"
           DMG_NAME="CapCha-${GITHUB_REF_NAME}.dmg"
 
-          # Create temporary DMG directory
-          mkdir -p dmg_contents
-          cp -R "$APP_PATH" dmg_contents/
-          ln -s /Applications dmg_contents/Applications
-
-          # Create DMG
-          hdiutil create -volname "CapCha" \
-            -srcfolder dmg_contents \
-            -ov -format UDZO \
-            "$DMG_NAME"
+          create-dmg \
+            --volname "CapCha" \
+            --background "installer/dmg_background.png" \
+            --window-pos 200 120 \
+            --window-size 660 400 \
+            --icon-size 120 \
+            --icon "CapCha.app" 170 180 \
+            --app-drop-link 490 180 \
+            --no-internet-enable \
+            "$DMG_NAME" \
+            "$APP_PATH"
 
           echo "DMG_NAME=$DMG_NAME" >> $GITHUB_ENV
 
