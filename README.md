@@ -1,141 +1,162 @@
-# CapCha
+<p align="center">
+  <img src="CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="CapCha Icon">
+</p>
 
-A macOS menu bar app that collects virtual keycaps as you type.
+<h1 align="center">CapCha</h1>
 
-[한국어](docs/README.ko.md)
+<p align="center">
+  <strong>Type to collect keycaps. Every keystroke counts.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/cow-coding/CapCha/releases/latest">
+    <img src="https://img.shields.io/github/v/release/cow-coding/CapCha?style=flat-square&color=white&labelColor=000000&label=release" alt="Release">
+  </a>
+  <a href="https://github.com/cow-coding/CapCha/releases">
+    <img src="https://img.shields.io/github/downloads/cow-coding/CapCha/total?style=flat-square&color=white&labelColor=000000" alt="Downloads">
+  </a>
+  <a href="https://github.com/cow-coding/CapCha/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-TBD-white?style=flat-square&labelColor=000000" alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/platform-macOS%2013%2B-white?style=flat-square&labelColor=000000" alt="Platform">
+  <img src="https://img.shields.io/badge/swift-5.9-white?style=flat-square&labelColor=000000" alt="Swift">
+</p>
+
+<p align="center">
+  <a href="docs/README.ko.md">한국어</a>
+</p>
+
+---
 
 ## What is CapCha?
 
-Just type as you normally do — coding, writing, chatting.
-CapCha runs quietly in your menu bar and drops virtual keycap collectibles as you type.
+CapCha is a macOS menu bar app that turns your everyday typing into a collectible keycap gacha game. Just type as you normally do — coding, writing, chatting — and watch virtual keycaps drop into your collection.
 
-- Runs silently in the background as a menu bar app
-- **Never reads what you type** — only counts keystrokes
-- 6-tier rarity system: Common → Uncommon → Rare → Epic → Legendary → Eternal
-- 2,610 possible keycap combinations (87 keys × 5 sets × 6 rarities)
-- Pity system guarantees drops — no endless drought
-- Collection window to browse all your keycaps
+> **🔒 Privacy first** — CapCha uses `CGEvent tap` in listen-only mode. It only counts keystrokes — it never reads, stores, or transmits what you type.
+
+### Highlights
+
+- 🎲 **2,610 keycap combinations** — 87 TKL keys × 5 themed sets × 6 rarity tiers
+- 🌈 **6 rarity tiers** — Common → Uncommon → Rare → Epic → Legendary → Eternal
+- 🎯 **Pity system** — No endless droughts, guaranteed drop within 2,000 keystrokes
+- 🔔 **Drop notifications** — Popover bubble anchored to menu bar icon
+- 📦 **Collection window** — Browse keycaps with isometric 3D card views
+- ⚙️ **Settings** — Launch at login, notification toggle
+- 🔐 **Secure** — Full security audit, no network access, no data collection
+
+---
 
 ## Installation
 
 ### 1. Download
 
-Download the latest `CapCha-vX.X.X.dmg` from the [Releases](https://github.com/cow-coding/CapCha/releases) page.
+Download the latest **DMG** from the [Releases](https://github.com/cow-coding/CapCha/releases/latest) page.
 
 ### 2. Install
 
-Open the DMG and drag **CapCha** to **Applications**.
+Open the DMG and drag **CapCha** → **Applications**.
 
-### 3. First Launch — Gatekeeper Warning
+### 3. First Launch
 
-Since CapCha is not signed with an Apple Developer ID, macOS will block it on first launch.
+Since CapCha is not notarized with Apple Developer ID:
 
-1. Open **CapCha** from Applications — macOS will show a warning dialog
+1. Open **CapCha** — macOS will show a warning
 2. Go to **System Settings → Privacy & Security**
-3. Scroll down to the **Security** section
-4. You'll see: *"CapCha" was blocked from use because it is not from an identified developer.*
-5. Click **Open Anyway**
-6. In the confirmation dialog, click **Open**
+3. Click **Open Anyway** → **Open**
 
-> You only need to do this once. After that, CapCha will open normally.
-
-### 4. Grant Input Monitoring Permission
-
-CapCha needs Input Monitoring permission to count your keystrokes.
-
-1. On first launch, CapCha will request Input Monitoring access
-2. If the system dialog appears, click **Open System Settings**
-3. Go to **System Settings → Privacy & Security → Input Monitoring**
-4. Find **CapCha** in the list and toggle it **ON**
-5. You may need to restart CapCha after granting permission
-
-### Updating to a New Version
-
-When updating CapCha, the old entry may remain in Input Monitoring settings:
+### 4. Grant Permission
 
 1. Go to **System Settings → Privacy & Security → Input Monitoring**
-2. Remove the old **CapCha** entry (click **−** button)
-3. Install the new version and grant permission again
+2. Toggle **CapCha** → **ON**
+3. Restart CapCha if needed
 
-> **Privacy**: CapCha uses `CGEvent tap` in listen-only mode. It only increments a counter on each key press — it never reads, stores, or transmits the content of your keystrokes.
+> ⚠️ **Updating?** Remove the old CapCha entry from Input Monitoring before adding the new one.
 
-## Usage
+---
 
-Once running, you'll see a keycap icon in your menu bar.
+## How It Works
 
-- **Click the icon** to see your keystroke count and recent drops
-- **Keep typing** — keycaps drop with a base 0.25% chance per keystroke
-- **Drop notification** — a popover appears below the menu bar icon when you get a new keycap
-- **Open Collection** — browse all collected keycaps in a grid view
-- **Settings** — toggle launch at login and drop notifications
+```
+⌨️ Keystroke → 🎲 Drop Check (0.25%) → 🎰 Rarity Roll → 🎁 Keycap Drop → 🔔 Notification
+```
+
+Every keystroke has a **0.25% base chance** to drop a keycap. When a drop occurs, the rarity is determined by weighted random, and a random key + set combination is generated.
 
 ### Rarity Tiers
 
-| Rarity | Drop Weight | Visual Effect |
-|--------|------------|---------------|
-| Common | 59.4% | Plain |
-| Uncommon | 25% | Green tint + subtle glow |
+| Rarity | Weight | Visual |
+|--------|--------|--------|
+| Common | 59.4% | Plain keycap |
+| Uncommon | 25% | Green glow |
 | Rare | 10% | Blue glow + thick outline |
 | Epic | 4% | Purple glow + inner shine |
 | Legendary | 1% | Gold glow + inner shine |
-| Eternal | 0.6% | Animated rainbow glow |
+| Eternal | 0.6% | 🌈 Animated rainbow glow |
 
 ### Pity System
 
-No more endless droughts. Drop chance increases the longer you go without a drop:
+Drop chance ramps up the longer you go without a drop:
 
-| Keystrokes Since Last Drop | Drop Chance |
-|---------------------------|-------------|
-| 0 – 499 | 0.25% (base) |
-| 500 – 999 | 0.25% → 0.5% (linear ramp) |
-| 1,000 – 1,999 | 0.5% → 1.0% (linear ramp) |
-| 2,000+ | **Guaranteed drop** |
+| Gap | Chance |
+|-----|--------|
+| 0 – 499 keystrokes | 0.25% base |
+| 500 – 999 | → 0.5% ramp |
+| 1,000 – 1,999 | → 1.0% ramp |
+| 2,000+ | **Guaranteed** |
 
-New users get a guaranteed Common keycap within their first 100 keystrokes.
+First-time users get a **guaranteed Common drop within 100 keystrokes**.
 
 ### Keycap Sets
 
-| Set | Theme |
-|-----|-------|
-| Mechanical Classics | Cherry-inspired reds |
-| Retro Computing | Vintage beige/brown |
-| Artisan Collection | Deep purples |
-| Nature Elements | Forest greens |
-| Space Theme | Cosmic blues |
+| Set | Theme | Vibe |
+|-----|-------|------|
+| Mechanical Classics | Cherry reds | 🔴 Bold, warm |
+| Retro Computing | Vintage beige | 🟤 Nostalgic |
+| Artisan Collection | Deep purples | 🟣 Premium |
+| Nature Elements | Forest greens | 🟢 Organic |
+| Space Theme | Cosmic blues | 🔵 Ethereal |
 
-Each set contains all 87 TKL keys, and every key can appear in any rarity tier.
-Duplicates stack with a count — trade them later!
+Duplicates stack as count — save them for future trading!
 
-## Tech Stack
-
-- **Swift + SwiftUI** (macOS 13.0+)
-- **CGEvent tap** (Listen-Only, tailAppend) for global keystroke counting
-- **Combine** for reactive data flow
-- **Canvas** for isometric keycap rendering
-- **JSON** for local persistence (`~/Library/Application Support/CapCha/`)
+---
 
 ## Build from Source
 
 ```bash
-# Install xcodegen
 brew install xcodegen
-
-# Generate Xcode project
 xcodegen generate
-
-# Build
 xcodebuild -project CapCha.xcodeproj -scheme CapCha -configuration Release build
 ```
 
+---
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Language | Swift 5.9 |
+| UI | SwiftUI + Canvas |
+| Keystroke | CGEvent tap (listen-only, tailAppend) |
+| Data Flow | Combine |
+| Persistence | JSON (`~/Library/Application Support/CapCha/`) |
+| CI/CD | GitHub Actions + create-dmg |
+
+---
+
 ## Documentation
 
-- [DESIGN.md](./DESIGN.md) — Architecture design document (Korean)
-- [docs/DESIGN.en.md](./docs/DESIGN.en.md) — Architecture design document (English)
+- [DESIGN.md](./DESIGN.md) — Architecture design (Korean)
+- [docs/DESIGN.en.md](./docs/DESIGN.en.md) — Architecture design (English)
+
+---
 
 ## Privacy
 
 CapCha uses macOS Input Monitoring permission to count keystrokes.
-**We never read, store, or transmit what you type.** Only the keystroke count is tracked.
+
+**We never read, store, or transmit what you type.** Only the keystroke count is tracked. The app has zero network access — all data stays local on your machine.
+
+---
 
 ## License
 
