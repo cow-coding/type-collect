@@ -40,7 +40,12 @@ struct DropEngine {
     }
 
     /// Execute drop with pity system
-    static func executeDrop(keystrokesSinceLastDrop: Int) -> Keycap? {
+    static func executeDrop(keystrokesSinceLastDrop: Int, isFirstDrop: Bool = false) -> Keycap? {
+        // First-time user: guarantee a Common drop within 100 keystrokes
+        if isFirstDrop && keystrokesSinceLastDrop >= 100 {
+            return KeycapCatalog.randomKeycap(for: .common)
+        }
+
         guard shouldDrop(keystrokesSinceLastDrop: keystrokesSinceLastDrop) else { return nil }
         let rarity = rollRarity()
         return KeycapCatalog.randomKeycap(for: rarity)

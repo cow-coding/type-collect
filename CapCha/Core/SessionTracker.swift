@@ -5,16 +5,17 @@ final class SessionTracker: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var lastCheckedCount: Int = 0
     private var keystrokesSinceLastDrop: Int = 0
+    private var hasEverDropped: Bool
 
     private let keystrokeMonitor: KeystrokeMonitor
     private let onDrop: (Keycap, Int) -> Void
 
-    init(keystrokeMonitor: KeystrokeMonitor, initialKeystrokesSinceLastDrop: Int = 0, onDrop: @escaping (Keycap, Int) -> Void) {
+    init(keystrokeMonitor: KeystrokeMonitor, initialKeystrokesSinceLastDrop: Int = 0, hasEverDropped: Bool = false, onDrop: @escaping (Keycap, Int) -> Void) {
         self.keystrokeMonitor = keystrokeMonitor
         self.keystrokesSinceLastDrop = initialKeystrokesSinceLastDrop
+        self.hasEverDropped = hasEverDropped
         self.onDrop = onDrop
 
-        // Start from current count to avoid re-evaluating persisted keystrokes
         lastCheckedCount = keystrokeMonitor.totalCount
 
         keystrokeMonitor.$totalCount
@@ -30,8 +31,10 @@ final class SessionTracker: ObservableObject {
         while lastCheckedCount < currentCount {
             lastCheckedCount += 1
             keystrokesSinceLastDrop += 1
-            if let keycap = DropEngine.executeDrop(keystrokesSinceLastDrop: keystrokesSinceLastDrop) {
+            let isFirstDrop = !hasEverDropped
+            if let keycap = DropEngine.executeDrop(keystrokesSinceLastDrop: keystrokesSinceLastDrop, isFirstDrop: isFirstDrop) {
                 keystrokesSinceLastDrop = 0
+                hasEverDropped = true
                 onDrop(keycap, lastCheckedCount)
             }
         }

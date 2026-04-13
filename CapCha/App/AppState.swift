@@ -70,7 +70,7 @@ final class AppState: ObservableObject {
             print("[AppState] Monitoring started.")
             #endif
 
-            sessionTracker = SessionTracker(keystrokeMonitor: keystrokeMonitor, initialKeystrokesSinceLastDrop: savedPityCount) { [weak self] keycap, keystrokeNumber in
+            sessionTracker = SessionTracker(keystrokeMonitor: keystrokeMonitor, initialKeystrokesSinceLastDrop: savedPityCount, hasEverDropped: !collection.isEmpty) { [weak self] keycap, keystrokeNumber in
                 self?.handleDrop(keycap: keycap, keystrokeNumber: keystrokeNumber)
             }
             reEnableTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
