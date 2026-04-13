@@ -10,6 +10,26 @@ final class AppState: ObservableObject {
     @Published var isMonitoring: Bool = false
     @Published var keystrokeCount: Int = 0
 
+    /// Set of unique keycap IDs the user has collected
+    var collectedKeycapIDs: Set<String> {
+        Set(collection.map { $0.keycap.id })
+    }
+
+    /// Number of unique keycaps collected
+    var uniqueCollectedCount: Int {
+        collectedKeycapIDs.count
+    }
+
+    /// Check if a specific keycap has been collected
+    func isCollected(_ keycap: Keycap) -> Bool {
+        collectedKeycapIDs.contains(keycap.id)
+    }
+
+    /// Get the first collected instance of a keycap (for detail view)
+    func collectedInstance(of keycap: Keycap) -> CollectedKeycap? {
+        collection.first { $0.keycap.id == keycap.id }
+    }
+
     private var sessionTracker: SessionTracker?
     private var reEnableTimer: Timer?
     private var permissionPollTimer: Timer?

@@ -12,7 +12,11 @@ final class SessionTracker: ObservableObject {
         self.keystrokeMonitor = keystrokeMonitor
         self.onDrop = onDrop
 
+        // Start from current count to avoid re-evaluating persisted keystrokes
+        lastCheckedCount = keystrokeMonitor.totalCount
+
         keystrokeMonitor.$totalCount
+            .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] count in
                 self?.evaluate(currentCount: count)
