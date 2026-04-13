@@ -18,7 +18,7 @@ CapCha runs quietly in your menu bar and drops virtual keycap collectibles as yo
 
 ### 1. Download
 
-Download the latest `CapCha-vX.X.X.dmg` from the [Releases](https://github.com/cow-coding/type-collect/releases) page.
+Download the latest `CapCha-vX.X.X.dmg` from the [Releases](https://github.com/cow-coding/CapCha/releases) page.
 
 ### 2. Install
 
