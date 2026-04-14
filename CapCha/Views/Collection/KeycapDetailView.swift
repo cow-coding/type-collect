@@ -7,12 +7,12 @@ struct KeycapDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     // Design tokens
-    private let surface = Color(red: 0.047, green: 0.055, blue: 0.071)
-    private let surfaceContainerHigh = Color(red: 0.11, green: 0.125, blue: 0.15)
-    private let surfaceContainerLowest = Color.black
-    private let onSurface = Color(red: 0.886, green: 0.898, blue: 0.937)
-    private let outline = Color(red: 0.447, green: 0.459, blue: 0.494)
-    private let primaryColor = Color(red: 0.757, green: 0.502, blue: 1.0)
+    private let surface = DesignTokens.surface
+    private let surfaceContainerHigh = DesignTokens.surfaceContainerHigh
+    private let surfaceContainerLowest = DesignTokens.surfaceContainerLowest
+    private let onSurface = DesignTokens.onSurface
+    private let outline = DesignTokens.outline
+    private let primaryColor = DesignTokens.primary
 
     private var glowColor: Color {
         keycap.rarity.color

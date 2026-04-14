@@ -6,6 +6,8 @@ final class CollectionWindowController: NSObject, NSWindowDelegate {
 
     private var window: NSWindow?
 
+    var isWindowOpen: Bool { window != nil }
+
     func showWindow(appState: AppState) {
         if let window = window {
             window.makeKeyAndOrderFront(nil)

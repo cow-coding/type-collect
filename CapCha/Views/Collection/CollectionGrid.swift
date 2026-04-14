@@ -30,11 +30,11 @@ struct CollectionGrid: View {
     @State private var selectedCollected: CollectedKeycap?
 
     // Design tokens
-    private let onSurface = Color(red: 0.886, green: 0.898, blue: 0.937)
-    private let outline = Color(red: 0.447, green: 0.459, blue: 0.494)
-    private let primaryColor = Color(red: 0.757, green: 0.502, blue: 1.0)
-    private let surface = Color(red: 0.047, green: 0.055, blue: 0.071)
-    private let surfaceContainer = Color(red: 0.09, green: 0.102, blue: 0.122)
+    private let onSurface = DesignTokens.onSurface
+    private let outline = DesignTokens.outline
+    private let primaryColor = DesignTokens.primary
+    private let surface = DesignTokens.surface
+    private let surfaceContainer = DesignTokens.surfaceContainer
 
     private var collection: [CollectedKeycap] {
         overrideCollection ?? appState.collection
@@ -197,10 +197,7 @@ struct CollectionGrid: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 10)
-        .background(
-            Color.black.opacity(0.6)
-                .background(.ultraThinMaterial)
-        )
+        .background(.bar)
         .overlay(
             Rectangle()
                 .fill(outline.opacity(0.1))

@@ -10,10 +10,10 @@ struct CollectionSidebar: View {
     }
 
     // Design tokens
-    private let surfaceContainerHigh = Color(red: 0.11, green: 0.125, blue: 0.15) // #1c2026
-    private let outline = Color(red: 0.447, green: 0.459, blue: 0.494) // #72757e
-    private let onSurface = Color(red: 0.886, green: 0.898, blue: 0.937) // #e2e5ef
-    private let primaryColor = Color(red: 0.757, green: 0.502, blue: 1.0) // #c180ff
+    private let surfaceContainerHigh = DesignTokens.surfaceContainerHigh
+    private let outline = DesignTokens.outline
+    private let onSurface = DesignTokens.onSurface
+    private let primaryColor = DesignTokens.primary
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

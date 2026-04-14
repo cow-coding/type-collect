@@ -46,6 +46,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         // Register notifications
         NotificationCenter.default.addObserver(self, selector: #selector(openCollectionWindow), name: .openCollectionWindow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSettingsWindow), name: .openSettings, object: nil)
+
+        // Show welcome window on first launch
+        WelcomeWindowController.shared.showIfNeeded()
     }
 
     @objc private func openCollectionWindow() {

@@ -27,6 +27,10 @@ final class AppSettings: ObservableObject {
         didSet { save() }
     }
 
+    @Published var hasCompletedOnboarding: Bool {
+        didSet { save() }
+    }
+
     private let defaults = UserDefaults.standard
 
     private init() {
@@ -34,10 +38,12 @@ final class AppSettings: ObservableObject {
         let systemStatus = SMAppService.mainApp.status
         launchAtLogin = (systemStatus == .enabled)
         showDropNotifications = defaults.object(forKey: "showDropNotifications") as? Bool ?? true
+        hasCompletedOnboarding = defaults.bool(forKey: "hasCompletedOnboarding")
     }
 
     private func save() {
         defaults.set(launchAtLogin, forKey: "launchAtLogin")
         defaults.set(showDropNotifications, forKey: "showDropNotifications")
+        defaults.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
     }
 }
