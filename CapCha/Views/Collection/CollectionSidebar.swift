@@ -6,7 +6,7 @@ struct CollectionSidebar: View {
     var overrideCollection: [CollectedKeycap]?
 
     private var collection: [CollectedKeycap] {
-        overrideCollection ?? collection
+        overrideCollection ?? appState.collection
     }
 
     // Design tokens
