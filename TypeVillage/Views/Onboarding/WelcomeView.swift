@@ -91,7 +91,7 @@ struct WelcomeView: View {
                 .frame(width: 56, height: 56)
                 .foregroundColor(primaryColor)
 
-            Text("CapCha")
+            Text("TypeVillage")
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(onSurface)
 
@@ -179,7 +179,7 @@ struct WelcomeView: View {
             }
             .padding(.horizontal, 32)
 
-            Text("CapCha는 안심하고 사용할 수 있습니다")
+            Text("TypeVillage는 안심하고 사용할 수 있습니다")
                 .font(.system(size: 13))
                 .foregroundColor(outline)
                 .padding(.horizontal, 32)

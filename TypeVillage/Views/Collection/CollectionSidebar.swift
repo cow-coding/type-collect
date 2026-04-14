@@ -25,7 +25,7 @@ struct CollectionSidebar: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
                     .foregroundColor(primaryColor)
-                Text("CapCha")
+                Text("TypeVillage")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(onSurface)
             }

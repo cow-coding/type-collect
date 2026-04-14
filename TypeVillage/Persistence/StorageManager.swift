@@ -12,11 +12,11 @@ final class StorageManager {
 
     private let fileManager = FileManager.default
     private let directory: URL
-    private let saveQueue = DispatchQueue(label: "com.capcha.storage", qos: .utility)
+    private let saveQueue = DispatchQueue(label: "com.typevillage.storage", qos: .utility)
 
     private init() {
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        directory = appSupport.appendingPathComponent("CapCha", isDirectory: true)
+        directory = appSupport.appendingPathComponent("TypeVillage", isDirectory: true)
         try? fileManager.createDirectory(
             at: directory,
             withIntermediateDirectories: true,

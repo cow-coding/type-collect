@@ -4,6 +4,7 @@ import Combine
 final class AppState: ObservableObject {
     let permissionManager = PermissionManager()
     let keystrokeMonitor = KeystrokeMonitor()
+    let village = VillageState()
 
     @Published var collection: [CollectedKeycap] = []
     @Published var recentDrops: [CollectedKeycap] = []
@@ -87,6 +88,7 @@ final class AppState: ObservableObject {
                 if delta > 0 {
                     self.todayKeystrokeCount += delta
                     self.lastKnownTotal = newTotal
+                    self.village.addXP(delta)
                 }
             }
             .store(in: &cancellables)
@@ -292,6 +294,7 @@ final class AppState: ObservableObject {
             todayDate: Self.todayString()
         )
         StorageManager.shared.saveStats(stats, sync: true)
+        village.save()
         keystrokeMonitor.stop()
     }
 }

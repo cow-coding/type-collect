@@ -1,0 +1,231 @@
+import SwiftUI
+
+/// Isometric (quarter-view) Minecraft-style grass block
+struct GrassBlockView: View {
+    let size: CGFloat
+
+    private var halfW: CGFloat { size / 2 }
+    private var quarterH: CGFloat { size / 4 }
+
+    var body: some View {
+        Canvas { context, canvasSize in
+            let cx = canvasSize.width / 2
+            let midY = quarterH
+            let botY = quarterH * 3
+
+            // Top face
+            var topFace = Path()
+            topFace.move(to: CGPoint(x: cx, y: 0))
+            topFace.addLine(to: CGPoint(x: cx + halfW, y: midY))
+            topFace.addLine(to: CGPoint(x: cx, y: midY * 2))
+            topFace.addLine(to: CGPoint(x: cx - halfW, y: midY))
+            topFace.closeSubpath()
+            context.fill(topFace, with: .color(Color(red: 0.42, green: 0.78, blue: 0.28)))
+
+            // Left face
+            var leftFace = Path()
+            leftFace.move(to: CGPoint(x: cx - halfW, y: midY))
+            leftFace.addLine(to: CGPoint(x: cx, y: midY * 2))
+            leftFace.addLine(to: CGPoint(x: cx, y: botY))
+            leftFace.addLine(to: CGPoint(x: cx - halfW, y: botY - midY))
+            leftFace.closeSubpath()
+            context.fill(leftFace, with: .color(Color(red: 0.55, green: 0.36, blue: 0.22)))
+
+            // Grass edge on left face
+            var leftGrass = Path()
+            leftGrass.move(to: CGPoint(x: cx - halfW, y: midY))
+            leftGrass.addLine(to: CGPoint(x: cx, y: midY * 2))
+            leftGrass.addLine(to: CGPoint(x: cx, y: midY * 2 + 3))
+            leftGrass.addLine(to: CGPoint(x: cx - halfW, y: midY + 3))
+            leftGrass.closeSubpath()
+            context.fill(leftGrass, with: .color(Color(red: 0.34, green: 0.62, blue: 0.20)))
+
+            // Right face
+            var rightFace = Path()
+            rightFace.move(to: CGPoint(x: cx, y: midY * 2))
+            rightFace.addLine(to: CGPoint(x: cx + halfW, y: midY))
+            rightFace.addLine(to: CGPoint(x: cx + halfW, y: botY - midY))
+            rightFace.addLine(to: CGPoint(x: cx, y: botY))
+            rightFace.closeSubpath()
+            context.fill(rightFace, with: .color(Color(red: 0.44, green: 0.28, blue: 0.17)))
+
+            // Grass edge on right face
+            var rightGrass = Path()
+            rightGrass.move(to: CGPoint(x: cx, y: midY * 2))
+            rightGrass.addLine(to: CGPoint(x: cx + halfW, y: midY))
+            rightGrass.addLine(to: CGPoint(x: cx + halfW, y: midY + 3))
+            rightGrass.addLine(to: CGPoint(x: cx, y: midY * 2 + 3))
+            rightGrass.closeSubpath()
+            context.fill(rightGrass, with: .color(Color(red: 0.28, green: 0.52, blue: 0.16)))
+
+            // Edges
+            context.stroke(topFace, with: .color(Color.black.opacity(0.25)), lineWidth: 0.5)
+            context.stroke(leftFace, with: .color(Color.black.opacity(0.15)), lineWidth: 0.5)
+            context.stroke(rightFace, with: .color(Color.black.opacity(0.15)), lineWidth: 0.5)
+        }
+        .frame(width: size, height: quarterH * 3)
+    }
+}
+
+/// 4x4 isometric grid
+struct VillageGridView: View {
+    @ObservedObject var village: VillageState
+    @State private var selectedCell: (Int, Int)?
+
+    let blockSize: CGFloat = 64
+
+    private var blockH: CGFloat { blockSize / 4 * 3 }
+    private var stepX: CGFloat { blockSize / 2 }
+    private var stepY: CGFloat { blockSize / 4 }
+
+    private struct Cell: Identifiable {
+        let row: Int
+        let col: Int
+        var id: Int { row * 100 + col }
+    }
+
+    /// Tiles sorted by (row + col) ascending so foreground draws on top
+    private var sortedCells: [Cell] {
+        var cells: [Cell] = []
+        for row in 0..<village.gridSize {
+            for col in 0..<village.gridSize {
+                cells.append(Cell(row: row, col: col))
+            }
+        }
+        return cells.sorted { ($0.row + $0.col) < ($1.row + $1.col) }
+    }
+
+    var body: some View {
+        VStack(spacing: 4) {
+            ZStack {
+                // Sort by (row + col) so foreground tiles are drawn on top
+                ForEach(sortedCells, id: \.id) { cell in
+                    VillageTileView(
+                        tile: village.grid[cell.row][cell.col],
+                        blockSize: blockSize,
+                        isSelected: selectedCell?.0 == cell.row && selectedCell?.1 == cell.col
+                    )
+                    .offset(
+                        x: CGFloat(cell.col - cell.row) * stepX,
+                        y: CGFloat(cell.col + cell.row) * stepY
+                    )
+                    .onTapGesture {
+                        selectedCell = (cell.row, cell.col)
+                    }
+                }
+            }
+            .frame(
+                width: blockSize * CGFloat(village.gridSize),
+                height: blockH + stepY * CGFloat(village.gridSize * 2)
+            )
+        }
+        .popover(isPresented: Binding(
+            get: { selectedCell != nil },
+            set: { if !$0 { selectedCell = nil } }
+        )) {
+            if let (row, col) = selectedCell {
+                BuildingPickerView(
+                    village: village,
+                    row: row,
+                    col: col,
+                    onClose: { selectedCell = nil }
+                )
+            }
+        }
+    }
+}
+
+/// A single tile with ground + object + decoration layers
+struct VillageTileView: View {
+    let tile: VillageTile
+    let blockSize: CGFloat
+    let isSelected: Bool
+
+    @State private var bounceScale: CGFloat = 1.0
+    @State private var selectionPulse: Bool = false
+
+    // GrassBlockView height = blockSize * 0.75; top face occupies top half
+    // In a centered ZStack, the top face center sits at -blockSize/8 relative to ZStack center
+    private var topFaceOffsetY: CGFloat { -blockSize / 8 }
+
+    var body: some View {
+        ZStack {
+            // Base: grass block (always)
+            GrassBlockView(size: blockSize)
+
+            // Selection highlight on top face (diamond)
+            if isSelected {
+                IsometricDiamond()
+                    .fill(Color.yellow.opacity(0.35))
+                    .frame(width: blockSize, height: blockSize / 2)
+                    .offset(y: topFaceOffsetY)
+                    .overlay(
+                        IsometricDiamond()
+                            .stroke(Color.yellow, lineWidth: 2.5)
+                            .frame(width: blockSize, height: blockSize / 2)
+                            .offset(y: topFaceOffsetY)
+                            .shadow(color: .yellow, radius: selectionPulse ? 6 : 2)
+                    )
+                    .animation(
+                        .easeInOut(duration: 0.7).repeatForever(autoreverses: true),
+                        value: selectionPulse
+                    )
+                    .onAppear { selectionPulse = true }
+            }
+
+            // Object layer (tree, house, etc.)
+            if let objectId = tile.object,
+               let building = BuildingCatalog.find(objectId) {
+                BuildingPixelView(building: building, size: blockSize)
+                    .offset(y: -blockSize / 4)
+                    .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 2)
+                    .scaleEffect(bounceScale)
+                    .allowsHitTesting(false)  // Don't block tile taps
+                    .onChange(of: objectId) { _ in
+                        bounceScale = 0.1
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.55)) {
+                            bounceScale = 1.0
+                        }
+                    }
+            }
+        }
+        // Restrict hit area to the diamond top face so adjacent tiles don't overlap
+        .contentShape(TopFaceDiamondHitArea())
+    }
+}
+
+/// Hit-testing shape: an isometric diamond positioned at the top face of the grass block
+struct TopFaceDiamondHitArea: Shape {
+    func path(in rect: CGRect) -> Path {
+        // Top face occupies the top half of the tile
+        let cx = rect.midX
+        let top: CGFloat = 0
+        let mid = rect.height * 0.33  // Where top face meets sides (≈ quarterH of blockSize*0.75)
+        let hw = rect.width / 2
+
+        var p = Path()
+        p.move(to: CGPoint(x: cx, y: top))
+        p.addLine(to: CGPoint(x: cx + hw, y: mid))
+        p.addLine(to: CGPoint(x: cx, y: mid * 2))
+        p.addLine(to: CGPoint(x: cx - hw, y: mid))
+        p.closeSubpath()
+        return p
+    }
+}
+
+/// Isometric diamond (rhombus) shape matching the top face of a grass block
+struct IsometricDiamond: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let cx = rect.midX
+        let cy = rect.midY
+        let hw = rect.width / 2
+        let hh = rect.height / 2
+        path.move(to: CGPoint(x: cx, y: cy - hh))
+        path.addLine(to: CGPoint(x: cx + hw, y: cy))
+        path.addLine(to: CGPoint(x: cx, y: cy + hh))
+        path.addLine(to: CGPoint(x: cx - hw, y: cy))
+        path.closeSubpath()
+        return path
+    }
+}

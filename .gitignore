@@ -31,3 +31,6 @@ Package.resolved
 .LSOverride
 # Screenshots
 스크린샷*
+
+# Claude Code
+.claude/

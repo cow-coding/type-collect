@@ -24,7 +24,7 @@ final class CollectionWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "CapCha Collection"
+        window.title = "TypeVillage Collection"
         window.contentViewController = hostingController
         window.setContentSize(NSSize(width: 1080, height: 680))
         window.minSize = NSSize(width: 560, height: 400)

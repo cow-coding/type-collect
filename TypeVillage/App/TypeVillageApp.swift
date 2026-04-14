@@ -2,7 +2,7 @@ import SwiftUI
 import ServiceManagement
 
 @main
-struct CapChaApp: App {
+struct TypeVillageApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
@@ -40,20 +40,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover.contentViewController = NSHostingController(rootView: MenuBarContentView(appState: appState))
         popover.delegate = self
 
-        // Pass status item button to drop notification manager
-        DropNotificationManager.shared.anchorButton = statusItem.button
-
         // Register notifications
-        NotificationCenter.default.addObserver(self, selector: #selector(openCollectionWindow), name: .openCollectionWindow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSettingsWindow), name: .openSettings, object: nil)
 
-        // Show welcome window on first launch
-        WelcomeWindowController.shared.showIfNeeded()
-    }
-
-    @objc private func openCollectionWindow() {
-        popover.performClose(nil)
-        CollectionWindowController.shared.showWindow(appState: appState)
+        // Level-up bubble hook — anchored to menu bar icon
+        LevelUpToastManager.shared.anchorButton = statusItem.button
+        appState.village.onLevelUp = { from, to, unlocked in
+            LevelUpToastManager.shared.show(fromLevel: from, toLevel: to, unlocked: unlocked)
+        }
     }
 
     private var settingsWindow: NSWindow?
@@ -73,7 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "CapCha Settings"
+        window.title = "TypeVillage Settings"
         window.contentViewController = NSHostingController(rootView: SettingsView())
         window.isReleasedWhenClosed = false
         window.center()
@@ -121,7 +115,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 }
 
 extension Notification.Name {
-    static let openCollectionWindow = Notification.Name("openCollectionWindow")
     static let openSettings = Notification.Name("openSettings")
 }
 
@@ -146,7 +139,7 @@ extension AppDelegate {
 
             let alert = NSAlert()
             alert.messageText = "디스크 이미지를 마운트 해제할까요?"
-            alert.informativeText = "CapCha를 Applications 폴더로 옮긴 후 디스크 이미지를 해제하는 것을 권장합니다."
+            alert.informativeText = "TypeVillage를 Applications 폴더로 옮긴 후 디스크 이미지를 해제하는 것을 권장합니다."
             alert.alertStyle = .informational
             alert.addButton(withTitle: "해제")
             alert.addButton(withTitle: "나중에")
