@@ -202,6 +202,79 @@ final class AppState: ObservableObject {
         StorageManager.shared.saveStats(stats)
     }
 
+    // MARK: - Debug Seed Data
+
+    #if DEBUG
+    static func makeTestCollection() -> [CollectedKeycap] {
+        let now = Date()
+        var seeded: [CollectedKeycap] = []
+
+        let standardKeys = KeycapCatalog.keys.filter { $0.widthUnit == 1.0 }
+        let modifierKeys = KeycapCatalog.keys.filter { $0.widthUnit > 1.0 && $0.widthUnit < 5.0 }
+        let spaceKeys = KeycapCatalog.keys.filter { $0.widthUnit >= 5.0 }
+
+        for (i, key) in standardKeys.prefix(30).enumerated() {
+            let set = KeycapCatalog.sets[i % KeycapCatalog.sets.count]
+            let rarity = Rarity.allCases[i % Rarity.allCases.count]
+            guard let colors = set.palette[rarity], let color = colors.first else { continue }
+
+            let id = "\(set.prefix)-\(key.displayName.lowercased().replacingOccurrences(of: " ", with: "-"))-\(rarity.rawValue)"
+            let keycap = Keycap(
+                id: id, name: key.displayName, rarity: rarity,
+                legendCharacter: key.legend, primaryColor: color,
+                setName: set.name, widthUnit: key.widthUnit
+            )
+            let count = rarity == .common ? Int.random(in: 3...15) :
+                        rarity == .uncommon ? Int.random(in: 2...8) :
+                        rarity == .rare ? Int.random(in: 1...4) :
+                        rarity == .epic ? Int.random(in: 1...2) : 1
+            seeded.append(CollectedKeycap(
+                id: id, keycap: keycap, count: count,
+                firstCollectedAt: now.addingTimeInterval(Double(-i * 3600)),
+                lastCollectedAt: now.addingTimeInterval(Double(-i * 60)),
+                keystrokeNumber: (i + 1) * 150
+            ))
+        }
+
+        for (i, key) in modifierKeys.prefix(8).enumerated() {
+            let set = KeycapCatalog.sets[i % KeycapCatalog.sets.count]
+            let rarity: Rarity = [.uncommon, .rare, .epic, .legendary][i % 4]
+            guard let colors = set.palette[rarity], let color = colors.first else { continue }
+
+            let id = "\(set.prefix)-\(key.displayName.lowercased().replacingOccurrences(of: " ", with: "-"))-\(rarity.rawValue)"
+            let keycap = Keycap(
+                id: id, name: key.displayName, rarity: rarity,
+                legendCharacter: key.legend, primaryColor: color,
+                setName: set.name, widthUnit: key.widthUnit
+            )
+            seeded.append(CollectedKeycap(
+                id: id, keycap: keycap, count: Int.random(in: 1...3),
+                firstCollectedAt: now.addingTimeInterval(Double(-i * 7200)),
+                lastCollectedAt: now.addingTimeInterval(Double(-i * 120)),
+                keystrokeNumber: (i + 31) * 200
+            ))
+        }
+
+        if let spaceKey = spaceKeys.first {
+            let set = KeycapCatalog.sets[2]
+            let id = "\(set.prefix)-space-legendary"
+            let keycap = Keycap(
+                id: id, name: "Space", rarity: .legendary,
+                legendCharacter: spaceKey.legend, primaryColor: set.palette[.legendary]!.first!,
+                setName: set.name, widthUnit: spaceKey.widthUnit
+            )
+            seeded.append(CollectedKeycap(
+                id: id, keycap: keycap, count: 1,
+                firstCollectedAt: now.addingTimeInterval(-86400),
+                lastCollectedAt: now.addingTimeInterval(-86400),
+                keystrokeNumber: 9999
+            ))
+        }
+
+        return seeded
+    }
+    #endif
+
     func saveOnExit() {
         reEnableTimer?.invalidate()
         permissionPollTimer?.invalidate()

@@ -182,13 +182,32 @@ struct KeycapShapeView: View {
                 .frame(width: glowSize, height: glowSize)
                 .blur(radius: 14)
         case .eternal:
-            TimelineView(.animation(minimumInterval: 0.05)) { timeline in
-                let t = timeline.date.timeIntervalSinceReferenceDate
-                let hue = t.truncatingRemainder(dividingBy: 3.0) / 3.0
-                Circle()
-                    .fill(Color(hue: hue, saturation: 0.6, brightness: 1.0).opacity(0.35))
-                    .frame(width: glowSize, height: glowSize)
-                    .blur(radius: 16)
+            EternalGlowView(glowSize: glowSize)
+        }
+    }
+}
+
+/// Eternal rarity glow using native SwiftUI animation (GPU-driven, no TimelineView)
+private struct EternalGlowView: View {
+    let glowSize: CGFloat
+    @State private var hueRotation: Double = 0
+
+    var body: some View {
+        RadialGradient(
+            colors: [
+                Color.purple.opacity(0.7),
+                Color.cyan.opacity(0.3),
+                Color.clear
+            ],
+            center: .center,
+            startRadius: 0,
+            endRadius: glowSize
+        )
+        .frame(width: glowSize * 1.6, height: glowSize * 1.6)
+        .hueRotation(.degrees(hueRotation))
+        .onAppear {
+            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                hueRotation = 360
             }
         }
     }

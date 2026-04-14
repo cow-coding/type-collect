@@ -73,6 +73,7 @@ enum Rarity: String, Codable, CaseIterable, Comparable {
 struct RainbowText: View {
     let text: String
     let font: Font
+    @State private var hueRotation: Double = 0
 
     init(_ text: String, font: Font = .system(size: 11, weight: .bold)) {
         self.text = text
@@ -80,22 +81,21 @@ struct RainbowText: View {
     }
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 0.05)) { timeline in
-            let time = timeline.date.timeIntervalSinceReferenceDate
-            let phase = time.truncatingRemainder(dividingBy: 3.0) / 3.0
-
-            HStack(spacing: 0) {
-                ForEach(Array(text.enumerated()), id: \.offset) { index, char in
-                    let hue = (phase + Double(index) / Double(text.count))
-                        .truncatingRemainder(dividingBy: 1.0)
-                    Text(String(char))
-                        .font(font)
-                        .fontWeight(.heavy)
-                        .foregroundStyle(
-                            Color(hue: hue, saturation: 0.75, brightness: 1.0)
-                        )
+        Text(text)
+            .font(font)
+            .fontWeight(.heavy)
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [.red, .orange, .yellow, .green, .blue, .purple, .red],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .hueRotation(.degrees(hueRotation))
+            .onAppear {
+                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                    hueRotation = 360
                 }
             }
-        }
     }
 }
