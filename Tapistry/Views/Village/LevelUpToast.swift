@@ -25,7 +25,7 @@ final class LevelUpToastManager {
 
         let hasUnlock = !unlocked.isEmpty
         let popover = NSPopover()
-        popover.contentSize = NSSize(width: 240, height: hasUnlock ? 92 : 54)
+        popover.contentSize = NSSize(width: 260, height: hasUnlock ? 110 : 70)
         popover.behavior = .applicationDefined
         popover.animates = true
         popover.contentViewController = NSHostingController(
@@ -57,13 +57,7 @@ struct LevelUpBubbleContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.orange.opacity(0.15))
-                    Text("⭐️")
-                        .font(.system(size: 22))
-                }
-                .frame(width: 40, height: 40)
+                LvUpBadgeView(width: 56)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L10n.levelUp.resolve(lang))
@@ -98,14 +92,14 @@ struct LevelUpBubbleContent: View {
                         .foregroundStyle(.yellow)
 
                     ForEach(unlocked) { building in
-                        HStack(spacing: 2) {
-                            Text(building.emoji)
-                                .font(.system(size: 14))
+                        HStack(spacing: 3) {
+                            BuildingPixelView(building: building, size: 18)
+                                .frame(width: 18, height: 18)
                             Text(building.name.resolve(lang))
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundStyle(.primary)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, 5)
                         .padding(.vertical, 3)
                         .background(
                             RoundedRectangle(cornerRadius: 6)

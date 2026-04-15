@@ -666,6 +666,32 @@ private enum Sprites {
         ]
     )
 
+    // MARK: LV UP! badge (32×16) — used on the level-up toast
+
+    static let lvUpBadge = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "...G....G...G..G...G.GGG..G.....",
+            "...G....G...G..G...G.G..G.G.....",
+            "...G....G...G..G...G.G..G.G.....",
+            "...G....G...G..G...G.GGG..G.....",
+            "...G....G...G..G...G.G....G.....",
+            "...G.....G.G..G...G.G...........",
+            "...GGGG...G.....GGG..G....G.....",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "G": SpriteColors.leafLight,
+        ]
+    )
+
     // MARK: Logo house (32×32) — used in Welcome step 1
 
     static let logoHouse = PixelArt(
@@ -726,6 +752,29 @@ struct LogoHouseView: View {
     let size: CGFloat
     var body: some View {
         PixelSpriteView(art: Sprites.logoHouse, width: size)
+    }
+}
+
+/// "LV UP!" pixel-art badge — used on the level-up toast instead of the ⭐️ emoji.
+/// Pulses slowly via a scale-based repeating animation.
+struct LvUpBadgeView: View {
+    let width: CGFloat
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(SpriteColors.leafDark.opacity(0.85))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(SpriteColors.leaf, lineWidth: 1.5)
+                )
+            PixelSpriteView(art: Sprites.lvUpBadge, width: width * 0.88)
+        }
+        .frame(width: width, height: width * 0.5)
+        .scaleEffect(pulse ? 1.04 : 0.96)
+        .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulse)
+        .onAppear { pulse = true }
     }
 }
 
