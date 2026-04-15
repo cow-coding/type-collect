@@ -843,19 +843,75 @@ private struct GroundPixelView: View {
     }
 }
 
-// MARK: - Flowers (wind sway)
+// MARK: - Flowers (individual flower sway)
 
-/// Flowers ground layer that sways left-right as one unit, like a patch
-/// of meadow in a gentle breeze (산들바람). Period ≈ 5 s, amplitude
-/// ±4% of sprite width — slow and subtle.
+/// Flowers ground layer where each individual flower sways left-right
+/// independently, with slightly staggered phases so the meadow ripples
+/// like a real breeze moving through. Grass background stays static.
+/// Period ≈ 5 s, each flower offset up to ±1 pixel.
 private struct FlowersGroundView: View {
     let size: CGFloat
+
+    /// Flower positions: (col, row, color char). Row is the center row of
+    /// each 3×3 cross. Colors: y=yellow, p=pink, w=white, u=purple.
+    private static let flowers: [(col: Int, row: Int, color: Character)] = [
+        (2,  3, "y"), (10, 3, "p"), (19, 3, "w"), (27, 3, "u"),
+        (7,  7, "p"), (15, 7, "u"), (22, 7, "y"),
+        (2, 11, "w"), (11, 11, "y"), (20, 11, "p"), (29, 11, "u"),
+        (5, 15, "p"), (13, 15, "y"), (21, 15, "w"),
+        (2, 19, "u"), (10, 19, "p"), (19, 19, "w"), (27, 19, "y"),
+        (7, 23, "y"), (15, 23, "u"), (22, 23, "p"),
+        (2, 27, "w"), (11, 27, "p"), (20, 27, "y"), (29, 27, "u"),
+    ]
+
+    private static let flowerColors: [Character: Color] = [
+        "y": SpriteColors.flowerYellow,
+        "p": SpriteColors.flowerPink,
+        "w": SpriteColors.flowerWhite,
+        "u": SpriteColors.flowerPurple,
+    ]
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+        TimelineView(.animation(minimumInterval: 1.0 / 20.0, paused: false)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate
-            let offsetX = 0.04 * size * sin(t * 2.0 * .pi / 5.0)
-            GroundPixelView(art: Sprites.flowersGround, size: size)
-                .offset(x: offsetX)
+            Canvas { context, cs in
+                let px = cs.width / 32
+
+                // Static grass background — only G and g cells from the sprite.
+                for (r, row) in Sprites.flowersGround.rows.enumerated() {
+                    for (c, ch) in row.enumerated() {
+                        guard ch == "G" || ch == "g",
+                              let color = Sprites.flowersGround.colors[ch] else { continue }
+                        let rect = CGRect(x: CGFloat(c) * px,
+                                          y: CGFloat(r) * px,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+
+                // Animated flowers — each with its own phase.
+                let period = 5.0
+                let maxSway = 1.0 * px  // ±1 pixel of sway
+                for (i, f) in Self.flowers.enumerated() {
+                    guard let color = Self.flowerColors[f.color] else { continue }
+                    let phase = Double(i) * 0.4
+                    let sway = maxSway * CGFloat(sin(t * 2.0 * .pi / period + phase))
+
+                    // 5-pixel cross: center + 4 cardinals
+                    let cx = CGFloat(f.col) * px + sway
+                    let cy = CGFloat(f.row) * px
+                    for (dx, dy): (CGFloat, CGFloat) in [(0, 0), (0, -px), (0, px), (-px, 0), (px, 0)] {
+                        let rect = CGRect(x: cx + dx,
+                                          y: cy + dy,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+            }
+            .frame(width: size, height: size / 2)
+            .clipShape(DiamondMask())
         }
     }
 }
