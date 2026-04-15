@@ -197,18 +197,18 @@ private enum Sprites {
         rows: [
             "................................",
             "................................",
-            "........cCCc....................",
-            ".........CC.....................",
-            ".........CC.....R...............",
-            ".........CC...rrRR..............",
-            ".........CC.rrrrRRR.............",
-            ".........CCrrrrRRRRR............",
-            ".......rrrrrrrrRRRRRR...........",
-            "....rrrrrrrrrrRRRRRRRRR.........",
-            "....EErrrrrrrrRRRRRRRRRR........",
-            "....EEEErrrrrRRRRRRRRRRRR.......",
-            "....EEEEEErrrRRRRRRRRRRRRR......",
-            "....EEEEEEEErRRRRRRRRRRRRRRR....",
+            "................................",
+            "................................",
+            "...........cCCc.................",
+            "............CC..................",
+            "............CC..................",
+            "............CC..................",
+            "............CC..R...............",
+            "............CCrrRR..............",
+            "............CCrRRRRR............",
+            "..........rrrrrRRRRRRR..........",
+            "........rrrrrrRRRRRRRRRR........",
+            "....rrrrrrrrrRRRRRRRRRRRRRRR....",
             "....EEEEEEEEEWWWWWWWWWWWWWWW....",
             "....EeeeeeeeEWnnnnnnnnnnnnnW....",
             "....EeeeeeeeEWnXXXnnnnnXXXnW....",
@@ -949,9 +949,9 @@ private struct TreePixelView: View {
 private struct HousePixelView: View {
     let size: CGFloat
 
-    // House grid 32×32. Chimney at cols 9-10, rows 2-7 (mirrored iso house).
+    // House grid 32×32. Chimney at cols 12-13, rows 4-10 (iso house with lowered peak).
     private var pixelSize: CGFloat { size / 32 }
-    private var chimneyCenterX: CGFloat { pixelSize * 9.5 - size / 2 }
+    private var chimneyCenterX: CGFloat { pixelSize * 12.5 - size / 2 }
 
     var body: some View {
         ZStack {
