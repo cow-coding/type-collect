@@ -180,7 +180,71 @@ and commit after each step so you can revert cleanly.
 
 ---
 
-## 8. Progressive-iteration guidance
+## 8. Per-element animation (Canvas rendering)
+
+For animations that need to move individual elements within a sprite
+(not just transform the whole sprite), bypass `PixelSpriteView` and
+draw directly into a `Canvas` inside a `TimelineView(.animation)`.
+
+Pattern used for flowers wind sway (see `FlowersGroundView`):
+
+1. **Hardcode element positions** once, by reading the sprite grid.
+   For flowers, a 5-pixel cross at `(col, row)` with a color char:
+
+   ```swift
+   private static let flowers: [(col: Int, row: Int, color: Character)] = [
+       (2, 3, "y"), (10, 3, "p"), (19, 3, "w"), (27, 3, "u"), …
+   ]
+   ```
+
+2. **Split static vs. animated layers** in the Canvas pass:
+
+   ```swift
+   // Static background — iterate the sprite, draw only non-animated cells.
+   for (r, row) in Sprites.flowersGround.rows.enumerated() {
+       for (c, ch) in row.enumerated() {
+           guard ch == "G" || ch == "g" else { continue }  // grass only
+           // fill pixel rect
+       }
+   }
+
+   // Animated elements — draw at base position + per-element offset.
+   for (i, f) in Self.flowers.enumerated() {
+       let phase = Double(i) * 0.4                     // stagger each element
+       let sway  = maxSway * sin(t * 2π/period + phase)
+       // draw element at (f.col × px + sway, f.row × px)
+   }
+   ```
+
+3. **Give each element its own phase** via `Double(index) * phaseStep`.
+   Without this the whole patch moves in lockstep — reads as sprite
+   translation rather than per-element animation, which was the exact
+   problem before we switched away from `.offset(x:)`.
+
+4. **Amplitude and period**: keep sway amplitude below ~1 pixel for
+   ground textures. A full-pixel swing is already very visible at
+   `0.75pt/pixel`. Period 4–6 s reads as "산들바람"; faster looks
+   frantic.
+
+5. **Clip after drawing**. Apply `.frame` + `.clipShape(DiamondMask())`
+   on the `Canvas` view so animated pixels that sway past the diamond
+   edge get cut cleanly, not exposed as rectangular overdraw.
+
+Things this approach is good for:
+- Scattered decorative elements (flowers, grass, sprouts, snowflakes)
+- Water surface ripples (multiple highlight points)
+- Lanterns / lamps flickering at different phases
+
+Things it's **not** good for:
+- Rigid structural elements (walls, roofs) — use static pixel art
+- Animations that need a specific art-directed shape — use frame
+  sprites / flipbook instead
+
+See `FlowersGroundView` for the reference implementation.
+
+---
+
+## 9. Progressive-iteration guidance
 
 When in doubt, go in small steps:
 
