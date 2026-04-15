@@ -100,32 +100,94 @@ final class VillageState: ObservableObject {
 
     // MARK: - Grid
 
-    func place(_ buildingType: BuildingType, row: Int, col: Int, layer: TileLayer) {
-        guard row >= 0, row < gridSize, col >= 0, col < gridSize else { return }
-        guard unlockedBuildings.contains(where: { $0.id == buildingType.id }) else { return }
-
-        switch layer {
-        case .ground:
-            grid[row][col].ground = buildingType.id
-        case .object:
-            grid[row][col].object = buildingType.id
-        case .decoration:
-            grid[row][col].decoration = buildingType.id
+    /// Ground covers the whole tile. Pass nil to clear.
+    func placeGround(_ buildingType: BuildingType?, row: Int, col: Int) {
+        guard isValidTile(row: row, col: col) else { return }
+        if let b = buildingType {
+            guard b.layer == .ground else { return }
+            guard unlockedBuildings.contains(where: { $0.id == b.id }) else { return }
+            grid[row][col].ground = b.id
+        } else {
+            grid[row][col].ground = nil
         }
         scheduleSave()
     }
 
-    func remove(row: Int, col: Int, layer: TileLayer) {
-        guard row >= 0, row < gridSize, col >= 0, col < gridSize else { return }
+    /// Place an object or decoration into a specific sub-cell (3×3 within a tile).
+    func placeSubCell(
+        _ buildingType: BuildingType,
+        row: Int, col: Int,
+        subRow: Int, subCol: Int,
+        layer: TileLayer
+    ) {
+        guard isValidTile(row: row, col: col),
+              isValidSub(subRow: subRow, subCol: subCol) else { return }
+        guard buildingType.layer == layer else { return }
+        guard unlockedBuildings.contains(where: { $0.id == buildingType.id }) else { return }
+
         switch layer {
         case .ground:
-            grid[row][col].ground = nil
+            return  // use placeGround instead
         case .object:
-            grid[row][col].object = nil
+            grid[row][col].subCells[subRow][subCol].object = buildingType.id
         case .decoration:
-            grid[row][col].decoration = nil
+            grid[row][col].subCells[subRow][subCol].decoration = buildingType.id
         }
         scheduleSave()
+    }
+
+    func removeSubCell(row: Int, col: Int, subRow: Int, subCol: Int, layer: TileLayer) {
+        guard isValidTile(row: row, col: col),
+              isValidSub(subRow: subRow, subCol: subCol) else { return }
+        switch layer {
+        case .ground:
+            return
+        case .object:
+            grid[row][col].subCells[subRow][subCol].object = nil
+        case .decoration:
+            grid[row][col].subCells[subRow][subCol].decoration = nil
+        }
+        scheduleSave()
+    }
+
+    /// Replace a whole tile (used by the tile editor "Cancel" to restore a snapshot).
+    func replaceTile(_ tile: VillageTile, row: Int, col: Int) {
+        guard isValidTile(row: row, col: col) else { return }
+        grid[row][col] = tile
+        scheduleSave()
+    }
+
+    // MARK: - Legacy placement APIs (delegate to ground / center sub-cell)
+
+    func place(_ buildingType: BuildingType, row: Int, col: Int, layer: TileLayer) {
+        let mid = VillageTile.subGridSize / 2
+        switch layer {
+        case .ground:
+            placeGround(buildingType, row: row, col: col)
+        case .object, .decoration:
+            placeSubCell(buildingType, row: row, col: col, subRow: mid, subCol: mid, layer: layer)
+        }
+    }
+
+    func remove(row: Int, col: Int, layer: TileLayer) {
+        let mid = VillageTile.subGridSize / 2
+        switch layer {
+        case .ground:
+            placeGround(nil, row: row, col: col)
+        case .object, .decoration:
+            removeSubCell(row: row, col: col, subRow: mid, subCol: mid, layer: layer)
+        }
+    }
+
+    // MARK: - Bounds helpers
+
+    private func isValidTile(row: Int, col: Int) -> Bool {
+        row >= 0 && row < gridSize && col >= 0 && col < gridSize
+    }
+
+    private func isValidSub(subRow: Int, subCol: Int) -> Bool {
+        subRow >= 0 && subRow < VillageTile.subGridSize
+            && subCol >= 0 && subCol < VillageTile.subGridSize
     }
 
     // MARK: - Persistence

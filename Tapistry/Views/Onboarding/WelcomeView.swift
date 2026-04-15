@@ -84,12 +84,7 @@ struct WelcomeView: View {
     private var stepTitle: some View {
         VStack(spacing: 18) {
             Spacer()
-            Image("MenuBarIcon")
-                .resizable()
-                .renderingMode(.template)
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .foregroundColor(primaryColor)
+            LogoHouseView(size: 128)
 
             Text("Tapistry")
                 .font(.system(size: 34, weight: .bold, design: .rounded))

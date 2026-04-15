@@ -41,9 +41,10 @@ struct LocalizedString {
 /// Centralized localized strings for the app
 enum L10n {
     // Menu bar
-    static let appName        = LocalizedString("Tapistry", ko: "태피스트리")
+    // Brand name stays in English across all locales
+    static let appName        = LocalizedString("Tapistry", ko: "Tapistry")
     static let settings       = LocalizedString("Settings", ko: "설정")
-    static let quit           = LocalizedString("Quit Tapistry", ko: "태피스트리 종료")
+    static let quit           = LocalizedString("Quit Tapistry", ko: "Tapistry 종료")
 
     // Permission banner
     static let permissionTitle    = LocalizedString("Input Monitoring required", ko: "입력 모니터링 권한 필요")
@@ -62,6 +63,11 @@ enum L10n {
     static let noUnlocked     = LocalizedString("No unlocks yet", ko: "해금된 건물 없음")
     static let upcomingUnlocks = LocalizedString("Coming up", ko: "해금 예정")
     static let remove         = LocalizedString("Remove", ko: "제거")
+    static let done           = LocalizedString("Done", ko: "완료")
+    static let cancel         = LocalizedString("Cancel", ko: "취소")
+    static let noneLabel      = LocalizedString("None", ko: "없음")
+    static let tapSubCell     = LocalizedString("Tap a cell to place", ko: "셀을 탭해 배치")
+    static let subCellLabel   = LocalizedString("Cell", ko: "셀")
     static func tileLabel(row: Int, col: Int, lang: AppLanguage) -> String {
         switch lang {
         case .english: return "Tile (\(row), \(col))"

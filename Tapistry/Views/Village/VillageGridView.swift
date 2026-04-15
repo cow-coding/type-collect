@@ -72,7 +72,7 @@ struct VillageGridView: View {
     @ObservedObject var village: VillageState
     @State private var selectedCell: (Int, Int)?
 
-    let blockSize: CGFloat = 64
+    let blockSize: CGFloat = 72
 
     private var blockH: CGFloat { blockSize / 4 * 3 }
     private var stepX: CGFloat { blockSize / 2 }
@@ -124,7 +124,7 @@ struct VillageGridView: View {
             set: { if !$0 { selectedCell = nil } }
         )) {
             if let (row, col) = selectedCell {
-                BuildingPickerView(
+                TileEditorView(
                     village: village,
                     row: row,
                     col: col,
@@ -135,18 +135,84 @@ struct VillageGridView: View {
     }
 }
 
-/// A single tile with ground + object + decoration layers
+/// A single tile: grass block + whole-tile ground + 3×3 sub-cells of objects & decorations.
 struct VillageTileView: View {
     let tile: VillageTile
     let blockSize: CGFloat
     let isSelected: Bool
 
-    @State private var bounceScale: CGFloat = 1.0
+    /// Editor preview: highlight a specific sub-cell with a small yellow diamond.
+    var selectedSubCell: (Int, Int)? = nil
+    /// Editor preview: invoke when a sub-cell diamond is tapped.
+    var onSubCellTap: ((Int, Int) -> Void)? = nil
+
     @State private var selectionPulse: Bool = false
 
     // GrassBlockView height = blockSize * 0.75; top face occupies top half
     // In a centered ZStack, the top face center sits at -blockSize/8 relative to ZStack center
     private var topFaceOffsetY: CGFloat { -blockSize / 8 }
+
+    // Iso geometry for the 3×3 sub-grid on top of the tile's top-face diamond.
+    // Each sub-cell is a mini diamond of size (blockSize/3 × blockSize/6).
+    // Half-step between sub-cells:
+    private var subStepX: CGFloat { blockSize / 6 }
+    private var subStepY: CGFloat { blockSize / 12 }
+    /// Y of the (row=0, col=0) sub-cell center, relative to ZStack center.
+    private var subOriginY: CGFloat { topFaceOffsetY - blockSize / 6 }
+    /// Rendered size of a sub-cell object sprite (intentionally larger than a sub-cell so
+    /// neighbors overlap slightly for a dense village feel).
+    private var subObjectSize: CGFloat { blockSize / 2 }
+
+    private struct Renderable: Identifiable {
+        let subRow: Int
+        let subCol: Int
+        let building: BuildingType
+        let isDecoration: Bool
+        var id: String { "\(subRow)-\(subCol)-\(isDecoration ? "d" : "o")" }
+        /// Lower z draws first (behind). Within the same sub-cell decoration goes on top.
+        var zOrder: Int { (subRow + subCol) * 2 + (isDecoration ? 1 : 0) }
+    }
+
+    private var renderables: [Renderable] {
+        var r: [Renderable] = []
+        for sr in 0..<VillageTile.subGridSize {
+            for sc in 0..<VillageTile.subGridSize {
+                let cell = tile.subCells[sr][sc]
+                if let oid = cell.object, let b = BuildingCatalog.find(oid) {
+                    r.append(Renderable(subRow: sr, subCol: sc, building: b, isDecoration: false))
+                }
+                if let did = cell.decoration, let b = BuildingCatalog.find(did) {
+                    r.append(Renderable(subRow: sr, subCol: sc, building: b, isDecoration: true))
+                }
+            }
+        }
+        return r.sorted { $0.zOrder < $1.zOrder }
+    }
+
+    private func subCellOffset(subRow: Int, subCol: Int) -> CGSize {
+        let x = CGFloat(subCol - subRow) * subStepX
+        let y = CGFloat(subCol + subRow) * subStepY + subOriginY
+        return CGSize(width: x, height: y)
+    }
+
+    /// Iso Y-shear applied to each sprite.
+    ///
+    /// Negative b=-0.5 aligns the sprite's horizontal edges with the top-LEFT diamond
+    /// edge (slope -1:2), so the building's south/front face is visible — i.e. it
+    /// "faces" the viewer who looks from the south-east. This is the correct orientation
+    /// for a building sitting on the tile with its entrance/windows facing the camera.
+    ///
+    /// Billboards (tree, lamp) and ground layers return 0 (no shear).
+    private func isoShearY(for building: BuildingType) -> CGFloat {
+        switch building.id {
+        case "tree", "lamp":
+            return 0
+        case "flowers", "stone_path":
+            return 0
+        default:
+            return -0.5       // south face visible — top-right corner rises to match left diamond edge
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -181,28 +247,82 @@ struct VillageTileView: View {
                     .onAppear { selectionPulse = true }
             }
 
-            // Object layer (tree, house, etc.)
-            if let objectId = tile.object,
-               let building = BuildingCatalog.find(objectId) {
-                BuildingPixelView(building: building, size: blockSize)
-                    .offset(y: -blockSize / 4)
-                    .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 2)
-                    .scaleEffect(bounceScale)
-                    .allowsHitTesting(false)  // Don't block tile taps
-                    .onChange(of: objectId) { _ in
-                        bounceScale = 0.1
-                        withAnimation(.spring(response: 0.45, dampingFraction: 0.55)) {
-                            bounceScale = 1.0
-                        }
-                    }
+            // Sub-cell contents — objects and decorations painted back-to-front.
+            //
+            // Structures get a negative Y-shear (b = -0.5) so their front/south face
+            // is visible to the SE-looking camera. A hard-edged shadow offset to the
+            // right (+x) and slightly down (+y) along the iso east slope simulates the
+            // east/right wall of the building, giving genuine 3-D depth perception.
+            //
+            // Billboards (tree, lamp) stay upright — iso convention for tall elements.
+            // Ground layers are already diamond-clipped.
+            ForEach(renderables) { item in
+                let off = subCellOffset(subRow: item.subRow, subCol: item.subCol)
+                let shear = isoShearY(for: item.building)
+                BuildingPixelView(building: item.building, size: subObjectSize)
+                    .transformEffect(
+                        CGAffineTransform(a: 1, b: shear, c: 0, d: 1, tx: 0, ty: 0)
+                    )
+                    // East-face depth: hard shadow offset along the iso +0.5 east slope.
+                    // Only applied to structures (shear != 0); billboards and ground omit it.
+                    .shadow(
+                        color: shear != 0 ? Color(white: 0.12).opacity(0.50) : .clear,
+                        radius: 0,
+                        x: subObjectSize * 0.12,
+                        y: subObjectSize * 0.06
+                    )
+                    .offset(x: off.width, y: off.height - subObjectSize / 2)
+                    .allowsHitTesting(false)
             }
 
-            // Decoration layer — sits on top of object
-            if let decorationId = tile.decoration,
-               let building = BuildingCatalog.find(decorationId) {
-                DecorationLayerView(building: building, blockSize: blockSize)
-                    .offset(y: -blockSize / 4)
+            // Editor mode: selection highlight (visual only, does not hit-test)
+            if let sel = selectedSubCell {
+                let off = subCellOffset(subRow: sel.0, subCol: sel.1)
+                IsometricDiamond()
+                    .fill(Color.yellow.opacity(0.30))
+                    .overlay(
+                        IsometricDiamond()
+                            .stroke(Color.yellow, lineWidth: 1.5)
+                    )
+                    .frame(width: blockSize / 3, height: blockSize / 6)
+                    .offset(x: off.width, y: off.height)
                     .allowsHitTesting(false)
+            }
+
+            // Editor mode: single tap-catcher over the top-face diamond that
+            // resolves the tapped sub-cell mathematically from the tap location.
+            // This avoids z-order ambiguity between 9 overlapping diamond hit
+            // shapes and gives a generous tap target for every cell.
+            if let handler = onSubCellTap {
+                GeometryReader { geo in
+                    Color.clear
+                        .contentShape(TopFaceDiamondHitArea())
+                        .gesture(
+                            SpatialTapGesture(coordinateSpace: .local)
+                                .onEnded { value in
+                                    // Convert tap location into the ZStack's centered
+                                    // coordinate space (origin at tile center), then
+                                    // remove subOriginY so iso math is anchored at
+                                    // sub-cell (0,0).
+                                    let cx = geo.size.width / 2
+                                    let cy = geo.size.height / 2
+                                    let x = value.location.x - cx
+                                    let y = value.location.y - cy - subOriginY
+                                    // Forward mapping:
+                                    //   x = (subCol - subRow) * subStepX
+                                    //   y = (subCol + subRow) * subStepY
+                                    // Inverse:
+                                    let u = x / subStepX       // = subCol - subRow
+                                    let v = y / subStepY       // = subCol + subRow
+                                    let subCol = Int(((u + v) / 2).rounded())
+                                    let subRow = Int(((v - u) / 2).rounded())
+                                    let last = VillageTile.subGridSize - 1
+                                    let r = max(0, min(last, subRow))
+                                    let c = max(0, min(last, subCol))
+                                    handler(r, c)
+                                }
+                        )
+                }
             }
         }
         // Restrict hit area to the diamond top face so adjacent tiles don't overlap
@@ -210,75 +330,32 @@ struct VillageTileView: View {
     }
 }
 
-/// Ground layer: tints the top face + scatters small emoji dots
+/// Ground layer: renders a pixel-art ground sprite clipped to the top-face diamond.
 struct GroundLayerView: View {
     let building: BuildingType
     let blockSize: CGFloat
 
-    private var tint: Color {
-        switch building.id {
-        case "flowers":    return Color(red: 0.95, green: 0.70, blue: 0.80).opacity(0.55)
-        case "stone_path": return Color(red: 0.58, green: 0.58, blue: 0.60).opacity(0.75)
-        default:           return Color.clear
-        }
-    }
-
     var body: some View {
-        ZStack {
-            IsometricDiamond()
-                .fill(tint)
-                .frame(width: blockSize, height: blockSize / 2)
-
-            // Light outline to integrate with grass edges
-            IsometricDiamond()
-                .stroke(Color.black.opacity(0.15), lineWidth: 0.5)
-                .frame(width: blockSize, height: blockSize / 2)
-
-            // Scattered emoji tokens for character
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.22))
-                .offset(x: -blockSize * 0.15, y: -blockSize * 0.02)
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.18))
-                .offset(x: blockSize * 0.12, y: blockSize * 0.06)
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.16))
-                .offset(x: -blockSize * 0.02, y: -blockSize * 0.10)
-        }
+        BuildingPixelView(building: building, size: blockSize)
+            // Faint outline so the edge reads cleanly against the grass
+            .overlay(
+                IsometricDiamond()
+                    .stroke(Color.black.opacity(0.18), lineWidth: 0.5)
+                    .frame(width: blockSize, height: blockSize / 2)
+            )
     }
 }
 
-/// Decoration layer: small accent positioned in front-right of the object
+/// Decoration layer: places a pixel-art decoration in the tile's front-right.
 struct DecorationLayerView: View {
     let building: BuildingType
     let blockSize: CGFloat
 
     var body: some View {
-        // Fence wraps the front edge, lamp sits front-right
-        Group {
-            switch building.id {
-            case "fence":
-                // Two stacked fence emojis at front-left and front-right of the diamond
-                ZStack {
-                    Text(building.emoji)
-                        .font(.system(size: blockSize * 0.32))
-                        .offset(x: -blockSize * 0.22, y: blockSize * 0.22)
-                    Text(building.emoji)
-                        .font(.system(size: blockSize * 0.32))
-                        .offset(x: blockSize * 0.22, y: blockSize * 0.22)
-                }
-            case "lamp":
-                Text(building.emoji)
-                    .font(.system(size: blockSize * 0.42))
-                    .offset(x: blockSize * 0.28, y: blockSize * 0.02)
-                    .shadow(color: .yellow.opacity(0.5), radius: 4)
-            default:
-                Text(building.emoji)
-                    .font(.system(size: blockSize * 0.35))
-                    .offset(x: blockSize * 0.22, y: blockSize * 0.18)
-            }
-        }
-        .shadow(color: .black.opacity(0.35), radius: 1.5, x: 0, y: 1)
+        // Smaller than full object; decorations are accents.
+        let decoSize = blockSize * 0.65
+        BuildingPixelView(building: building, size: decoSize)
+            .offset(x: blockSize * 0.18, y: blockSize * 0.18)
     }
 }
 
