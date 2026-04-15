@@ -48,6 +48,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         appState.village.onLevelUp = { from, to, unlocked in
             LevelUpToastManager.shared.show(fromLevel: from, toLevel: to, unlocked: unlocked)
         }
+
+        // First-launch welcome window
+        WelcomeWindowController.shared.showIfNeeded()
     }
 
     private var settingsWindow: NSWindow?
