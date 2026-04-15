@@ -26,7 +26,7 @@ struct MenuBarContentView: View {
             Spacer()
             footerSection
         }
-        .frame(width: 280)
+        .frame(width: 320)
     }
 
     private var headerBar: some View {

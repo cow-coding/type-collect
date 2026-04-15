@@ -72,7 +72,7 @@ struct VillageGridView: View {
     @ObservedObject var village: VillageState
     @State private var selectedCell: (Int, Int)?
 
-    let blockSize: CGFloat = 64
+    let blockSize: CGFloat = 72
 
     private var blockH: CGFloat { blockSize / 4 * 3 }
     private var stepX: CGFloat { blockSize / 2 }
