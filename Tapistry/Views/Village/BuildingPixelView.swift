@@ -843,18 +843,26 @@ private struct GroundPixelView: View {
     }
 }
 
-// MARK: - Flowers (gentle breathing scale)
+// MARK: - Flowers (wind sway)
 
-/// Flowers ground layer with a sin-wave scale pulse — makes the petals "breathe"
-/// subtly so they don't feel static. Period ≈ 3.2 s, amplitude ±4%.
+/// Flowers ground layer with a horizontal shear that waves the petals
+/// left-right like wind catching a meadow. The shear is applied based
+/// on y with the reference at the diamond's vertical midline, so the
+/// upper half of the clipped diamond sways while the lower half stays
+/// relatively planted. Period ≈ 2.4 s, amplitude ±0.08 shear coefficient.
 private struct FlowersGroundView: View {
     let size: CGFloat
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate
-            let scale = 1.0 + 0.04 * sin(t * 2.0 * .pi / 3.2)
-            GroundPixelView(art: Sprites.flowersGround, size: size)
-                .scaleEffect(scale)
+            let shear = 0.08 * sin(t * 2.0 * .pi / 2.4)
+            PixelSpriteView(art: Sprites.flowersGround, width: size)
+                .transformEffect(
+                    CGAffineTransform(a: 1, b: 0, c: shear, d: 1,
+                                      tx: -shear * size / 2, ty: 0)
+                )
+                .frame(width: size, height: size / 2)
+                .clipShape(DiamondMask())
         }
     }
 }
