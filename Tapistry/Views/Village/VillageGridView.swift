@@ -293,16 +293,13 @@ struct VillageTileView: View {
                         x: subObjectSize * 0.12,
                         y: subObjectSize * 0.06
                     )
-                    // Sub-cell anchor: the sprite's visual bottom lands one full
-                    // sub-cell height (blockSize/6) past its center — i.e. at what
-                    // would be the bottom of the NEXT sub-cell down. This embeds the
-                    // building into the tile rather than perching it on the back
-                    // corner of its own sub-cell diamond, which otherwise reads as
-                    // floating when only one or two cells are populated.
+                    // Sub-cell anchor: the sprite's visual bottom lands at the sub-cell
+                    // diamond's BOTTOM VERTEX (blockSize/12 past its center) — the
+                    // front-most iso point of the cell, where the building "stands".
                     // baselineShift further compensates for per-sprite bottom padding.
                     .offset(
                         x: off.width,
-                        y: off.height + blockSize / 6 - subObjectSize / 2 + baselineShift
+                        y: off.height + blockSize / 12 - subObjectSize / 2 + baselineShift
                     )
                     .allowsHitTesting(false)
             }
