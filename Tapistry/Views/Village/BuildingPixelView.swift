@@ -806,9 +806,9 @@ struct BuildingPixelView: View {
         case "tree":       TreePixelView(size: size)
         case "house":      HousePixelView(size: size)
         case "windmill":   WindmillPixelView(size: size)
-        case "well":       PixelSpriteView(art: Sprites.well, width: size)
+        case "well":       WellPixelView(size: size)
         case "farm":       FarmPixelView(size: size)
-        case "shop":       PixelSpriteView(art: Sprites.shop, width: size)
+        case "shop":       ShopPixelView(size: size)
         case "fence":      PixelSpriteView(art: Sprites.fence, width: size)
         case "lamp":       LampPixelView(size: size)
         case "flowers":    FlowersGroundView(size: size)
@@ -846,6 +846,54 @@ private struct FlowersGroundView: View {
             let scale = 1.0 + 0.04 * sin(t * 2.0 * .pi / 3.2)
             GroundPixelView(art: Sprites.flowersGround, size: size)
                 .scaleEffect(scale)
+        }
+    }
+}
+
+// MARK: - Well (water shimmer)
+
+/// Well with a soft horizontal highlight drifting across the water surface, hinting
+/// at ripples. The highlight is a thin bright strip whose horizontal position and
+/// opacity cycle on out-of-phase sin waves so it feels organic rather than metronomic.
+private struct WellPixelView: View {
+    let size: CGFloat
+
+    // Water rows in the 32×32 well sprite are rows 17–20 → mid-water at row 18.5.
+    // Left/right bounds of the water area ≈ cols 6..25 (inclusive) → 19 cols wide.
+    private var waterCenterY: CGFloat { size * (18.5 / 32.0 - 0.5) }
+    private var waterW: CGFloat { size * 19.0 / 32.0 }
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate
+            let drift = 0.35 * sin(t * 2.0 * .pi / 3.0)         // -0.35..0.35
+            let fade  = 0.5 + 0.5 * sin(t * 2.0 * .pi / 2.2)    // 0..1
+            PixelSpriteView(art: Sprites.well, width: size)
+                .overlay(
+                    Rectangle()
+                        .fill(Color.white.opacity(0.22 * fade))
+                        .frame(width: waterW * 0.35, height: size * 0.04)
+                        .offset(x: drift * waterW * 0.4, y: waterCenterY)
+                        .blendMode(.screen)
+                        .allowsHitTesting(false)
+                )
+        }
+    }
+}
+
+// MARK: - Shop (awning flap)
+
+/// Shop with a tiny rotational sway concentrated near the awning — 0.9° amplitude,
+/// period ≈ 2.1 s, anchored slightly above center so the base of the building stays
+/// planted while the cloth awning appears to catch a light breeze.
+private struct ShopPixelView: View {
+    let size: CGFloat
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate
+            let deg = 0.9 * sin(t * 2.0 * .pi / 2.1)
+            PixelSpriteView(art: Sprites.shop, width: size)
+                .rotationEffect(.degrees(deg), anchor: .init(x: 0.5, y: 0.75))
         }
     }
 }
