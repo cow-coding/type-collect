@@ -190,7 +190,7 @@ struct VillageTileView: View {
         return CGSize(width: x, height: y)
     }
 
-    /// Iso Y-axis tilt applied to each sprite so it reads as set into the quarter-view scene.
+    /// Iso tilt applied to each sprite so it reads as set into the quarter-view scene.
     /// Upright elements stay flat (billboard convention); structural / ground-adjacent
     /// elements tilt so their front face angles toward the viewer.
     private func isoTiltDegrees(for building: BuildingType) -> Double {
@@ -200,9 +200,18 @@ struct VillageTileView: View {
         case "flowers", "stone_path":
             return 0          // ground layer — no tilt (diamond clip already handles iso)
         case "fence":
-            return 14         // slightly less than buildings — still reads as linear
+            return 24         // mostly decorative/horizontal, moderate tilt
         default:
-            return 16         // house, shop, well, farm, windmill
+            return 28         // house, shop, well, farm, windmill
+        }
+    }
+
+    /// Whether a sprite should cast an iso-shaped ground shadow (diamond) under it.
+    /// Billboards still cast one; ground layers don't (they already fill the top face).
+    private func isoGroundShadow(for building: BuildingType) -> Bool {
+        switch building.id {
+        case "flowers", "stone_path": return false
+        default: return true
         }
     }
 
@@ -245,24 +254,37 @@ struct VillageTileView: View {
             // on that cell. Since .offset moves the sprite's frame center, we subtract
             // half the sprite height from the cell center y.
             //
-            // Structures (houses, shops, fences, etc.) get a subtle Y-axis tilt so they
-            // read as set into the quarter-view scene. Tall upright elements (tree, lamp)
-            // are treated as iso billboards and stay flat — the classic pixel-art
-            // convention for these shapes.
+            // Structures (houses, shops, fences, etc.) get a 3D Y-axis rotation so they
+            // read as set into the quarter-view scene. We also drop a diamond-shaped
+            // ground shadow under each sprite to anchor it to the iso plane. Tall
+            // upright elements (tree, lamp) stay flat as iso billboards.
             ForEach(renderables) { item in
                 let off = subCellOffset(subRow: item.subRow, subCol: item.subCol)
                 let tilt = isoTiltDegrees(for: item.building)
-                BuildingPixelView(building: item.building, size: subObjectSize)
-                    .shadow(color: .black.opacity(item.isDecoration ? 0.25 : 0.4),
-                            radius: item.isDecoration ? 1.5 : 2, x: 0, y: 1.5)
-                    .rotation3DEffect(
-                        .degrees(tilt),
-                        axis: (x: 0, y: 1, z: 0),
-                        anchor: .bottom,
-                        perspective: 0.18
-                    )
-                    .offset(x: off.width, y: off.height - subObjectSize / 2)
-                    .allowsHitTesting(false)
+                let hasShadow = isoGroundShadow(for: item.building)
+
+                ZStack {
+                    // Iso ground shadow under the sprite (only for elements that touch ground)
+                    if hasShadow {
+                        IsometricDiamond()
+                            .fill(Color.black.opacity(0.22))
+                            .frame(width: subObjectSize * 0.6, height: subObjectSize * 0.3)
+                            .blur(radius: 1.2)
+                            .offset(y: subObjectSize / 2 - subObjectSize * 0.06)
+                    }
+
+                    BuildingPixelView(building: item.building, size: subObjectSize)
+                        .rotation3DEffect(
+                            .degrees(tilt),
+                            axis: (x: 0.25, y: 1, z: 0),
+                            anchor: .bottom,
+                            perspective: 0.35
+                        )
+                }
+                .shadow(color: .black.opacity(item.isDecoration ? 0.22 : 0.35),
+                        radius: item.isDecoration ? 1.5 : 2, x: 0, y: 1.5)
+                .offset(x: off.width, y: off.height - subObjectSize / 2)
+                .allowsHitTesting(false)
             }
         }
         // Restrict hit area to the diamond top face so adjacent tiles don't overlap
