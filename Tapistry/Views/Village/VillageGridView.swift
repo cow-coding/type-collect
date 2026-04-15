@@ -275,30 +275,53 @@ struct VillageTileView: View {
                     .allowsHitTesting(false)
             }
 
-            // Editor mode: sub-cell tap targets + selection highlight
-            if onSubCellTap != nil || selectedSubCell != nil {
-                ForEach(0..<VillageTile.subGridSize, id: \.self) { sr in
-                    ForEach(0..<VillageTile.subGridSize, id: \.self) { sc in
-                        let off = subCellOffset(subRow: sr, subCol: sc)
-                        let diamondW = blockSize / 3
-                        let diamondH = blockSize / 6
-                        let isSel = selectedSubCell.map { $0.0 == sr && $0.1 == sc } ?? false
+            // Editor mode: selection highlight (visual only, does not hit-test)
+            if let sel = selectedSubCell {
+                let off = subCellOffset(subRow: sel.0, subCol: sel.1)
+                IsometricDiamond()
+                    .fill(Color.yellow.opacity(0.30))
+                    .overlay(
+                        IsometricDiamond()
+                            .stroke(Color.yellow, lineWidth: 1.5)
+                    )
+                    .frame(width: blockSize / 3, height: blockSize / 6)
+                    .offset(x: off.width, y: off.height)
+                    .allowsHitTesting(false)
+            }
 
-                        ZStack {
-                            IsometricDiamond()
-                                .fill(isSel ? Color.yellow.opacity(0.30) : Color.white.opacity(0.001))
-                            if isSel {
-                                IsometricDiamond()
-                                    .stroke(Color.yellow, lineWidth: 1.5)
-                            }
-                        }
-                        .frame(width: diamondW, height: diamondH)
-                        .offset(x: off.width, y: off.height)
-                        .contentShape(IsometricDiamond())
-                        .onTapGesture {
-                            onSubCellTap?(sr, sc)
-                        }
-                    }
+            // Editor mode: single tap-catcher over the top-face diamond that
+            // resolves the tapped sub-cell mathematically from the tap location.
+            // This avoids z-order ambiguity between 9 overlapping diamond hit
+            // shapes and gives a generous tap target for every cell.
+            if let handler = onSubCellTap {
+                GeometryReader { geo in
+                    Color.clear
+                        .contentShape(TopFaceDiamondHitArea())
+                        .gesture(
+                            SpatialTapGesture(coordinateSpace: .local)
+                                .onEnded { value in
+                                    // Convert tap location into the ZStack's centered
+                                    // coordinate space (origin at tile center), then
+                                    // remove subOriginY so iso math is anchored at
+                                    // sub-cell (0,0).
+                                    let cx = geo.size.width / 2
+                                    let cy = geo.size.height / 2
+                                    let x = value.location.x - cx
+                                    let y = value.location.y - cy - subOriginY
+                                    // Forward mapping:
+                                    //   x = (subCol - subRow) * subStepX
+                                    //   y = (subCol + subRow) * subStepY
+                                    // Inverse:
+                                    let u = x / subStepX       // = subCol - subRow
+                                    let v = y / subStepY       // = subCol + subRow
+                                    let subCol = Int(((u + v) / 2).rounded())
+                                    let subRow = Int(((v - u) / 2).rounded())
+                                    let last = VillageTile.subGridSize - 1
+                                    let r = max(0, min(last, subRow))
+                                    let c = max(0, min(last, subCol))
+                                    handler(r, c)
+                                }
+                        )
                 }
             }
         }
