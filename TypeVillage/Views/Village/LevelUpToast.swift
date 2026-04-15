@@ -11,6 +11,7 @@ final class LevelUpToastManager {
     private var hideTask: DispatchWorkItem?
 
     func show(fromLevel: Int, toLevel: Int, unlocked: [BuildingType]) {
+        guard AppSettings.shared.showDropNotifications else { return }
         DispatchQueue.main.async { [weak self] in
             self?.hideTask?.cancel()
             self?.popover?.close()

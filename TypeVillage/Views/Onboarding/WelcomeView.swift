@@ -5,10 +5,9 @@ struct WelcomeView: View {
 
     @State private var currentStep = 0
 
-    // Design tokens
+    // Design tokens (kept inline until a proper redesign)
     private let surface = Color(red: 0.047, green: 0.055, blue: 0.071)
     private let surfaceContainerHigh = Color(red: 0.11, green: 0.125, blue: 0.15)
-    private let surfaceContainerLowest = Color.black
     private let onSurface = Color(red: 0.886, green: 0.898, blue: 0.937)
     private let outline = Color(red: 0.447, green: 0.459, blue: 0.494)
     private let primaryColor = Color(red: 0.757, green: 0.502, blue: 1.0)
@@ -18,7 +17,6 @@ struct WelcomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Step content (fixed height so all steps share the same frame)
             Group {
                 switch currentStep {
                 case 0: stepTitle
@@ -33,9 +31,7 @@ struct WelcomeView: View {
             ))
             .animation(.easeInOut(duration: 0.3), value: currentStep)
 
-            // Step indicator + button
             VStack(spacing: 16) {
-                // Dots
                 HStack(spacing: 8) {
                     ForEach(0..<totalSteps, id: \.self) { i in
                         Circle()
@@ -45,7 +41,6 @@ struct WelcomeView: View {
                     }
                 }
 
-                // Button
                 Button {
                     if currentStep < totalSteps - 1 {
                         currentStep += 1
@@ -95,63 +90,33 @@ struct WelcomeView: View {
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(onSurface)
 
-            Text("타이핑으로 키캡을 수집하세요")
+            Text("타이핑으로 마을을 키워보세요")
                 .font(.system(size: 15))
                 .foregroundColor(outline)
             Spacer()
         }
     }
 
-    // MARK: - Step 2: Concept
+    // MARK: - Step 2: Concept (placeholder — to be redesigned)
 
     private var stepConcept: some View {
         VStack(spacing: 20) {
             Spacer().frame(height: 24)
-            Text("6단계 레리티 키캡")
+            Text("키 입력으로 XP 획득")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(onSurface)
 
-            Text("타이핑할수록 다양한 키캡이 드롭됩니다.\n희귀한 키캡일수록 등장 확률이 낮아요.")
+            Text("타이핑할수록 마을이 레벨업합니다.\n새로운 건물과 장식이 해금되죠.")
                 .font(.system(size: 13))
                 .foregroundColor(outline)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            // All 6 rarity keycaps
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 12) {
-                ForEach(Rarity.allCases, id: \.self) { rarity in
-                    let set = setForRarity(rarity)
-                    let color = KeycapCatalog.sets.first { $0.name == set }?.palette[rarity]?.first ?? "#9370DB"
-                    let legend = legendForRarity(rarity)
-
-                    VStack(spacing: 4) {
-                        KeycapShapeView(
-                            primaryColor: color,
-                            legendCharacter: legend,
-                            rarity: rarity,
-                            isCollected: true,
-                            size: 44,
-                            widthUnit: 1.0,
-                            setName: set
-                        )
-
-                        if rarity.isRainbow {
-                            RainbowText(
-                                rarity.displayName.uppercased(),
-                                font: .system(size: 8, weight: .bold)
-                            )
-                        } else {
-                            Text(rarity.displayName.uppercased())
-                                .font(.system(size: 8, weight: .bold))
-                                .tracking(0.5)
-                                .foregroundColor(rarity.color)
-                        }
-                    }
-                }
+            HStack(spacing: 12) {
+                conceptEmoji("🌳", label: "Lv.1")
+                conceptEmoji("🏠", label: "Lv.5")
+                conceptEmoji("🪣", label: "Lv.10")
+                conceptEmoji("🌾", label: "Lv.20")
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
@@ -160,6 +125,17 @@ struct WelcomeView: View {
                     .fill(surfaceContainerHigh)
             )
             .padding(.horizontal, 32)
+        }
+    }
+
+    private func conceptEmoji(_ emoji: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(emoji)
+                .font(.system(size: 36))
+            Text(label)
+                .font(.system(size: 9, weight: .bold))
+                .tracking(0.5)
+                .foregroundColor(primaryColor)
         }
     }
 
@@ -184,7 +160,6 @@ struct WelcomeView: View {
                 .foregroundColor(outline)
                 .padding(.horizontal, 32)
 
-            // Privacy details
             VStack(spacing: 0) {
                 privacyRow(
                     icon: "keyboard",
@@ -211,8 +186,6 @@ struct WelcomeView: View {
             Spacer()
         }
     }
-
-    // MARK: - Helpers
 
     private func privacyRow(icon: String, title: String, detail: String, isLast: Bool = false) -> some View {
         HStack(spacing: 12) {
@@ -242,28 +215,6 @@ struct WelcomeView: View {
                     .frame(height: 0.5)
                     .padding(.leading, 50)
             }
-        }
-    }
-
-    private func setForRarity(_ rarity: Rarity) -> String {
-        switch rarity {
-        case .common: return "Mechanical Classics"
-        case .uncommon: return "Retro Computing"
-        case .rare: return "Space Theme"
-        case .epic: return "Artisan Collection"
-        case .legendary: return "Nature Elements"
-        case .eternal: return "Artisan Collection"
-        }
-    }
-
-    private func legendForRarity(_ rarity: Rarity) -> String {
-        switch rarity {
-        case .common: return "A"
-        case .uncommon: return "S"
-        case .rare: return "D"
-        case .epic: return "F"
-        case .legendary: return "G"
-        case .eternal: return "H"
         }
     }
 }

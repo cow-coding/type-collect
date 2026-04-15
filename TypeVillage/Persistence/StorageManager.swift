@@ -2,7 +2,6 @@ import Foundation
 
 struct UserStats: Codable {
     var totalKeystrokes: Int = 0
-    var keystrokesSinceLastDrop: Int = 0
     var todayKeystrokes: Int = 0
     var todayDate: String = ""  // "yyyy-MM-dd" format
 }
@@ -24,94 +23,8 @@ final class StorageManager {
         )
     }
 
-    private var collectionURL: URL {
-        directory.appendingPathComponent("collection.json")
-    }
-
     private var statsURL: URL {
         directory.appendingPathComponent("stats.json")
-    }
-
-    // MARK: - Collection
-
-    func saveCollection(_ items: [CollectedKeycap], sync: Bool = false) {
-        let work = { [collectionURL] in
-            do {
-                let data = try JSONEncoder().encode(items)
-                try data.write(to: collectionURL, options: .atomic)
-            } catch {
-                #if DEBUG
-                print("[StorageManager] Save collection failed: \(error)")
-                #endif
-            }
-        }
-        if sync {
-            dispatchPrecondition(condition: .notOnQueue(saveQueue))
-            saveQueue.sync { work() }
-        } else {
-            saveQueue.async { work() }
-        }
-    }
-
-    func loadCollection() -> [CollectedKeycap] {
-        guard let data = try? Data(contentsOf: collectionURL) else { return [] }
-
-        // Try new format first
-        if let collection = try? JSONDecoder().decode([CollectedKeycap].self, from: data) {
-            return collection
-        }
-
-        // Migrate from old format (id: UUID, collectedAt: Date)
-        // Try multiple date decoding strategies
-        for strategy in [JSONDecoder.DateDecodingStrategy.deferredToDate, .secondsSince1970, .iso8601] {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = strategy
-            if let legacy = try? decoder.decode([LegacyCollectedKeycap].self, from: data), !legacy.isEmpty {
-                #if DEBUG
-                print("[StorageManager] Migrating \(legacy.count) legacy keycaps (strategy: \(strategy))")
-                #endif
-                var migrated: [String: CollectedKeycap] = [:]
-                for old in legacy {
-                    let key = old.keycap.id
-                    if var existing = migrated[key] {
-                        existing.count += 1
-                        if old.collectedAt > existing.lastCollectedAt {
-                            existing.lastCollectedAt = old.collectedAt
-                        }
-                        migrated[key] = existing
-                    } else {
-                        migrated[key] = CollectedKeycap(
-                            id: key,
-                            keycap: old.keycap,
-                            count: 1,
-                            firstCollectedAt: old.collectedAt,
-                            lastCollectedAt: old.collectedAt,
-                            keystrokeNumber: old.keystrokeNumber
-                        )
-                    }
-                }
-                let result = Array(migrated.values)
-                saveCollection(result)
-                return result
-            }
-        }
-
-        // Backup corrupt file before returning empty
-        let backupURL = directory.appendingPathComponent("collection.json.bak")
-        try? fileManager.removeItem(at: backupURL)
-        try? fileManager.copyItem(at: collectionURL, to: backupURL)
-        #if DEBUG
-        print("[StorageManager] Could not parse collection data, backed up to collection.json.bak")
-        #endif
-        return []
-    }
-
-    // Legacy format for migration
-    private struct LegacyCollectedKeycap: Codable {
-        let id: UUID
-        let keycap: Keycap
-        let collectedAt: Date
-        let keystrokeNumber: Int
     }
 
     // MARK: - Stats

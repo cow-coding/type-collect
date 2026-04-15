@@ -24,7 +24,7 @@ final class WelcomeWindowController: NSObject, NSWindowDelegate {
         let hostingController = NSHostingController(rootView: welcomeView)
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 480),
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 520),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -35,7 +35,7 @@ final class WelcomeWindowController: NSObject, NSWindowDelegate {
         window.appearance = NSAppearance(named: .darkAqua)
         window.backgroundColor = NSColor(red: 0.047, green: 0.055, blue: 0.071, alpha: 1.0)
         window.contentViewController = hostingController
-        window.setContentSize(NSSize(width: 480, height: 480))
+        window.setContentSize(NSSize(width: 480, height: 520))
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.center()
@@ -49,9 +49,7 @@ final class WelcomeWindowController: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         window = nil
-        // If no other windows are open, go back to accessory mode
-        if CollectionWindowController.shared.isWindowOpen == false {
-            NSApp.setActivationPolicy(.accessory)
-        }
+        // Back to accessory (menu bar only) mode
+        NSApp.setActivationPolicy(.accessory)
     }
 }
