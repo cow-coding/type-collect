@@ -845,24 +845,17 @@ private struct GroundPixelView: View {
 
 // MARK: - Flowers (wind sway)
 
-/// Flowers ground layer with a horizontal shear that waves the petals
-/// left-right like wind catching a meadow. The shear is applied based
-/// on y with the reference at the diamond's vertical midline, so the
-/// upper half of the clipped diamond sways while the lower half stays
-/// relatively planted. Period ≈ 2.4 s, amplitude ±0.08 shear coefficient.
+/// Flowers ground layer that sways left-right as one unit, like a patch
+/// of meadow being blown by a light breeze. Period ≈ 2.4 s, amplitude
+/// ±6% of sprite width.
 private struct FlowersGroundView: View {
     let size: CGFloat
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate
-            let shear = 0.08 * sin(t * 2.0 * .pi / 2.4)
-            PixelSpriteView(art: Sprites.flowersGround, width: size)
-                .transformEffect(
-                    CGAffineTransform(a: 1, b: 0, c: shear, d: 1,
-                                      tx: -shear * size / 2, ty: 0)
-                )
-                .frame(width: size, height: size / 2)
-                .clipShape(DiamondMask())
+            let offsetX = 0.06 * size * sin(t * 2.0 * .pi / 2.4)
+            GroundPixelView(art: Sprites.flowersGround, size: size)
+                .offset(x: offsetX)
         }
     }
 }
