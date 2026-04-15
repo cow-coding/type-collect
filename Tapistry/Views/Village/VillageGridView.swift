@@ -210,75 +210,32 @@ struct VillageTileView: View {
     }
 }
 
-/// Ground layer: tints the top face + scatters small emoji dots
+/// Ground layer: renders a pixel-art ground sprite clipped to the top-face diamond.
 struct GroundLayerView: View {
     let building: BuildingType
     let blockSize: CGFloat
 
-    private var tint: Color {
-        switch building.id {
-        case "flowers":    return Color(red: 0.95, green: 0.70, blue: 0.80).opacity(0.55)
-        case "stone_path": return Color(red: 0.58, green: 0.58, blue: 0.60).opacity(0.75)
-        default:           return Color.clear
-        }
-    }
-
     var body: some View {
-        ZStack {
-            IsometricDiamond()
-                .fill(tint)
-                .frame(width: blockSize, height: blockSize / 2)
-
-            // Light outline to integrate with grass edges
-            IsometricDiamond()
-                .stroke(Color.black.opacity(0.15), lineWidth: 0.5)
-                .frame(width: blockSize, height: blockSize / 2)
-
-            // Scattered emoji tokens for character
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.22))
-                .offset(x: -blockSize * 0.15, y: -blockSize * 0.02)
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.18))
-                .offset(x: blockSize * 0.12, y: blockSize * 0.06)
-            Text(building.emoji)
-                .font(.system(size: blockSize * 0.16))
-                .offset(x: -blockSize * 0.02, y: -blockSize * 0.10)
-        }
+        BuildingPixelView(building: building, size: blockSize)
+            // Faint outline so the edge reads cleanly against the grass
+            .overlay(
+                IsometricDiamond()
+                    .stroke(Color.black.opacity(0.18), lineWidth: 0.5)
+                    .frame(width: blockSize, height: blockSize / 2)
+            )
     }
 }
 
-/// Decoration layer: small accent positioned in front-right of the object
+/// Decoration layer: places a pixel-art decoration in the tile's front-right.
 struct DecorationLayerView: View {
     let building: BuildingType
     let blockSize: CGFloat
 
     var body: some View {
-        // Fence wraps the front edge, lamp sits front-right
-        Group {
-            switch building.id {
-            case "fence":
-                // Two stacked fence emojis at front-left and front-right of the diamond
-                ZStack {
-                    Text(building.emoji)
-                        .font(.system(size: blockSize * 0.32))
-                        .offset(x: -blockSize * 0.22, y: blockSize * 0.22)
-                    Text(building.emoji)
-                        .font(.system(size: blockSize * 0.32))
-                        .offset(x: blockSize * 0.22, y: blockSize * 0.22)
-                }
-            case "lamp":
-                Text(building.emoji)
-                    .font(.system(size: blockSize * 0.42))
-                    .offset(x: blockSize * 0.28, y: blockSize * 0.02)
-                    .shadow(color: .yellow.opacity(0.5), radius: 4)
-            default:
-                Text(building.emoji)
-                    .font(.system(size: blockSize * 0.35))
-                    .offset(x: blockSize * 0.22, y: blockSize * 0.18)
-            }
-        }
-        .shadow(color: .black.opacity(0.35), radius: 1.5, x: 0, y: 1)
+        // Smaller than full object; decorations are accents.
+        let decoSize = blockSize * 0.65
+        BuildingPixelView(building: building, size: decoSize)
+            .offset(x: blockSize * 0.18, y: blockSize * 0.18)
     }
 }
 

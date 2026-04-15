@@ -34,7 +34,6 @@ struct PixelSpriteView: View {
             for (y, row) in art.rows.enumerated() {
                 for (x, ch) in row.enumerated() {
                     guard let color = art.colors[ch] else { continue }
-                    // Tiny overlap to avoid hairline gaps between pixels
                     let rect = CGRect(
                         x: CGFloat(x) * pw,
                         y: CGFloat(y) * ph,
@@ -49,183 +48,678 @@ struct PixelSpriteView: View {
     }
 }
 
+// MARK: - Color palette
+
+enum SpriteColors {
+    // Foliage
+    static let leaf         = Color(red: 0.36, green: 0.68, blue: 0.28)
+    static let leafDark     = Color(red: 0.22, green: 0.48, blue: 0.16)
+    static let leafLight    = Color(red: 0.55, green: 0.82, blue: 0.40)
+
+    // Wood
+    static let bark         = Color(red: 0.48, green: 0.30, blue: 0.15)
+    static let barkDark     = Color(red: 0.30, green: 0.18, blue: 0.08)
+    static let barkLight    = Color(red: 0.62, green: 0.42, blue: 0.22)
+    static let plank        = Color(red: 0.72, green: 0.54, blue: 0.32)
+    static let plankDark    = Color(red: 0.50, green: 0.34, blue: 0.16)
+
+    // House
+    static let roof         = Color(red: 0.80, green: 0.30, blue: 0.24)
+    static let roofDark     = Color(red: 0.58, green: 0.18, blue: 0.14)
+    static let roofLight    = Color(red: 0.92, green: 0.46, blue: 0.36)
+    static let wall         = Color(red: 0.94, green: 0.86, blue: 0.66)
+    static let wallDark     = Color(red: 0.72, green: 0.60, blue: 0.40)
+    static let wallLight    = Color(red: 1.0,  green: 0.96, blue: 0.82)
+    static let window       = Color(red: 0.48, green: 0.76, blue: 0.94)
+    static let windowDark   = Color(red: 0.28, green: 0.52, blue: 0.72)
+    static let door         = Color(red: 0.42, green: 0.24, blue: 0.12)
+    static let doorLight    = Color(red: 0.58, green: 0.36, blue: 0.18)
+    static let chimney      = Color(red: 0.52, green: 0.50, blue: 0.52)
+    static let chimneyDark  = Color(red: 0.30, green: 0.28, blue: 0.30)
+
+    // Stone
+    static let stone        = Color(red: 0.62, green: 0.62, blue: 0.64)
+    static let stoneDark    = Color(red: 0.42, green: 0.42, blue: 0.46)
+    static let stoneLight   = Color(red: 0.78, green: 0.78, blue: 0.80)
+
+    // Windmill
+    static let millRoof     = Color(red: 0.58, green: 0.32, blue: 0.20)
+    static let millRoofDark = Color(red: 0.38, green: 0.20, blue: 0.12)
+    static let millBody     = Color(red: 0.94, green: 0.90, blue: 0.80)
+    static let millBodyDark = Color(red: 0.72, green: 0.66, blue: 0.54)
+    static let millBlade    = Color(red: 0.98, green: 0.96, blue: 0.90)
+    static let millBladeDark = Color(red: 0.72, green: 0.68, blue: 0.54)
+    static let millHub      = Color(red: 0.32, green: 0.22, blue: 0.14)
+
+    // Flowers / nature
+    static let grass        = Color(red: 0.44, green: 0.76, blue: 0.30)
+    static let grassDark    = Color(red: 0.30, green: 0.58, blue: 0.18)
+    static let flowerPink   = Color(red: 0.96, green: 0.56, blue: 0.72)
+    static let flowerYellow = Color(red: 0.98, green: 0.86, blue: 0.30)
+    static let flowerWhite  = Color(red: 0.98, green: 0.96, blue: 0.94)
+    static let flowerPurple = Color(red: 0.74, green: 0.56, blue: 0.92)
+
+    // Farm / dirt
+    static let dirt         = Color(red: 0.46, green: 0.30, blue: 0.18)
+    static let dirtDark     = Color(red: 0.30, green: 0.20, blue: 0.12)
+    static let dirtLight    = Color(red: 0.60, green: 0.42, blue: 0.26)
+    static let sprout       = Color(red: 0.40, green: 0.72, blue: 0.30)
+
+    // Lamp
+    static let lampPole     = Color(red: 0.28, green: 0.28, blue: 0.30)
+    static let lampHead     = Color(red: 0.44, green: 0.44, blue: 0.48)
+    static let lampGlow     = Color(red: 1.0,  green: 0.94, blue: 0.62)
+    static let lampGlowSoft = Color(red: 1.0,  green: 0.88, blue: 0.42).opacity(0.55)
+
+    // Shop
+    static let shopAwning   = Color(red: 0.92, green: 0.36, blue: 0.36)
+    static let shopAwning2  = Color(red: 0.98, green: 0.96, blue: 0.90)
+    static let shopWall     = Color(red: 0.96, green: 0.82, blue: 0.58)
+    static let shopWallDark = Color(red: 0.72, green: 0.58, blue: 0.36)
+    static let shopSign     = Color(red: 0.82, green: 0.68, blue: 0.36)
+    static let shopSignDark = Color(red: 0.50, green: 0.38, blue: 0.18)
+
+    // Water (well)
+    static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
+    static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
+
+    // Shadow
+    static let shadow       = Color.black.opacity(0.22)
+    static let shadowLight  = Color.black.opacity(0.12)
+}
+
 // MARK: - Sprite definitions
 
 private enum Sprites {
-    static let leaf        = Color(red: 0.36, green: 0.68, blue: 0.28)
-    static let leafDark    = Color(red: 0.24, green: 0.50, blue: 0.18)
-    static let leafLight   = Color(red: 0.52, green: 0.80, blue: 0.38)
-    static let bark        = Color(red: 0.42, green: 0.26, blue: 0.13)
-    static let barkDark    = Color(red: 0.28, green: 0.17, blue: 0.08)
+    // MARK: Tree (32×32, split into canopy + trunk for sway)
 
-    static let roof        = Color(red: 0.78, green: 0.28, blue: 0.22)
-    static let roofDark    = Color(red: 0.56, green: 0.17, blue: 0.12)
-    static let wall        = Color(red: 0.94, green: 0.84, blue: 0.65)
-    static let wallDark    = Color(red: 0.74, green: 0.62, blue: 0.42)
-    static let window      = Color(red: 0.45, green: 0.72, blue: 0.92)
-    static let door        = Color(red: 0.38, green: 0.22, blue: 0.10)
-    static let chimney     = Color(red: 0.48, green: 0.48, blue: 0.50)
-    static let chimneyDark = Color(red: 0.28, green: 0.28, blue: 0.30)
-
-    static let millBody    = Color(red: 0.92, green: 0.88, blue: 0.78)
-    static let millBodyDark = Color(red: 0.70, green: 0.64, blue: 0.50)
-    static let millRoof    = Color(red: 0.58, green: 0.32, blue: 0.20)
-    static let millBlade   = Color(red: 0.98, green: 0.95, blue: 0.88)
-    static let millBladeDark = Color(red: 0.70, green: 0.65, blue: 0.50)
-    static let millHub     = Color(red: 0.30, green: 0.22, blue: 0.14)
-
-    static let tree = PixelArt(
+    static let treeCanopy = PixelArt(
         rows: [
-            "....gGGGg....",
-            "...gGLLGGg...",
-            "..gGLLLLGGg..",
-            ".gGLGGGGLGGg.",
-            "gGGGGGGGGGGGg",
-            "GGdGGGLLGGdGG",
-            "GGGGGGLLGGGGG",
-            ".gGGdGGGGdGG.",
-            "..gGGGGGGGg..",
-            "...gGGGGGg...",
-            "....ggGGg....",
-            ".....bBb.....",
-            ".....bBb.....",
-            ".....bBb.....",
-            "....bBBBb....",
-            "...xbbBbbx...",
+            "................................",
+            "............gGGGGGGgg...........",
+            "..........gGGGLLLLLGGGg.........",
+            ".........gGGGLLLLLLGGGGg........",
+            "........gGLLLGGGGGLLLLGGg.......",
+            ".......gGLLGGGGddGGLLLGGGGg.....",
+            "......gGGLGGGddGGGGLLGGGGGGg....",
+            "......gGGGGGddGGGGGGGGGGGGGGg...",
+            ".....gGLGGGGGGGGGLLGGGGLGGGGGg..",
+            ".....gGGGGLLGGdGGLLGGGGGGGGGGGg.",
+            "....gGGGGLLLGGGdGGGGGGLGGGGGGGg.",
+            "....gGGLLGGGGGGGGGGGGLLGGdGGGGg.",
+            "....gGGGGGGGGGGdGGGGLLGGGGGGGg..",
+            "....gGGdGGGGGGddGGGGGGGGGGGGg...",
+            ".....gGGGddGGGGGGGGGLLGGGGGGg...",
+            "......gGGGGGGGGGGGGGLLGGGGg.....",
+            ".......gGGGGGGGGGGGGGGGGg.......",
         ],
         colors: [
-            "G": Sprites.leaf,
-            "g": Sprites.leafDark,
-            "L": Sprites.leafLight,
-            "d": Sprites.leafDark,
-            "B": Sprites.bark,
-            "b": Sprites.barkDark,
-            "x": Color.black.opacity(0.18),
+            "G": SpriteColors.leaf,
+            "g": SpriteColors.leafDark,
+            "L": SpriteColors.leafLight,
+            "d": SpriteColors.leafDark,
         ]
     )
 
-    /// Tree canopy only — for sway animation
-    static let treeCanopy = PixelArt(
-        rows: Array(tree.rows.prefix(11)),
-        colors: tree.colors
+    static let treeTrunk = PixelArt(
+        rows: [
+            "..............BBBB..............",
+            "..............BBBB..............",
+            ".............bBBBBb.............",
+            ".............bBBBBb.............",
+            ".............bBBBBb.............",
+            "............bBBBBBBb............",
+            "............bBBBBBBb............",
+            "...........bbBBBBBBbb...........",
+            "..........bbbBBBBBBbbb..........",
+            ".........bbbbbbbbbbbbbb.........",
+            "........xxxxxxxxxxxxxxxx........",
+            ".........xxxxxxxxxxxxxx.........",
+            "...........xxxxxxxxxx...........",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "B": SpriteColors.bark,
+            "b": SpriteColors.barkDark,
+            "x": SpriteColors.shadow,
+        ]
     )
 
-    /// Tree trunk only — stays still
-    static let treeTrunk = PixelArt(
-        rows: Array(tree.rows.suffix(5)),
-        colors: tree.colors
-    )
+    // MARK: House (32×32)
 
     static let house = PixelArt(
         rows: [
-            "......CC......",
-            ".....cCCc.....",
-            "....rRRRRr....",
-            "...rRRRRRRr...",
-            "..rRRRRRRRRr..",
-            ".rRRRRRRRRRRr.",
-            "rRRRRRRRRRRRRr",
-            "WWWWWWWWWWWWWW",
-            "WwXXwWWWWwXXwW",
-            "WwXXwWWWWwXXwW",
-            "WwwwwWWWWwwwwW",
-            "WWWWWWDDWWWWWW",
-            "WWWWWWDDWWWWWW",
-            "WWWWWWDDWWWWWW",
+            "................................",
+            "......................CC........",
+            "......................CC........",
+            "......................CC........",
+            ".....................cCCc.......",
+            "...............rRRr.............",
+            "..............rRRRRr............",
+            ".............rRRRRRRr...........",
+            "............rRRLRRRRRr..........",
+            "...........rRRRRLLRRRRr.........",
+            "..........rRRRRRRRRRRRRr........",
+            ".........rRRRRLLLLRRRRRRr.......",
+            "........rRRRRRRRRRRRRLRRRr......",
+            ".......rRRRRRRRRRRRRRRRRRRr.....",
+            "....WWWWWWWWWWWWWWWWWWWWWWWW....",
+            "....WnnnnnnnnnnnnnnnnnnnnnnW....",
+            "....WnnXXXnnnWWnnnnnnXXXnnnW....",
+            "....WnXXXXXnnWWnnnnXXXXXnnnW....",
+            "....WnXXXXXnnWWnnnnXXXXXnnnW....",
+            "....WnnXXXnnnWWnnnnnXXXnnnnW....",
+            "....Wnnnnnnnnnnnnnnnnnnnnnnn....",
+            "....WnnnnnnnnnnDDDDnnnnnnnnW....",
+            "....WnnnnnnnnnDdddDnnnnnnnnW....",
+            "....WnnnnnnnnnDdLDDnnnnnnnnW....",
+            "....WnnnnnnnnnDdddDnnnnnnnnW....",
+            "....WnnnnnnnnnDdddDnnnnnnnnW....",
+            "....WnnnnnnnnnDDDDDnnnnnnnnW....",
+            "....WWWWWWWWWWWWWWWWWWWWWWWW....",
+            "...KKKKKKKKKKKKKKKKKKKKKKKKKK...",
+            "..xxxxxxxxxxxxxxxxxxxxxxxxxxxx..",
+            "...xxxxxxxxxxxxxxxxxxxxxxxxx....",
+            "................................",
         ],
         colors: [
-            "R": Sprites.roof,
-            "r": Sprites.roofDark,
-            "C": Sprites.chimney,
-            "c": Sprites.chimneyDark,
-            "W": Sprites.wall,
-            "w": Sprites.wallDark,
-            "X": Sprites.window,
-            "D": Sprites.door,
+            "R": SpriteColors.roof,
+            "r": SpriteColors.roofDark,
+            "L": SpriteColors.roofLight,
+            "C": SpriteColors.chimney,
+            "c": SpriteColors.chimneyDark,
+            "W": SpriteColors.wallDark,
+            "n": SpriteColors.wall,
+            "X": SpriteColors.window,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+            "K": SpriteColors.plankDark,
+            "x": SpriteColors.shadow,
         ]
     )
 
-    /// Windmill tower (no blades — blades are a separate rotating sprite)
+    // MARK: Windmill tower + blades (32×32 each)
+
     static let windmillTower = PixelArt(
         rows: [
-            ".....rRRRRr.....",
-            "....rRRRRRRr....",
-            "...rRRRRRRRRr...",
-            "..rRRHHHHHHRRr..",
-            "..rRR.HHHH.RRr..",
-            "..rRR.HHHH.RRr..",
-            "..rRRHHHHHHRRr..",
-            "..WWWWWWWWWWWW..",
-            "..WwwwWWWWwwwW..",
-            "..WwXXWWWWwXXW..",
-            "..WwXXWWWWwXXW..",
-            "..WwwwWWWWwwwW..",
-            "..WWWWWDDWWWWW..",
-            "..WWWWWDDWWWWW..",
-            "..WWWWWDDWWWWW..",
-            ".xWWWWWDDWWWWWx.",
+            "................................",
+            "..............rrrr..............",
+            "............rRRRRRRr............",
+            "..........rRRRRLLLLRRr..........",
+            ".........rRRRRRRRRRRRRr.........",
+            "........rRRRRRRHHRRRRRRr........",
+            ".......rRRRRRRHHHHRRRRRRr.......",
+            "......rRRRRRRHHHHHHRRRRRRr......",
+            "......rRRRRHHHHHHHHHRRRRRr......",
+            ".......rRRRHHHhhhhhHHRRRRr......",
+            "........WWWWWWWWWWWWWWWW........",
+            "........WnnnnnnnnnnnnnnW........",
+            "........WnnnnnnnnnnnnnnW........",
+            "........WnXXXnnnnnnnXXXn........",
+            "........WnXXXnnnnnnnXXXn........",
+            "........WnXXXnnnnnnnXXXn........",
+            "........WnnnnnnnnnnnnnnW........",
+            "........WnnnnnnnnnnnnnnW........",
+            "........WnnnnnnnnnnnnnnW........",
+            "........WnnnnnDDDDnnnnnW........",
+            "........WnnnnnDdddnnnnnW........",
+            "........WnnnnnDdLdnnnnnW........",
+            "........WnnnnnDdddnnnnnW........",
+            "........WnnnnnDdddnnnnnW........",
+            "........WnnnnnDDDDnnnnnW........",
+            "........WWWWWWWWWWWWWWWW........",
+            "........KKKKKKKKKKKKKKKK........",
+            ".......KKKKKKKKKKKKKKKKKK.......",
+            "......xxxxxxxxxxxxxxxxxxxx......",
+            ".......xxxxxxxxxxxxxxxxxx.......",
+            "................................",
+            "................................",
         ],
         colors: [
-            "R": Sprites.millRoof,
-            "r": Sprites.millRoof.opacity(0.7),
-            "H": Sprites.millHub,
-            "W": Sprites.millBody,
-            "w": Sprites.millBodyDark,
-            "X": Sprites.window,
-            "D": Sprites.door,
-            "x": Color.black.opacity(0.18),
+            "R": SpriteColors.millRoof,
+            "r": SpriteColors.millRoofDark,
+            "L": SpriteColors.roofLight,
+            "H": SpriteColors.millHub,
+            "h": SpriteColors.millBodyDark,
+            "W": SpriteColors.millBodyDark,
+            "n": SpriteColors.millBody,
+            "X": SpriteColors.window,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+            "K": SpriteColors.plankDark,
+            "x": SpriteColors.shadow,
         ]
     )
 
-    /// Windmill blades — rotates
     static let windmillBlades = PixelArt(
         rows: [
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
-            "BBBBBBhBBBBBB",
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
-            "......B......",
+            "..............BBB...............",
+            "..............BBB...............",
+            "..............BBB...............",
+            "..............BBB...............",
+            "..............BBB...............",
+            "..............BBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "BBBBBBBBBBBBBBHHHBBBBBBBBBBBBBBB",
+            "bbbbbbbbbbbbbbhhhBBBBBBBBBBBBBBB",
+            "..............bbbbbbbbbbbbbbbbbb",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "..............bBB...............",
+            "................................",
+            "................................",
         ],
         colors: [
-            "B": Sprites.millBlade,
-            "h": Sprites.millHub,
+            "B": SpriteColors.millBlade,
+            "b": SpriteColors.millBladeDark,
+            "H": SpriteColors.millHub,
+            "h": SpriteColors.millHub,
+        ]
+    )
+
+    // MARK: Well (32×32)
+
+    static let well = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "..........WWWWWWWWWWWW..........",
+            ".........WrRRRRRRRRRRrW.........",
+            "........WrRRRRLLRRRRRRrW........",
+            ".......WrRRRRRRRRRRRRRRrW.......",
+            "......WrRRRRRRRRRRRRRRRRrW......",
+            "......WrRRRRRRRRRRRRRRRRrW......",
+            "................................",
+            ".............BBBBBB.............",
+            ".............B....B.............",
+            ".............B....B.............",
+            ".............B....B.............",
+            ".............B....B.............",
+            ".......SSSSSSSSSSSSSSSSSS.......",
+            "......SssssssssssssssssssS......",
+            ".....SssSSSSSSSSSSSSSSSSssS.....",
+            ".....Ssswwwwwwwwwwwwwwwwss......",
+            ".....SssWWWWWWWWWWWWWWWWss......",
+            ".....SssWWWWWWWWWWWWWWWWss......",
+            ".....SssSSSSSSSSSSSSSSSSssS.....",
+            ".....SssssssssssssssssssS.......",
+            "......SSSSSSSSSSSSSSSSSS........",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "W": SpriteColors.millRoofDark,
+            "R": SpriteColors.millRoof,
+            "r": SpriteColors.millRoofDark,
+            "L": SpriteColors.roofLight,
+            "B": SpriteColors.bark,
+            "S": SpriteColors.stoneDark,
+            "s": SpriteColors.stone,
+            "w": SpriteColors.water,
+            "x": SpriteColors.shadow,
+        ]
+    )
+
+    // MARK: Farm (32×32)
+
+    static let farm = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "......ssssssssssssssssssssss....",
+            ".....sSSSSSSSSSSSSSSSSSSSSSSs...",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSSSSSSSSSSSSSSSSSSSSSSSSs..",
+            "....ssssssssssssssssssssssssss..",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "D": SpriteColors.dirt,
+            "d": SpriteColors.dirtLight,
+            "S": SpriteColors.dirtDark,
+            "s": SpriteColors.sprout,
+        ]
+    )
+
+    // MARK: Shop (32×32)
+
+    static let shop = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "..........SSSSSSSSSSSS..........",
+            ".........SgShop SignsgS.........",
+            ".........SSSSSSSSSSSSSS.........",
+            "........aAAAAAAAAAAAAAAAa.......",
+            "........aBBBBBBBBBBBBBBBBa......",
+            ".......aAAAAAAAAAAAAAAAAAAa.....",
+            ".......aBBBBBBBBBBBBBBBBBBBa....",
+            "......WWWWWWWWWWWWWWWWWWWWWW....",
+            "......WnnnnnnnnnnnnnnnnnnnnW....",
+            "......WnXXXXnnnnnnnnXXXXnnnW....",
+            "......WnXXXXnnnnnnnnXXXXnnnW....",
+            "......WnXXXXnnnnnnnnXXXXnnnW....",
+            "......WnXXXXnnnnnnnnXXXXnnnW....",
+            "......WnnnnnnnnDDDDnnnnnnnnW....",
+            "......WnnnnnnnDdddDnnnnnnnnW....",
+            "......WnnnnnnnDdLDDnnnnnnnnW....",
+            "......WnnnnnnnDdddDnnnnnnnnW....",
+            "......WnnnnnnnDdddDnnnnnnnnW....",
+            "......WnnnnnnnDdddDnnnnnnnnW....",
+            "......WnnnnnnnDDDDDnnnnnnnnW....",
+            "......WWWWWWWWWWWWWWWWWWWWWW....",
+            ".....KKKKKKKKKKKKKKKKKKKKKKKK...",
+            "....xxxxxxxxxxxxxxxxxxxxxxxxxx..",
+            ".....xxxxxxxxxxxxxxxxxxxxxxxx...",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "S": SpriteColors.shopSign,
+            "g": SpriteColors.shopSignDark,
+            "A": SpriteColors.shopAwning,
+            "a": SpriteColors.shopSignDark,
+            "B": SpriteColors.shopAwning2,
+            "W": SpriteColors.shopWallDark,
+            "n": SpriteColors.shopWall,
+            "X": SpriteColors.window,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+            "L": SpriteColors.roofLight,
+            "K": SpriteColors.plankDark,
+            "x": SpriteColors.shadow,
+        ]
+    )
+
+    // MARK: Flowers ground (32×32, tileable)
+
+    static let flowersGround = PixelArt(
+        rows: [
+            "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGyGGGGGGGpGGGGGGGGwGGGGGGGuGGGG",
+            "GyyyGGGGGpppGGGGGGwwwGGGGGuuuGGG",
+            "GGyGGGGGGGpGGGGGGGGwGGGGGGGuGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGGGpGGGGGGGuGGGGGGyGGGGGGGGG",
+            "GGGGGGpppGGGGGGuuuGGGGyyyGGGGGGG",
+            "GGGGGGGpGGGGGGGuGGGGGGGyGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGwGGGGGGGGyGGGGGGGGpGGGGGGGGuGG",
+            "GwwwGGGGGGyyyGGGGGGpppGGGGGGuuuG",
+            "GGwGGGGGGGGyGGGGGGGGpGGGGGGGGuGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGpGGGGGGGyGGGGGGGwGGGGGGGGGG",
+            "GGGGpppGGGGGGyyyGGGGGwwwGGGGGGGG",
+            "GGGGGpGGGGGGGyGGGGGGGwGGGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGuGGGGGGGpGGGGGGGGwGGGGGGGyGGGG",
+            "GuuuGGGGGpppGGGGGGwwwGGGGGyyyGGG",
+            "GGuGGGGGGGpGGGGGGGGwGGGGGGGyGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGGGyGGGGGGGuGGGGGGpGGGGGGGGG",
+            "GGGGGGyyyGGGGGGuuuGGGGpppGGGGGGG",
+            "GGGGGGGyGGGGGGGuGGGGGGGpGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGwGGGGGGGGpGGGGGGGGyGGGGGGGGuGG",
+            "GwwwGGGGGGpppGGGGGGyyyGGGGGGuuuG",
+            "GGwGGGGGGGGpGGGGGGGGyGGGGGGGGuGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGpGGGGGGGuGGGGGGGyGGGGGGGwGGG",
+            "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        ],
+        colors: [
+            "G": SpriteColors.grass,
+            "g": SpriteColors.grassDark,
+            "p": SpriteColors.flowerPink,
+            "y": SpriteColors.flowerYellow,
+            "w": SpriteColors.flowerWhite,
+            "u": SpriteColors.flowerPurple,
+        ]
+    )
+
+    // MARK: Stone Path ground (32×32)
+
+    static let stonePathGround = PixelArt(
+        rows: [
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSSSsSGGsSSSsSSSGGSSSsSSSssSSSG",
+            "GSssSssSGsSssSssSGSssSsssSsSSsSG",
+            "GssSSsssGsssSSssSsSssSSSsSsSSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSssSSSsSGSsSSsSSsGSSSsSSsSSsSSG",
+            "GSSSssSssGSssSsSSSGSssSSSssSSsSG",
+            "GSssSsSSSGSsSSSssSGSsSSsSSSsSSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GsSSsSSSSGSSsSSSsSGSsSSsSsSSSsSG",
+            "GSssSsSSsGSsSsSSsSGSSSsSSSsSSsSG",
+            "GSSsSSSSSGsSSsSSsSGSsSsSsSSSsSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSSsSSsSGSsSsSSSsGsSsSSsSSsSSsG",
+            "GsSsSSSsSGSSsSSsSSGSsSsSsSsSSsSG",
+            "GSsSSsSsSGSSsSSSsSGSsSsSSsSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSsSsGSsSsSsSsGsSsSSsSSSsSSG",
+            "GsSSsSsSsGsSsSSsSSGSsSSSSsSsSSsG",
+            "GSSSsSsSsGsSSSsSSsGSsSsSsSsSsSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSSSsGSSSSssSSGSsSsSSsSSSssG",
+            "GssSsSsSSGSsSsSSSsGSSSsSSSsSSsSG",
+            "GSsSSsSSsGSsSSsSSsGSsSsSsSSSSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSsSsGsSSsSsSSGSsSSsSsSSsSSG",
+            "GsSSsSsSSGSSsSSsSSGSsSSsSsSSsSsG",
+            "GSsSsSSsSGSsSsSSsSGsSsSsSsSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSsSsSsSGsSsSsSsSGSSsSSsSsSSsSG",
+            "GssSsSSSsGSSsSsSSsGSsSsSsSSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+        ],
+        colors: [
+            "G": SpriteColors.grass,
+            "g": SpriteColors.grassDark,
+            "S": SpriteColors.stone,
+            "s": SpriteColors.stoneLight,
+        ]
+    )
+
+    // MARK: Fence (32×32 decoration)
+
+    static let fence = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP...",
+            "ppppppppppppppppppppppppppppp...",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP...",
+            "ppppppppppppppppppppppppppppp...",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "....pPp............pPp..........",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "P": SpriteColors.plank,
+            "p": SpriteColors.plankDark,
+        ]
+    )
+
+    // MARK: Lamp (32×32 decoration)
+
+    static let lamp = PixelArt(
+        rows: [
+            "................................",
+            ".............YYYY...............",
+            "............YyyyyY..............",
+            "...........YyyyyyyY.............",
+            "...........YyyyyyyY.............",
+            "...........YyyyyyyY.............",
+            "............YyyyyY..............",
+            ".............YYYY...............",
+            "............HHHHHH..............",
+            "............HHLLHH..............",
+            "............HHLLHH..............",
+            "............HHHHHH..............",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            ".............pPPp...............",
+            "............ppPPpp..............",
+            "...........pppPPppp.............",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "Y": SpriteColors.lampGlowSoft,
+            "y": SpriteColors.lampGlow,
+            "L": SpriteColors.lampGlow,
+            "H": SpriteColors.lampHead,
+            "P": SpriteColors.lampPole,
+            "p": SpriteColors.shadow,
         ]
     )
 }
 
+// MARK: - Isometric diamond shape (for ground clipping)
+
+private struct DiamondMask: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let cx = rect.midX, cy = rect.midY
+        let hw = rect.width / 2, hh = rect.height / 2
+        p.move(to: CGPoint(x: cx, y: cy - hh))
+        p.addLine(to: CGPoint(x: cx + hw, y: cy))
+        p.addLine(to: CGPoint(x: cx, y: cy + hh))
+        p.addLine(to: CGPoint(x: cx - hw, y: cy))
+        p.closeSubpath()
+        return p
+    }
+}
+
 // MARK: - Dispatcher
 
-/// Renders a building using pixel-art for the upgraded set (tree/house/windmill),
-/// falls back to emoji for everything else.
+/// Renders a building using pixel-art for all known building types.
 struct BuildingPixelView: View {
     let building: BuildingType
     let size: CGFloat
 
     var body: some View {
         switch building.id {
-        case "tree":     TreePixelView(size: size)
-        case "house":    HousePixelView(size: size)
-        case "windmill": WindmillPixelView(size: size)
-        default:         EmojiBuildingView(building: building, size: size)
+        case "tree":       TreePixelView(size: size)
+        case "house":      HousePixelView(size: size)
+        case "windmill":   WindmillPixelView(size: size)
+        case "well":       PixelSpriteView(art: Sprites.well, width: size)
+        case "farm":       PixelSpriteView(art: Sprites.farm, width: size)
+        case "shop":       PixelSpriteView(art: Sprites.shop, width: size)
+        case "fence":      PixelSpriteView(art: Sprites.fence, width: size)
+        case "lamp":       LampPixelView(size: size)
+        case "flowers":    GroundPixelView(art: Sprites.flowersGround, size: size)
+        case "stone_path": GroundPixelView(art: Sprites.stonePathGround, size: size)
+        default:
+            // Fallback to emoji for any unexpected id
+            Text(building.emoji).font(.system(size: size * 0.8))
         }
     }
 }
 
-private struct EmojiBuildingView: View {
-    let building: BuildingType
+// MARK: - Ground (clipped to isometric diamond)
+
+/// Renders a ground-layer sprite masked to the isometric top-face diamond.
+private struct GroundPixelView: View {
+    let art: PixelArt
     let size: CGFloat
 
     var body: some View {
-        Text(building.emoji)
-            .font(.system(size: size * 0.8))
+        PixelSpriteView(art: art, width: size)
+            .frame(width: size, height: size / 2)  // top face aspect
+            .clipShape(DiamondMask())
     }
 }
 
@@ -235,9 +729,8 @@ private struct TreePixelView: View {
     let size: CGFloat
     @State private var sway: Double = 0
 
-    // Full tree grid: 13 cols × 16 rows. Fit into size × size so pixelSize = size/16
-    // and sprite width = 13/16 × size (centered horizontally in the square frame).
-    private var spriteWidth: CGFloat { size * 13 / 16 }
+    // Full tree: 32 wide × (17 canopy + 15 trunk) = 32×32 at size scale
+    private var spriteWidth: CGFloat { size }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -259,22 +752,21 @@ private struct TreePixelView: View {
 private struct HousePixelView: View {
     let size: CGFloat
 
-    // House grid: 14×14, pixels are square. Chimney is at cols 6-7, top.
-    private var pixelSize: CGFloat { size / 14 }
-    private var chimneyCenterX: CGFloat { pixelSize * 6.5 - size / 2 }
+    // House grid 32×32. Chimney at cols 22-23, rows 1-3.
+    private var pixelSize: CGFloat { size / 32 }
+    private var chimneyCenterX: CGFloat { pixelSize * 22.5 - size / 2 }
 
     var body: some View {
         ZStack {
             PixelSpriteView(art: Sprites.house, width: size)
 
-            // Three smoke puffs, each on its own phase-offset loop
             ForEach(0..<3, id: \.self) { i in
                 SmokePuff(
                     baseOffsetX: chimneyCenterX,
                     travelHeight: size * 0.35,
-                    puffSize: pixelSize * 1.3,
+                    puffSize: pixelSize * 2.2,
                     phaseOffset: Double(i) * 0.33,
-                    topOfHouseY: -size / 2 + pixelSize
+                    topOfHouseY: -size / 2 + pixelSize * 2
                 )
             }
         }
@@ -282,20 +774,18 @@ private struct HousePixelView: View {
     }
 }
 
-/// A single smoke puff that rises from the chimney, drifts, fades, and loops.
-/// Driven by TimelineView so each puff's phase is independent and stable across redraws.
 private struct SmokePuff: View {
     let baseOffsetX: CGFloat
     let travelHeight: CGFloat
     let puffSize: CGFloat
-    let phaseOffset: Double       // 0..1
+    let phaseOffset: Double
     let topOfHouseY: CGFloat
     let duration: Double = 2.4
 
     var body: some View {
         TimelineView(.animation) { context in
             let t = context.date.timeIntervalSinceReferenceDate / duration + phaseOffset
-            let p = t.truncatingRemainder(dividingBy: 1.0) // 0..1
+            let p = t.truncatingRemainder(dividingBy: 1.0)
             Circle()
                 .fill(Color.white.opacity(0.75))
                 .frame(width: puffSize, height: puffSize)
@@ -315,21 +805,19 @@ private struct WindmillPixelView: View {
     let size: CGFloat
     @State private var angle: Double = 0
 
-    /// Hub center in the 16×16 tower grid: col 7.5 (midpoint of HHHHHH cols 5-10), row 4.5
-    private var hubCenterX: CGFloat { size * (7.5 / 16.0) }
-    private var hubCenterY: CGFloat { size * (4.5 / 16.0) }
+    // Tower grid (32×32): hub at col 15.5, row 7.
+    // Blades grid (32×32): hub cross at col 15.5, row 13.5.
+    private let bladeAnchor = UnitPoint(x: 15.5 / 32.0, y: 13.5 / 32.0)
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             PixelSpriteView(art: Sprites.windmillTower, width: size)
 
-            // Blades centered on hub
-            PixelSpriteView(art: Sprites.windmillBlades, width: size * (13.0 / 16.0))
-                .rotationEffect(.degrees(angle))
-                .offset(
-                    x: hubCenterX - (size * 13.0 / 16.0) / 2,
-                    y: hubCenterY - (size * 13.0 / 16.0) / 2
-                )
+            // Blade frame is size×size. For the blade's hub pixel to sit at the
+            // tower's hub pixel, shift blade up by (13.5 - 7) × pixelSize.
+            PixelSpriteView(art: Sprites.windmillBlades, width: size)
+                .rotationEffect(.degrees(angle), anchor: bladeAnchor)
+                .offset(y: size * (7.0 - 13.5) / 32.0)
         }
         .frame(width: size, height: size)
         .onAppear {
@@ -337,5 +825,22 @@ private struct WindmillPixelView: View {
                 angle = 360
             }
         }
+    }
+}
+
+// MARK: - Lamp (light flicker)
+
+private struct LampPixelView: View {
+    let size: CGFloat
+    @State private var flicker: Double = 1.0
+
+    var body: some View {
+        PixelSpriteView(art: Sprites.lamp, width: size)
+            .shadow(color: SpriteColors.lampGlow.opacity(flicker * 0.6), radius: 6)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                    flicker = 0.75
+                }
+            }
     }
 }
