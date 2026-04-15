@@ -210,7 +210,7 @@ struct VillageTileView: View {
         case "house":    return 4   // iso redraw: content rows 4-27, rows 28-31 empty
         case "shop":     return 2
         case "tree":     return 2
-        case "lamp":     return 8   // compact lamp: content rows 10-23, rows 24-31 empty
+        case "lamp":     return 4   // compact lamp, anchored higher on sub-cell
         default:         return 0
         }
     }
