@@ -23,10 +23,6 @@ struct MenuBarContentView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
 
-            #if DEBUG
-            debugControls
-            #endif
-
             Spacer()
             footerSection
         }
@@ -120,28 +116,6 @@ struct MenuBarContentView: View {
             alignment: .bottom
         )
     }
-
-    #if DEBUG
-    private var debugControls: some View {
-        VStack(spacing: 4) {
-            Divider().padding(.horizontal, 12)
-            Text("DEBUG")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(.red.opacity(0.6))
-
-            HStack(spacing: 4) {
-                Button("Lv1") { appState.village.setLevel(1) }
-                Button("Lv5") { appState.village.setLevel(5) }
-                Button("Lv10") { appState.village.setLevel(10) }
-                Button("Lv20") { appState.village.setLevel(20) }
-                Button("+100XP") { appState.village.addXP(100) }
-            }
-            .font(.system(size: 9))
-            .buttonStyle(.plain)
-        }
-        .padding(.vertical, 4)
-    }
-    #endif
 
     private var footerSection: some View {
         VStack(spacing: 0) {

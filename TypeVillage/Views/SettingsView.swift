@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var settings = AppSettings.shared
+    var village: VillageState? = nil
 
     private var lang: AppLanguage { settings.language }
 
@@ -40,6 +41,12 @@ struct SettingsView: View {
                 .padding(8)
             }
 
+            #if DEBUG
+            if let village = village {
+                DebugSection(village: village)
+            }
+            #endif
+
             Spacer()
 
             HStack {
@@ -51,8 +58,9 @@ struct SettingsView: View {
             }
         }
         .padding(24)
-        .frame(width: 420, height: 360)
+        .frame(width: 420, height: 440)
     }
+
 
     private func infoRow(_ label: String, value: String) -> some View {
         HStack {
@@ -64,3 +72,56 @@ struct SettingsView: View {
         }
     }
 }
+
+#if DEBUG
+private struct DebugSection: View {
+    @ObservedObject var village: VillageState
+
+    var body: some View {
+        GroupBox("Debug") {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 6) {
+                    Text("Level")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    ForEach([1, 5, 10, 15, 20], id: \.self) { lv in
+                        Button("Lv\(lv)") { village.setLevel(lv) }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                    }
+                }
+
+                HStack(spacing: 6) {
+                    Text("XP")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Button("+10") { village.addXP(10) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("+100") { village.addXP(100) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("+1000") { village.addXP(1000) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("Unlock All") { village.unlockAll() }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                }
+
+                HStack {
+                    Text("Current")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("Lv.\(village.level) · \(village.xp) XP")
+                        .font(.system(size: 11, design: .monospaced))
+                }
+            }
+            .padding(8)
+        }
+    }
+}
+#endif
