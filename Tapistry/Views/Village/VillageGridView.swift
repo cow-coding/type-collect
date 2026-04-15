@@ -207,7 +207,7 @@ struct VillageTileView: View {
         case "farm":     return 10
         case "fence":    return 5
         case "windmill": return 3
-        case "house":    return 6   // iso redraw: content rows 5-25, rows 26-31 empty
+        case "house":    return 4   // iso redraw: content rows 4-27, rows 28-31 empty
         case "shop":     return 2
         case "tree":     return 2
         default:         return 0
