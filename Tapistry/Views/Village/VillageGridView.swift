@@ -190,10 +190,14 @@ struct VillageTileView: View {
         return CGSize(width: x, height: y)
     }
 
-    /// Iso Y-shear applied to each sprite so its top/bottom edges become parallel to the
-    /// block's top-face diamond edges (2:1 iso slope). Positive value tilts the right
-    /// side downward, matching the top-right and bottom-left diamond edges.
-    /// Upright billboards (tree, lamp) and ground layers return 0 (no shear).
+    /// Iso Y-shear applied to each sprite.
+    ///
+    /// Negative b=-0.5 aligns the sprite's horizontal edges with the top-LEFT diamond
+    /// edge (slope -1:2), so the building's south/front face is visible — i.e. it
+    /// "faces" the viewer who looks from the south-east. This is the correct orientation
+    /// for a building sitting on the tile with its entrance/windows facing the camera.
+    ///
+    /// Billboards (tree, lamp) and ground layers return 0 (no shear).
     private func isoShearY(for building: BuildingType) -> CGFloat {
         switch building.id {
         case "tree", "lamp":
@@ -201,7 +205,7 @@ struct VillageTileView: View {
         case "flowers", "stone_path":
             return 0
         default:
-            return 0.5        // exact 2:1 iso slope
+            return -0.5       // south face visible — top-right corner rises to match left diamond edge
         }
     }
 
@@ -240,17 +244,27 @@ struct VillageTileView: View {
 
             // Sub-cell contents — objects and decorations painted back-to-front.
             //
-            // Structures are Y-sheared by the 2:1 iso slope so their horizontal edges
-            // end up parallel to the diamond top-face edges ("set into" the quarter-view
-            // scene). Tree and lamp stay flat as iso billboards — the pixel-art
-            // convention for tall vertical elements. Ground layers already fit the
-            // diamond via DiamondMask clipping.
+            // Structures get a negative Y-shear (b = -0.5) so their front/south face
+            // is visible to the SE-looking camera. A hard-edged shadow offset to the
+            // right (+x) and slightly down (+y) along the iso east slope simulates the
+            // east/right wall of the building, giving genuine 3-D depth perception.
+            //
+            // Billboards (tree, lamp) stay upright — iso convention for tall elements.
+            // Ground layers are already diamond-clipped.
             ForEach(renderables) { item in
                 let off = subCellOffset(subRow: item.subRow, subCol: item.subCol)
                 let shear = isoShearY(for: item.building)
                 BuildingPixelView(building: item.building, size: subObjectSize)
                     .transformEffect(
                         CGAffineTransform(a: 1, b: shear, c: 0, d: 1, tx: 0, ty: 0)
+                    )
+                    // East-face depth: hard shadow offset along the iso +0.5 east slope.
+                    // Only applied to structures (shear != 0); billboards and ground omit it.
+                    .shadow(
+                        color: shear != 0 ? Color(white: 0.12).opacity(0.50) : .clear,
+                        radius: 0,
+                        x: subObjectSize * 0.12,
+                        y: subObjectSize * 0.06
                     )
                     .offset(x: off.width, y: off.height - subObjectSize / 2)
                     .allowsHitTesting(false)
