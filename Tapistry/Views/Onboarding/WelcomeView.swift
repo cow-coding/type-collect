@@ -91,7 +91,7 @@ struct WelcomeView: View {
                 .frame(width: 64, height: 64)
                 .foregroundColor(primaryColor)
 
-            Text("TypeVillage")
+            Text("Tapistry")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundColor(onSurface)
 

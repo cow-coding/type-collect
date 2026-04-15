@@ -1,27 +1,27 @@
-name: TypeVillage
+name: Tapistry
 options:
-  bundleIdPrefix: com.typevillage
+  bundleIdPrefix: com.tapistry
   deploymentTarget:
     macOS: "13.0"
   xcodeVersion: "16.0"
   generateEmptyDirectories: true
 
 targets:
-  TypeVillage:
+  Tapistry:
     type: application
     platform: macOS
     sources:
-      - TypeVillage
+      - Tapistry
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.typevillage.app
-        PRODUCT_NAME: TypeVillage
+        PRODUCT_BUNDLE_IDENTIFIER: com.tapistry.app
+        PRODUCT_NAME: Tapistry
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "13.0"
         INFOPLIST_KEY_LSUIElement: YES
-        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 TypeVillage. All rights reserved."
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 Tapistry. All rights reserved."
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Automatic

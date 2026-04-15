@@ -141,7 +141,7 @@ final class VillageState: ObservableObject {
 
     private var saveURL: URL {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            .appendingPathComponent("TypeVillage", isDirectory: true)
+            .appendingPathComponent("Tapistry", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("village.json")
     }

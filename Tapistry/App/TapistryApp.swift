@@ -2,7 +2,7 @@ import SwiftUI
 import ServiceManagement
 
 @main
-struct TypeVillageApp: App {
+struct TapistryApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
@@ -70,7 +70,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "TypeVillage Settings"
+        window.title = "Tapistry Settings"
         window.contentViewController = NSHostingController(rootView: SettingsView(village: appState.village))
         window.isReleasedWhenClosed = false
         window.center()
@@ -142,7 +142,7 @@ extension AppDelegate {
 
             let alert = NSAlert()
             alert.messageText = "디스크 이미지를 마운트 해제할까요?"
-            alert.informativeText = "TypeVillage를 Applications 폴더로 옮긴 후 디스크 이미지를 해제하는 것을 권장합니다."
+            alert.informativeText = "Tapistry를 Applications 폴더로 옮긴 후 디스크 이미지를 해제하는 것을 권장합니다."
             alert.alertStyle = .informational
             alert.addButton(withTitle: "해제")
             alert.addButton(withTitle: "나중에")

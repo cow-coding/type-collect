@@ -1,8 +1,10 @@
-# TypeVillage Pivot — Context Document
+# Tapistry Pivot — Context Document
+
+> **Name note:** Project was renamed from working title `TypeVillage` → final name **Tapistry** (tap + tapestry — keystrokes weave the village). Bundle ID, App Support directory, and all user-facing strings switched over. "TypeVillage" below is kept as historical shorthand.
 
 ## Overview
 
-**Pivot direction**: `CapCha` (keyboard keycap gacha collection) → `TypeVillage` (keyboard-typing-powered village builder).
+**Pivot direction**: `CapCha` (keyboard keycap gacha collection) → `Tapistry` (keyboard-typing-powered village builder, formerly working title `TypeVillage`).
 
 Typing keystrokes is still the core input, but instead of dropping keycaps to collect, each keystroke awards XP that levels up a tiny village shown in a 4×4 isometric grid inside the menu bar popover.
 
