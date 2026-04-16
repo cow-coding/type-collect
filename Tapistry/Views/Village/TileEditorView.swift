@@ -17,6 +17,7 @@ struct TileEditorView: View {
     @State private var snapshot: VillageTile? = nil
     @State private var selectedSub: (Int, Int)? = (1, 1)
     @State private var layer: TileLayer = .object
+    @State private var coinsSpent: Int = 0  // track for cancel-refund
 
     private var lang: AppLanguage { settings.language }
 
@@ -94,22 +95,31 @@ struct TileEditorView: View {
                 .buttonStyle(.plain)
 
                 ForEach(unlockedGrounds) { g in
+                    let canAfford = village.cash >= g.price
                     Button {
-                        village.placeGround(g, row: row, col: col)
+                        if village.spendCash(g.price) {
+                            coinsSpent += g.price
+                            village.placeGround(g, row: row, col: col)
+                        }
                     } label: {
                         VStack(spacing: 1) {
                             BuildingPixelView(building: g, size: 26)
                                 .clipShape(IsometricDiamond())
                                 .frame(width: 26, height: 14)
+                                .opacity(canAfford ? 1.0 : 0.4)
                             Text(g.name.resolve(lang))
-                                .font(.system(size: 8))
+                                .font(.system(size: 7))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
+                            Text("\(g.price)💰")
+                                .font(.system(size: 7, weight: .medium))
+                                .foregroundColor(canAfford ? .yellow : .secondary)
                         }
-                        .frame(width: 44, height: 38)
+                        .frame(width: 44, height: 42)
                         .background(groundButtonBg(isSelected: currentGround == g.id))
                     }
                     .buttonStyle(.plain)
+                    .disabled(!canAfford)
                 }
             }
         }
@@ -239,20 +249,26 @@ struct TileEditorView: View {
                     }
 
                     ForEach(unlocked) { b in
+                        let canAfford = village.cash >= b.price
                         Button {
-                            village.placeSubCell(
-                                b,
-                                row: row, col: col,
-                                subRow: sel.0, subCol: sel.1,
-                                layer: layer
-                            )
+                            if village.spendCash(b.price) {
+                                coinsSpent += b.price
+                                village.placeSubCell(
+                                    b,
+                                    row: row, col: col,
+                                    subRow: sel.0, subCol: sel.1,
+                                    layer: layer
+                                )
+                            }
                         } label: {
                             paletteCell(content: {
                                 BuildingPixelView(building: b, size: 28)
                                     .frame(width: 28, height: 28)
-                            }, label: b.name.resolve(lang), isSelected: currentId == b.id, isRemove: false)
+                                    .opacity(canAfford ? 1.0 : 0.4)
+                            }, label: b.name.resolve(lang), price: b.price, canAfford: canAfford, isSelected: currentId == b.id, isRemove: false)
                         }
                         .buttonStyle(.plain)
+                        .disabled(!canAfford)
                     }
                 }
             }
@@ -262,18 +278,25 @@ struct TileEditorView: View {
     private func paletteCell<Content: View>(
         @ViewBuilder content: () -> Content,
         label: String,
+        price: Int = 0,
+        canAfford: Bool = true,
         isSelected: Bool,
         isRemove: Bool
     ) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 1) {
             content()
-                .frame(height: 28)
+                .frame(height: 24)
             Text(label)
-                .font(.system(size: 9))
+                .font(.system(size: 8))
                 .foregroundColor(.secondary)
                 .lineLimit(1)
+            if !isRemove {
+                Text("\(price)💰")
+                    .font(.system(size: 7, weight: .medium))
+                    .foregroundColor(canAfford ? .yellow : .secondary)
+            }
         }
-        .frame(width: 46, height: 48)
+        .frame(width: 46, height: 52)
         .background(
             RoundedRectangle(cornerRadius: 6)
                 .fill(
@@ -308,6 +331,10 @@ struct TileEditorView: View {
     private func closeKeep() { onClose() }
 
     private func cancel() {
+        // Refund coins spent during this editor session
+        if coinsSpent > 0 {
+            village.addCash(coinsSpent)
+        }
         if let snap = snapshot {
             village.replaceTile(snap, row: row, col: col)
         }

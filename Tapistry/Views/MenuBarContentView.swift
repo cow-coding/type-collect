@@ -15,6 +15,7 @@ struct MenuBarContentView: View {
 
             if appState.isMonitoring {
                 xpBar
+                cashBar
             } else {
                 permissionBanner
             }
@@ -82,6 +83,29 @@ struct MenuBarContentView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+    }
+
+    private var cashBar: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "dollarsign.circle.fill")
+                .font(.system(size: 11))
+                .foregroundColor(.yellow)
+            Text("\(appState.village.cash)")
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundColor(.yellow)
+            Text(L10n.coins.resolve(lang))
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+            Spacer()
+            Image(systemName: "keyboard")
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+            Text("\(appState.todayKeystrokeCount) \(L10n.todayLabel.resolve(lang))")
+                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 6)
     }
 
     private var permissionBanner: some View {
