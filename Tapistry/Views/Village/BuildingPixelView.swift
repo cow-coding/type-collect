@@ -475,56 +475,72 @@ private enum Sprites {
 
     // MARK: Shop (32×32)
 
-    /// Convenience store (편의점) — iso building with flat roof, large glass front,
-    /// and bright sign strip. Uses same 9-point geometry as house but with flat
-    /// roof (T/t) instead of pyramid, glass panels (X) instead of small windows,
-    /// and a colored sign band (S) at the top of the south face.
+    /// Convenience store / supermarket (편의점) — 48×48 hi-res iso building.
+    /// Flat roof with red perimeter trim, brown sign band with text dots,
+    /// blue glass storefront with cream columns, door reaching ground.
     static let shop = PixelArt(
         rows: [
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "..................T.............",
-            "................ttTTT...........",
-            "..............ttttTTTTT.........",
-            "............tttttTTTTTTTTT......",
-            "..........tttttttTTTTTTTTTTW....",
-            "........ttttttttTTTTTTTTTSSn....",
-            "......ttttttttttTTTTTTTSSnnn....",
-            "....EEttttttttttTTTTTSSnnnnnn...",
-            "....eeEEtttttttTTTTSSXXXXXXX...",
-            "....eeeeEEttttTTTSSXXXXXXXXX...",
-            "....eeeeeeEEtTSSXXXXXXXXXXXX...",
-            "....eeeeeeeeESSXXXXXXXXXXXXX...",
-            "....EeeeeeeeESXXDDDXXXXXXXW....",
-            "....EeeeeeeeESXXDdDXXXXW.......",
-            "....EeeeeeeeESXXDDDXXW.........",
-            "......EeeeeeESXXXXW.............",
-            "........EeeeESXXW...............",
-            "..........EeESW.................",
-            "............ES..................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "............................A...................",
+            "..........................AATAA.................",
+            "........................AATTTTTAA...............",
+            "......................AATTTTTTTTTAA.............",
+            "....................AATTTTTTTTTTTTTAA...........",
+            "..................AATTTTTTTTTTTTTTTTTAA.........",
+            "................AATTTTTTTTTTTTTTTTTTTTTAAA......",
+            "..............AATTTTTTTTTTTTTTTTTTTTTTAAAK......",
+            "............AATTTTTTTTTTTTTTTTTTTTTTAAAKbK......",
+            "..........AATTTTTTTTTTTTTTTTTTTTTTAAAKKKKX......",
+            "........AATTTTTTTTTTTTTTTTTTTTTTAAAKbKbXXX......",
+            "......EEATTTTTTTTTTTTTTTTTTTTTAAAKKKKnXXXX......",
+            "......EeEEATTTTTTTTTTTTTTTTTAAAKbKbXXnXXXX......",
+            "......EeeeEEATTTTTTTTTTTTTAAAKKKKXXXXnXXXX......",
+            "......EeeeeeEEATTTTTTTTTAAAKbKbnXXXXXnXXXX......",
+            "......EeeeeeeeEEATTTTTAAAKKKKDDnXXXXXnXXXn......",
+            "......EeeeeeeeeeEEATAAAKbKbXDdDnXXXXXnXnnn......",
+            "......EeeeeeeeeeeeEAAKKKKnXXDdDnXXXXXnnnn.......",
+            "......EeeeeeeeeeeeEKbKbXXnXXDdDnXXXnnnn.........",
+            "......EeeeeeeeeeeeEKKXXXXnXXDdDnXnnnn...........",
+            "......EeeeeeeeeeeeEnXXXXXnXXDdDnnnn.............",
+            "......EEeeeeeeeeeeEnXXXXXnXXDdDnn...............",
+            "........EEeeeeeeeeEnXXXXXnXnDdD.................",
+            "..........EEeeeeeeEnXXXXXnnnD...................",
+            "............EEeeeeEnXXXnnnn.....................",
+            "..............EEeeEnXnnnn.......................",
+            "................EEEnnnn.........................",
+            "..................Enn...........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
-            "T": SpriteColors.stoneLight,     // flat roof (light gray)
-            "t": SpriteColors.stone,          // flat roof east side (shadow)
-            "S": SpriteColors.leafDark,       // sign strip (green, like CU/GS25)
-            "E": SpriteColors.plankDark,      // east wall trim
-            "e": SpriteColors.wallDark,       // east wall body
-            "W": SpriteColors.wallDark,       // south wall trim
-            "X": SpriteColors.window,         // glass panels (large storefront)
-            "D": SpriteColors.door,           // door
-            "d": SpriteColors.doorLight,      // door frame
-            "n": SpriteColors.wall,           // south wall body (above glass)
+            "T": SpriteColors.stoneLight,     // flat roof (uniform gray)
+            "A": SpriteColors.shopAwning,     // red perimeter trim
+            "K": SpriteColors.plankDark,      // brown sign background
+            "b": SpriteColors.plank,          // lighter "text" dots on sign
+            "E": SpriteColors.stoneDark,      // east wall trim (cool gray)
+            "e": SpriteColors.stone,          // east wall body
+            "W": SpriteColors.wallDark,       // south wall base trim
+            "n": SpriteColors.wallLight,      // cream columns + base
+            "X": SpriteColors.windowDark,     // blue glass panels
+            "D": SpriteColors.door,           // door frame
+            "d": SpriteColors.doorLight,      // door panel
         ]
     )
 
