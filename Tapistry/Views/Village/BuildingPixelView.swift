@@ -133,56 +133,48 @@ enum SpriteColors {
 private enum Sprites {
     // MARK: Tree (32×32, split into canopy + trunk for sway)
 
-    static let treeCanopy = PixelArt(
+    /// Compact simple tree — round canopy + thin trunk in a single 32×32 sprite.
+    /// Much smaller than the original detailed tree to fit sub-cell scale.
+    static let tree = PixelArt(
         rows: [
             "................................",
-            "............gGGGGGGgg...........",
-            "..........gGGGLLLLLGGGg.........",
-            ".........gGGGLLLLLLGGGGg........",
-            "........gGLLLGGGGGLLLLGGg.......",
-            ".......gGLLGGGGddGGLLLGGGGg.....",
-            "......gGGLGGGddGGGGLLGGGGGGg....",
-            "......gGGGGGddGGGGGGGGGGGGGGg...",
-            ".....gGLGGGGGGGGGLLGGGGLGGGGGg..",
-            ".....gGGGGLLGGdGGLLGGGGGGGGGGGg.",
-            "....gGGGGLLLGGGdGGGGGGLGGGGGGGg.",
-            "....gGGLLGGGGGGGGGGGGLLGGdGGGGg.",
-            "....gGGGGGGGGGGdGGGGLLGGGGGGGg..",
-            "....gGGdGGGGGGddGGGGGGGGGGGGg...",
-            ".....gGGGddGGGGGGGGGLLGGGGGGg...",
-            "......gGGGGGGGGGGGGGLLGGGGg.....",
-            ".......gGGGGGGGGGGGGGGGGg.......",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "..............GG................",
+            "............GGGGGG..............",
+            "...........GGLGGGG..............",
+            "..........GGGLLGGGGG............",
+            "..........GGGGGGGGG.............",
+            "...........GGGGGGG..............",
+            "............gGGGg...............",
+            "..............BB................",
+            "..............BB................",
+            "..............BB................",
+            "..............BB................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
         ],
         colors: [
             "G": SpriteColors.leaf,
             "g": SpriteColors.leafDark,
             "L": SpriteColors.leafLight,
-            "d": SpriteColors.leafDark,
-        ]
-    )
-
-    static let treeTrunk = PixelArt(
-        rows: [
-            "..............BBBB..............",
-            "..............BBBB..............",
-            ".............bBBBBb.............",
-            ".............bBBBBb.............",
-            ".............bBBBBb.............",
-            "............bBBBBBBb............",
-            "............bBBBBBBb............",
-            "...........bbBBBBBBbb...........",
-            "..........bbbBBBBBBbbb..........",
-            ".........bbbbbbbbbbbbbb.........",
-            "........xxxxxxxxxxxxxxxx........",
-            ".........xxxxxxxxxxxxxx.........",
-            "...........xxxxxxxxxx...........",
-            "................................",
-            "................................",
-        ],
-        colors: [
             "B": SpriteColors.bark,
-            "b": SpriteColors.barkDark,
-            "x": SpriteColors.shadow,
         ]
     )
 
@@ -982,27 +974,25 @@ private struct FarmPixelView: View {
     }
 }
 
-// MARK: - Tree (canopy sway)
+// MARK: - Tree (gentle breeze sway)
 
+/// Compact tree with gentle rotation around the trunk base, giving a
+/// "leaves in the breeze" feel. Period 5s, amplitude ±1.5° — 산들바람.
 private struct TreePixelView: View {
     let size: CGFloat
     @State private var sway: Double = 0
 
-    // Full tree: 32 wide × (17 canopy + 15 trunk) = 32×32 at size scale
-    private var spriteWidth: CGFloat { size }
-
     var body: some View {
-        VStack(spacing: 0) {
-            PixelSpriteView(art: Sprites.treeCanopy, width: spriteWidth)
-                .rotationEffect(.degrees(sway), anchor: .bottom)
-            PixelSpriteView(art: Sprites.treeTrunk, width: spriteWidth)
-        }
-        .frame(width: size, height: size)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-                sway = 2.5
+        PixelSpriteView(art: Sprites.tree, width: size)
+            .rotationEffect(
+                .degrees(sway),
+                anchor: .init(x: 0.5, y: 0.65)  // near trunk base
+            )
+            .onAppear {
+                withAnimation(.easeInOut(duration: 5.0).repeatForever(autoreverses: true)) {
+                    sway = 1.5
+                }
             }
-        }
     }
 }
 

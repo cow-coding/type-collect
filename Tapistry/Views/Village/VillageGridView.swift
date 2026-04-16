@@ -209,7 +209,7 @@ struct VillageTileView: View {
         case "windmill": return 3
         case "house":    return 4   // iso redraw: content rows 4-27, rows 28-31 empty
         case "shop":     return 2
-        case "tree":     return 2
+        case "tree":     return 6   // compact tree: content rows 9-19
         case "lamp":     return 4   // compact lamp, anchored higher on sub-cell
         default:         return 0
         }
