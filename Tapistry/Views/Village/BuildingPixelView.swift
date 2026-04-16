@@ -821,9 +821,9 @@ struct BuildingPixelView: View {
         case "flowers":     FlowersGroundView(size: size)
         case "stone_path":  GroundPixelView(art: Sprites.stonePathGround, size: size)
         // New buildings — emoji fallback until sprites are drawn
-        case "cafe":        Text(building.emoji).font(.system(size: size * 0.6))
-        case "cityhall":    Text(building.emoji).font(.system(size: size * 0.6))
-        case "street_tree": Text(building.emoji).font(.system(size: size * 0.6))
+        case "cafe", "cityhall", "street_tree",
+             "apartment", "hotel", "skyscraper":
+            Text(building.emoji).font(.system(size: size * 0.6))
         default:
             // Fallback to emoji for any unexpected id
             Text(building.emoji).font(.system(size: size * 0.8))
