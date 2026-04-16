@@ -475,55 +475,56 @@ private enum Sprites {
 
     // MARK: Shop (32×32)
 
+    /// Convenience store (편의점) — iso building with flat roof, large glass front,
+    /// and bright sign strip. Uses same 9-point geometry as house but with flat
+    /// roof (T/t) instead of pyramid, glass panels (X) instead of small windows,
+    /// and a colored sign band (S) at the top of the south face.
     static let shop = PixelArt(
         rows: [
             "................................",
             "................................",
             "................................",
-            ".........gggggggggggggggg.......",
-            ".........gSSSSSSSSSSSSSSg.......",
-            ".........gSgSggSgSSgSgSSg.......",
-            ".........gSggSggSSggSSggg.......",
-            ".........gSSSSSSSSSSSSSSg.......",
-            ".........gggggggggggggggg.......",
-            "........aAAAAAAAAAAAAAAAAa......",
-            "........aBBBBBBBBBBBBBBBBa......",
-            "........aAAAAAAAAAAAAAAAAa......",
-            "........aBBBBBBBBBBBBBBBBa......",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDdhDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            ".....KKKKKKKKKKKKKKKKKKKKKK.....",
-            "....xxxxxxxxxxxxxxxxxxxxxxxx....",
-            ".....xxxxxxxxxxxxxxxxxxxxxx.....",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "..................T.............",
+            "................ttTTT...........",
+            "..............ttttTTTTT.........",
+            "............tttttTTTTTTTTT......",
+            "..........tttttttTTTTTTTTTTW....",
+            "........ttttttttTTTTTTTTTSSn....",
+            "......ttttttttttTTTTTTTSSnnn....",
+            "....EEttttttttttTTTTTSSnnnnnn...",
+            "....eeEEtttttttTTTTSSXXXXXXX...",
+            "....eeeeEEttttTTTSSXXXXXXXXX...",
+            "....eeeeeeEEtTSSXXXXXXXXXXXX...",
+            "....eeeeeeeeESSXXXXXXXXXXXXX...",
+            "....EeeeeeeeESXXDDDXXXXXXXW....",
+            "....EeeeeeeeESXXDdDXXXXW.......",
+            "....EeeeeeeeESXXDDDXXW.........",
+            "......EeeeeeESXXXXW.............",
+            "........EeeeESXXW...............",
+            "..........EeESW.................",
+            "............ES..................",
+            "................................",
+            "................................",
             "................................",
             "................................",
         ],
         colors: [
-            "S": SpriteColors.shopSign,
-            "g": SpriteColors.shopSignDark,
-            "A": SpriteColors.shopAwning,
-            "a": SpriteColors.shopSignDark,
-            "B": SpriteColors.shopAwning2,
-            "W": SpriteColors.shopWallDark,
-            "n": SpriteColors.shopWall,
-            "X": SpriteColors.window,
-            "D": SpriteColors.door,
-            "d": SpriteColors.doorLight,
-            "h": SpriteColors.shopSign,
-            "K": SpriteColors.plankDark,
-            "x": SpriteColors.shadow,
+            "T": SpriteColors.stoneLight,     // flat roof (light gray)
+            "t": SpriteColors.stone,          // flat roof east side (shadow)
+            "S": SpriteColors.leafDark,       // sign strip (green, like CU/GS25)
+            "E": SpriteColors.plankDark,      // east wall trim
+            "e": SpriteColors.wallDark,       // east wall body
+            "W": SpriteColors.wallDark,       // south wall trim
+            "X": SpriteColors.window,         // glass panels (large storefront)
+            "D": SpriteColors.door,           // door
+            "d": SpriteColors.doorLight,      // door frame
+            "n": SpriteColors.wall,           // south wall body (above glass)
         ]
     )
 
@@ -992,15 +993,11 @@ private struct WellPixelView: View {
 /// Shop with a tiny rotational sway concentrated near the awning — 0.9° amplitude,
 /// period ≈ 2.1 s, anchored slightly above center so the base of the building stays
 /// planted while the cloth awning appears to catch a light breeze.
+/// Convenience store — static render (no awning animation, clean modern look).
 private struct ShopPixelView: View {
     let size: CGFloat
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
-            let t = ctx.date.timeIntervalSinceReferenceDate
-            let deg = 0.9 * sin(t * 2.0 * .pi / 2.1)
-            PixelSpriteView(art: Sprites.shop, width: size)
-                .rotationEffect(.degrees(deg), anchor: .init(x: 0.5, y: 0.75))
-        }
+        PixelSpriteView(art: Sprites.shop, width: size)
     }
 }
 
