@@ -112,6 +112,11 @@ final class VillageState: ObservableObject {
     func unlockAll() {
         xp = 20_000
     }
+
+    func resetCash() {
+        cash = 0
+        scheduleSave()
+    }
     #endif
 
     // MARK: - Grid
@@ -129,7 +134,7 @@ final class VillageState: ObservableObject {
         scheduleSave()
     }
 
-    /// Place an object or decoration into a specific sub-cell (3×3 within a tile).
+    /// Place an object or decoration into a specific sub-cell (2×2 within a tile).
     func placeSubCell(
         _ buildingType: BuildingType,
         row: Int, col: Int,

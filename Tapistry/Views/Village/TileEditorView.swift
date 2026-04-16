@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Zoomed tile editor — a popover that shows a single tile at ~3× size with its 3×3
+/// Zoomed tile editor — a popover that shows a single tile at ~3× size with its 2×2
 /// sub-cell grid. The user picks a ground (whole-tile layer), then taps a sub-cell and
 /// places an object or decoration into that specific cell.
 ///

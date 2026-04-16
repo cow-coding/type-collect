@@ -135,7 +135,7 @@ struct VillageGridView: View {
     }
 }
 
-/// A single tile: grass block + whole-tile ground + 3×3 sub-cells of objects & decorations.
+/// A single tile: grass block + whole-tile ground + 2×2 sub-cells of objects & decorations.
 struct VillageTileView: View {
     let tile: VillageTile
     let blockSize: CGFloat
@@ -195,7 +195,8 @@ struct VillageTileView: View {
         return CGSize(width: x, height: y)
     }
 
-    /// Number of empty (dot-only) pixel rows at the bottom of each sprite's 32×32 grid.
+    /// Baseline compensation in 32-reference rows.
+    /// For 48×48 sprites, convert trailing empty rows with `rows * 32 / 48`.
     /// Used to shift the rendered sprite down so its *visual* bottom — not the sprite's
     /// bounding-box bottom — sits at the sub-cell iso anchor. Without this correction,
     /// sprites with bottom padding (well, farm, fence) appear to float above the tile.
@@ -207,10 +208,10 @@ struct VillageTileView: View {
         // farm removed from catalog
         case "fence":    return 6   // iso redraw: content rows 9-25, rows 26-31 empty
         case "windmill": return 3
-        case "house":    return 4   // iso redraw: content rows 4-27, rows 28-31 empty
+        case "house":    return 4   // 48×48 sprite: 6 empty trailing rows × (32/48) = 4
         case "shop":     return 4   // 48×48 sprite: 6 empty rows × (32/48) scale = 4
-        case "tree":       return 5   // compact tree: raised toward cell center
-        case "street_tree": return 4  // columnar tree: same adjustment
+        case "tree":       return 12  // 48×48 sprite: 18 empty trailing rows × (32/48) = 12
+        case "street_tree": return 13 // 48×48 sprite: 19 empty trailing rows × (32/48) ≈ 13
         case "lamp":       return 4   // compact lamp, anchored higher on sub-cell
         default:         return 0
         }
