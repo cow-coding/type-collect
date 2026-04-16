@@ -812,16 +812,18 @@ struct BuildingPixelView: View {
 
     var body: some View {
         switch building.id {
-        case "tree":       TreePixelView(size: size)
-        case "house":      HousePixelView(size: size)
-        case "windmill":   WindmillPixelView(size: size)
-        case "well":       WellPixelView(size: size)
-        // farm removed — doesn't fit village concept
-        case "shop":       ShopPixelView(size: size)
-        case "fence":      PixelSpriteView(art: Sprites.fence, width: size)
-        case "lamp":       LampPixelView(size: size)
-        case "flowers":    FlowersGroundView(size: size)
-        case "stone_path": GroundPixelView(art: Sprites.stonePathGround, size: size)
+        case "tree":        TreePixelView(size: size)
+        case "house":       HousePixelView(size: size)
+        case "windmill":    WindmillPixelView(size: size)
+        case "shop":        ShopPixelView(size: size)
+        case "fence":       PixelSpriteView(art: Sprites.fence, width: size)
+        case "lamp":        LampPixelView(size: size)
+        case "flowers":     FlowersGroundView(size: size)
+        case "stone_path":  GroundPixelView(art: Sprites.stonePathGround, size: size)
+        // New buildings — emoji fallback until sprites are drawn
+        case "cafe":        Text(building.emoji).font(.system(size: size * 0.6))
+        case "cityhall":    Text(building.emoji).font(.system(size: size * 0.6))
+        case "street_tree": Text(building.emoji).font(.system(size: size * 0.6))
         default:
             // Fallback to emoji for any unexpected id
             Text(building.emoji).font(.system(size: size * 0.8))

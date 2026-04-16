@@ -203,7 +203,7 @@ struct VillageTileView: View {
     /// Ground layers and billboards return 0 (they don't use the sub-cell baseline).
     private func spriteBaselineRows(for building: BuildingType) -> Int {
         switch building.id {
-        case "well":     return 9
+        // well removed from catalog
         // farm removed from catalog
         case "fence":    return 6   // iso redraw: content rows 9-25, rows 26-31 empty
         case "windmill": return 3
