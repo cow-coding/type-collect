@@ -1091,24 +1091,31 @@ struct BuildingPixelView: View {
     let size: CGFloat
 
     var body: some View {
-        switch building.id {
-        case "tree":        TreePixelView(size: size)
-        case "house":       HousePixelView(size: size)
-        case "windmill":    WindmillPixelView(size: size)
-        case "shop":        ShopPixelView(size: size)
-        case "cafe":        CafePixelView(size: size)
-        case "fence":       PixelSpriteView(art: Sprites.fence, width: size)
-        case "lamp":        LampPixelView(size: size)
-        case "flowers":     FlowersGroundView(size: size)
-        case "stone_path":  GroundPixelView(art: Sprites.stonePathGround, size: size)
-        case "street_tree": StreetTreePixelView(size: size)
-        // New buildings — emoji fallback until sprites are drawn
-        case "apartment":   PixelSpriteView(art: Sprites.apartment, width: size)
-        case "cityhall", "hotel", "skyscraper":
-            Text(building.emoji).font(.system(size: size * 0.6))
-        default:
-            // Fallback to emoji for any unexpected id
-            Text(building.emoji).font(.system(size: size * 0.8))
+        switch building.renderSpec.kind {
+        case .tree:
+            TreePixelView(size: size)
+        case .house:
+            HousePixelView(size: size)
+        case .windmill:
+            WindmillPixelView(size: size)
+        case .shop:
+            ShopPixelView(size: size)
+        case .cafe:
+            CafePixelView(size: size)
+        case .fence:
+            PixelSpriteView(art: Sprites.fence, width: size)
+        case .lamp:
+            LampPixelView(size: size)
+        case .flowersGround:
+            FlowersGroundView(size: size)
+        case .stonePathGround:
+            GroundPixelView(art: Sprites.stonePathGround, size: size)
+        case .streetTree:
+            StreetTreePixelView(size: size)
+        case .apartment:
+            PixelSpriteView(art: Sprites.apartment, width: size)
+        case .emojiFallback:
+            Text(building.emoji).font(.system(size: size * building.renderSpec.emojiScale))
         }
     }
 }

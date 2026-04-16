@@ -59,7 +59,12 @@ final class VillageState: ObservableObject {
 
     /// Building types unlocked at current level
     var unlockedBuildings: [BuildingType] {
-        BuildingCatalog.all.filter { $0.unlockLevel <= level }
+        BuildingCatalog.all.filter(isUnlocked)
+    }
+
+    /// Unlocked buildings for a specific layer.
+    func unlockedBuildings(for layer: TileLayer) -> [BuildingType] {
+        BuildingCatalog.forLayer(layer).filter(isUnlocked)
     }
 
     // MARK: - Init
@@ -126,7 +131,7 @@ final class VillageState: ObservableObject {
         guard isValidTile(row: row, col: col) else { return }
         if let b = buildingType {
             guard b.layer == .ground else { return }
-            guard unlockedBuildings.contains(where: { $0.id == b.id }) else { return }
+            guard isUnlocked(b) else { return }
             grid[row][col].ground = b.id
         } else {
             grid[row][col].ground = nil
@@ -144,7 +149,7 @@ final class VillageState: ObservableObject {
         guard isValidTile(row: row, col: col),
               isValidSub(subRow: subRow, subCol: subCol) else { return }
         guard buildingType.layer == layer else { return }
-        guard unlockedBuildings.contains(where: { $0.id == buildingType.id }) else { return }
+        guard isUnlocked(buildingType) else { return }
 
         switch layer {
         case .ground:
@@ -209,6 +214,10 @@ final class VillageState: ObservableObject {
     private func isValidSub(subRow: Int, subCol: Int) -> Bool {
         subRow >= 0 && subRow < VillageTile.subGridSize
             && subCol >= 0 && subCol < VillageTile.subGridSize
+    }
+
+    private func isUnlocked(_ building: BuildingType) -> Bool {
+        building.unlockLevel <= level
     }
 
     // MARK: - Persistence

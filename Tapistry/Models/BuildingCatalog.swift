@@ -10,6 +10,85 @@ struct BuildingType: Identifiable {
     let price: Int              // coin cost per placement
 }
 
+enum BuildingRenderKind {
+    case tree
+    case house
+    case windmill
+    case shop
+    case cafe
+    case fence
+    case lamp
+    case flowersGround
+    case stonePathGround
+    case streetTree
+    case apartment
+    case emojiFallback
+}
+
+enum BuildingAnchorStyle {
+    case centered
+    case structure
+    case fence
+}
+
+struct BuildingRenderSpec {
+    let kind: BuildingRenderKind
+    let baselineRows32: Int
+    let isoShearY: CGFloat
+    let anchorStyle: BuildingAnchorStyle
+    let emojiScale: CGFloat
+
+    static let byID: [String: BuildingRenderSpec] = [
+        // Ground
+        "flowers": .init(kind: .flowersGround, baselineRows32: 0, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8),
+        "stone_path": .init(kind: .stonePathGround, baselineRows32: 0, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8),
+
+        // Object
+        "house": .init(kind: .house, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
+        "shop": .init(kind: .shop, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
+        "cafe": .init(kind: .cafe, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
+        "apartment": .init(kind: .apartment, baselineRows32: 3, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
+        "cityhall": .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.6),
+        "hotel": .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.6),
+        "skyscraper": .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.6),
+        "windmill": .init(kind: .windmill, baselineRows32: 3, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.8),
+
+        // Decoration
+        "tree": .init(kind: .tree, baselineRows32: 12, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8),
+        "fence": .init(kind: .fence, baselineRows32: 8, isoShearY: 0, anchorStyle: .fence, emojiScale: 0.8),
+        "lamp": .init(kind: .lamp, baselineRows32: 4, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8),
+        "street_tree": .init(kind: .streetTree, baselineRows32: 13, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8),
+    ]
+
+    static func fallback(for building: BuildingType) -> BuildingRenderSpec {
+        switch building.layer {
+        case .ground:
+            return .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8)
+        case .decoration:
+            return .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: 0, anchorStyle: .centered, emojiScale: 0.8)
+        case .object:
+            return .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.8)
+        }
+    }
+
+    func placementOffset(blockSize: CGFloat) -> CGSize {
+        switch anchorStyle {
+        case .centered:
+            return .zero
+        case .structure:
+            return CGSize(width: -blockSize / 16, height: blockSize / 16)
+        case .fence:
+            return CGSize(width: blockSize / 32, height: blockSize / 10)
+        }
+    }
+}
+
+extension BuildingType {
+    var renderSpec: BuildingRenderSpec {
+        BuildingRenderSpec.byID[id] ?? BuildingRenderSpec.fallback(for: self)
+    }
+}
+
 struct BuildingCatalog {
     static let all: [BuildingType] = [
         // Ground types
@@ -33,11 +112,14 @@ struct BuildingCatalog {
         BuildingType(id: "street_tree", name: LocalizedString("Street Tree", ko: "가로수"), emoji: "🌲", layer: .decoration, unlockLevel: 10, animated: true,  price: 15),
     ]
 
+    private static let byID = Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
+    private static let byLayer = Dictionary(grouping: all, by: \.layer)
+
     static func find(_ id: String) -> BuildingType? {
-        all.first { $0.id == id }
+        byID[id]
     }
 
     static func forLayer(_ layer: TileLayer) -> [BuildingType] {
-        all.filter { $0.layer == layer }
+        byLayer[layer] ?? []
     }
 }

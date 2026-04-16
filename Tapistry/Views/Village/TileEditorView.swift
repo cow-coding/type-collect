@@ -68,7 +68,7 @@ struct TileEditorView: View {
     // MARK: - Ground row (whole-tile layer)
 
     private var groundRow: some View {
-        let unlockedGrounds = village.unlockedBuildings.filter { $0.layer == .ground }
+        let unlockedGrounds = village.unlockedBuildings(for: .ground)
         let currentGround = tile.ground
 
         return VStack(alignment: .leading, spacing: 4) {
@@ -213,7 +213,7 @@ struct TileEditorView: View {
     // MARK: - Palette (object or decoration)
 
     private var palette: some View {
-        let unlocked = village.unlockedBuildings.filter { $0.layer == layer }
+        let unlocked = village.unlockedBuildings(for: layer)
         let currentId = currentSubCellId()
 
         return Group {

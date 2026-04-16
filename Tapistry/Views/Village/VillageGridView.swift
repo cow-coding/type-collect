@@ -195,51 +195,6 @@ struct VillageTileView: View {
         return CGSize(width: x, height: y)
     }
 
-    /// Baseline compensation in 32-reference rows.
-    /// For 48×48 sprites, convert trailing empty rows with `rows * 32 / 48`.
-    /// Used to shift the rendered sprite down so its *visual* bottom — not the sprite's
-    /// bounding-box bottom — sits at the sub-cell iso anchor. Without this correction,
-    /// sprites with bottom padding (well, farm, fence) appear to float above the tile.
-    ///
-    /// Ground layers and billboards return 0 (they don't use the sub-cell baseline).
-    private func spriteBaselineRows(for building: BuildingType) -> Int {
-        switch building.id {
-        // well removed from catalog
-        // farm removed from catalog
-        case "fence":    return 8   // 48×48 sprite: 12 empty trailing rows × (32/48) = 8
-        case "windmill": return 3
-        case "house":    return 4   // 48×48 sprite: 6 empty trailing rows × (32/48) = 4
-        case "cafe":     return 4   // align with other 48×48 building anchors (shop/house)
-        case "shop":     return 4   // 48×48 sprite: 6 empty rows × (32/48) scale = 4
-        case "apartment": return 3  // 48×48 sprite: 5 empty trailing rows × (32/48) ≈ 3
-        case "tree":       return 12  // 48×48 sprite: 18 empty trailing rows × (32/48) = 12
-        case "street_tree": return 13 // 48×48 sprite: 19 empty trailing rows × (32/48) ≈ 13
-        case "lamp":       return 4   // compact lamp, anchored higher on sub-cell
-        default:         return 0
-        }
-    }
-
-    /// Iso Y-shear applied to each sprite.
-    ///
-    /// Negative b=-0.5 aligns the sprite's horizontal edges with the top-LEFT diamond
-    /// edge (slope -1:2), so the building's south/front face is visible — i.e. it
-    /// "faces" the viewer who looks from the south-east. This is the correct orientation
-    /// for a building sitting on the tile with its entrance/windows facing the camera.
-    ///
-    /// Billboards (tree, lamp) and ground layers return 0 (no shear).
-    private func isoShearY(for building: BuildingType) -> CGFloat {
-        switch building.id {
-        case "tree", "lamp", "street_tree":
-            return 0
-        case "flowers", "stone_path":
-            return 0
-        case "house", "fence", "shop", "cafe", "apartment":
-            return 0          // iso perspective already in the sprite pixels
-        default:
-            return -0.5       // 앞쪽벽(SE면) visible — top-right corner rises to match left diamond edge
-        }
-    }
-
     var body: some View {
         ZStack {
             // Base: grass block (always)
@@ -284,9 +239,10 @@ struct VillageTileView: View {
             // Ground layers are already diamond-clipped.
             ForEach(renderables) { item in
                 let off = subCellOffset(subRow: item.subRow, subCol: item.subCol)
-                let shear = isoShearY(for: item.building)
-                let baselineShift = CGFloat(spriteBaselineRows(for: item.building)) * subObjectSize / 32.0
-                let isDecor = item.building.layer == .decoration && item.building.id != "fence"
+                let renderSpec = item.building.renderSpec
+                let shear = renderSpec.isoShearY
+                let baselineShift = CGFloat(renderSpec.baselineRows32) * subObjectSize / 32.0
+                let placementOffset = renderSpec.placementOffset(blockSize: blockSize)
                 BuildingPixelView(building: item.building, size: subObjectSize)
                     .transformEffect(
                         CGAffineTransform(a: 1, b: shear, c: 0, d: 1, tx: 0, ty: 0)
@@ -302,8 +258,8 @@ struct VillageTileView: View {
                     // Decorations: centered on sub-cell.
                     // Buildings/fence: shifted forward from center.
                     .offset(
-                        x: off.width + (isDecor ? 0 : item.building.id == "fence" ? blockSize / 32 : -blockSize / 16),
-                        y: off.height + (isDecor ? 0 : item.building.id == "fence" ? blockSize / 10 : blockSize / 16) - subObjectSize / 2 + baselineShift
+                        x: off.width + placementOffset.width,
+                        y: off.height + placementOffset.height - subObjectSize / 2 + baselineShift
                     )
                     .allowsHitTesting(false)
             }
