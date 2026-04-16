@@ -295,12 +295,12 @@ struct VillageTileView: View {
                         x: subObjectSize * 0.12,
                         y: subObjectSize * 0.06
                     )
-                    // Sub-cell anchor: buildings align to the NE (back) edge of the
-                    // sub-cell diamond so they sit naturally "on" the tile, with the
-                    // building base at the back and the structure rising toward camera.
+                    // Sub-cell anchor: the sprite's visual bottom lands at the sub-cell
+                    // diamond's BOTTOM VERTEX (blockSize/8 past its center for 2×2 grid).
+                    // baselineShift further compensates for per-sprite bottom padding.
                     .offset(
                         x: off.width,
-                        y: off.height - blockSize / 8 - subObjectSize / 2 + baselineShift
+                        y: off.height + blockSize / 8 - subObjectSize / 2 + baselineShift
                     )
                     .allowsHitTesting(false)
             }
