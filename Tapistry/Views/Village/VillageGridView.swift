@@ -295,12 +295,10 @@ struct VillageTileView: View {
                         x: subObjectSize * 0.12,
                         y: subObjectSize * 0.06
                     )
-                    // Sub-cell anchor: the sprite's visual bottom lands at the sub-cell
-                    // diamond's BOTTOM VERTEX (blockSize/8 past its center for 2×2 grid).
-                    // baselineShift further compensates for per-sprite bottom padding.
+                    // Sub-cell anchor: shifted left + forward from center.
                     .offset(
-                        x: off.width,
-                        y: off.height + blockSize / 8 - subObjectSize / 2 + baselineShift
+                        x: off.width - blockSize / 16,
+                        y: off.height + blockSize / 16 - subObjectSize / 2 + baselineShift
                     )
                     .allowsHitTesting(false)
             }
