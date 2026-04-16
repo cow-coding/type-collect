@@ -211,6 +211,7 @@ struct VillageTileView: View {
         case "house":    return 4   // 48×48 sprite: 6 empty trailing rows × (32/48) = 4
         case "cafe":     return 4   // align with other 48×48 building anchors (shop/house)
         case "shop":     return 4   // 48×48 sprite: 6 empty rows × (32/48) scale = 4
+        case "apartment": return 3  // 48×48 sprite: 5 empty trailing rows × (32/48) ≈ 3
         case "tree":       return 12  // 48×48 sprite: 18 empty trailing rows × (32/48) = 12
         case "street_tree": return 13 // 48×48 sprite: 19 empty trailing rows × (32/48) ≈ 13
         case "lamp":       return 4   // compact lamp, anchored higher on sub-cell
@@ -232,7 +233,7 @@ struct VillageTileView: View {
             return 0
         case "flowers", "stone_path":
             return 0
-        case "house", "fence", "shop", "cafe":
+        case "house", "fence", "shop", "cafe", "apartment":
             return 0          // iso perspective already in the sprite pixels
         default:
             return -0.5       // 앞쪽벽(SE면) visible — top-right corner rises to match left diamond edge

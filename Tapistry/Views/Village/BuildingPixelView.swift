@@ -132,6 +132,17 @@ enum SpriteColors {
     static let cafeGlass     = Color(red: 0.53, green: 0.73, blue: 0.76)
     static let cafeGlassDark = Color(red: 0.33, green: 0.52, blue: 0.56)
 
+    // Apartment
+    static let aptRoof      = Color(red: 0.91, green: 0.91, blue: 0.93)
+    static let aptRoofDark  = Color(red: 0.82, green: 0.82, blue: 0.85)
+    static let aptRoofEdge  = Color(red: 0.78, green: 0.78, blue: 0.82)
+    static let aptWallTrim  = Color(red: 0.54, green: 0.54, blue: 0.58)
+    static let aptWall      = Color(red: 0.66, green: 0.66, blue: 0.70)
+    static let aptGlass     = Color(red: 0.29, green: 0.33, blue: 0.41)
+    static let aptGlassBrt  = Color(red: 0.35, green: 0.42, blue: 0.50)
+    static let aptSeam      = Color(red: 0.23, green: 0.23, blue: 0.27)
+    static let aptBright    = Color(red: 0.94, green: 0.94, blue: 0.96)
+
     // Water (well)
     static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
     static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
@@ -677,6 +688,73 @@ private enum Sprites {
         ]
     )
 
+    // MARK: Apartment (48×48)
+
+    /// Apartment (아파트) — tall modern tower with iso floor bands.
+    static let apartment = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "....................T...........................",
+            "..................WtTTW.........................",
+            "................WtttTTTTW.......................",
+            "..............WtttttTTTTTTW.....................",
+            "............WtttttttTTTTTTTTW...................",
+            "............EEWtttttTTTTTTWnn...................",
+            "............ExxEWtttTTTTWnXXn...................",
+            "............ExxxxEWtTTWnXXXXn...................",
+            "............ExxxxxxEWnXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "............ExxxxeexEKnnXXXXn...................",
+            "............ExxxxxxeEKXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "............ExxxxeexEKnnXXXXn...................",
+            "............ExxxxxxeEKXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "............ExxxxeexEKnnXXXXn...................",
+            "............ExxxxxxeEKXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "............ExxxxeexEKnnXXXXn...................",
+            "............ExxxxxxeEKXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "............ExxxxeexEKnnXXXXn...................",
+            "............ExxxxxxeEKXXXXXXn...................",
+            "............EeexxxxxEKXXXXnnn...................",
+            "............ExxeexxxEKXXnnXXn...................",
+            "..............ExxeexEKnnXXn.....................",
+            "................ExxeEKXXn.......................",
+            "..................ExEKn.........................",
+            "....................K...........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.aptRoof,
+            "t": SpriteColors.aptRoofDark,
+            "W": SpriteColors.aptRoofEdge,
+            "E": SpriteColors.aptWallTrim,
+            "e": SpriteColors.aptWall,
+            "x": SpriteColors.aptGlass,
+            "K": SpriteColors.aptSeam,
+            "n": SpriteColors.aptBright,
+            "X": SpriteColors.aptGlassBrt,
+        ]
+    )
+
     // MARK: Flowers ground (32×32, tileable)
 
     static let flowersGround = PixelArt(
@@ -1010,7 +1088,8 @@ struct BuildingPixelView: View {
         case "stone_path":  GroundPixelView(art: Sprites.stonePathGround, size: size)
         case "street_tree": StreetTreePixelView(size: size)
         // New buildings — emoji fallback until sprites are drawn
-        case "cityhall", "apartment", "hotel", "skyscraper":
+        case "apartment":   PixelSpriteView(art: Sprites.apartment, width: size)
+        case "cityhall", "hotel", "skyscraper":
             Text(building.emoji).font(.system(size: size * 0.6))
         default:
             // Fallback to emoji for any unexpected id
