@@ -209,8 +209,8 @@ struct VillageTileView: View {
         case "windmill": return 3
         case "house":    return 4   // iso redraw: content rows 4-27, rows 28-31 empty
         case "shop":     return 2
-        case "tree":       return 6   // compact tree: content rows 9-19
-        case "street_tree": return 5  // columnar tree: content rows 6-20
+        case "tree":       return 12  // compact tree: content rows 9-19, 31-19=12
+        case "street_tree": return 11  // columnar tree: content rows 6-20, 31-20=11
         case "lamp":       return 4   // compact lamp, anchored higher on sub-cell
         default:         return 0
         }
@@ -226,7 +226,7 @@ struct VillageTileView: View {
     /// Billboards (tree, lamp) and ground layers return 0 (no shear).
     private func isoShearY(for building: BuildingType) -> CGFloat {
         switch building.id {
-        case "tree", "lamp":
+        case "tree", "lamp", "street_tree":
             return 0
         case "flowers", "stone_path":
             return 0
