@@ -20,7 +20,7 @@ struct SubCell: Codable, Equatable {
 /// `object` / `decoration` fields) by moving any legacy content into the
 /// center sub-cell.
 struct VillageTile: Codable, Equatable {
-    static let subGridSize = 3
+    static let subGridSize = 2
 
     /// Covers the whole tile's top face.
     var ground: String?

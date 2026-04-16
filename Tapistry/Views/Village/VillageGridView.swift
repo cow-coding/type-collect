@@ -152,16 +152,16 @@ struct VillageTileView: View {
     // In a centered ZStack, the top face center sits at -blockSize/8 relative to ZStack center
     private var topFaceOffsetY: CGFloat { -blockSize / 8 }
 
-    // Iso geometry for the 3×3 sub-grid on top of the tile's top-face diamond.
-    // Each sub-cell is a mini diamond of size (blockSize/3 × blockSize/6).
+    // Iso geometry for the 2×2 sub-grid on top of the tile's top-face diamond.
+    // Each sub-cell is a mini diamond of size (blockSize/2 × blockSize/4).
     // Half-step between sub-cells:
-    private var subStepX: CGFloat { blockSize / 6 }
-    private var subStepY: CGFloat { blockSize / 12 }
+    private var subStepX: CGFloat { blockSize / 4 }
+    private var subStepY: CGFloat { blockSize / 8 }
     /// Y of the (row=0, col=0) sub-cell center, relative to ZStack center.
-    private var subOriginY: CGFloat { topFaceOffsetY - blockSize / 6 }
+    private var subOriginY: CGFloat { topFaceOffsetY - blockSize / 8 }
     /// Rendered size of a sub-cell object sprite — sized to fit within the sub-cell
-    /// diamond (blockSize/3 wide) so neighbors don't spill into each other.
-    private var subObjectSize: CGFloat { blockSize / 3 }
+    /// diamond (blockSize/2 wide) so neighbors don't spill into each other.
+    private var subObjectSize: CGFloat { blockSize / 2 }
 
     private struct Renderable: Identifiable {
         let subRow: Int
@@ -295,12 +295,11 @@ struct VillageTileView: View {
                         y: subObjectSize * 0.06
                     )
                     // Sub-cell anchor: the sprite's visual bottom lands at the sub-cell
-                    // diamond's BOTTOM VERTEX (blockSize/12 past its center) — the
-                    // front-most iso point of the cell, where the building "stands".
+                    // diamond's BOTTOM VERTEX (blockSize/8 past its center for 2×2 grid).
                     // baselineShift further compensates for per-sprite bottom padding.
                     .offset(
                         x: off.width,
-                        y: off.height + blockSize / 12 - subObjectSize / 2 + baselineShift
+                        y: off.height + blockSize / 8 - subObjectSize / 2 + baselineShift
                     )
                     .allowsHitTesting(false)
             }
@@ -314,7 +313,7 @@ struct VillageTileView: View {
                         IsometricDiamond()
                             .stroke(Color.yellow, lineWidth: 1.5)
                     )
-                    .frame(width: blockSize / 3, height: blockSize / 6)
+                    .frame(width: blockSize / 2, height: blockSize / 4)
                     .offset(x: off.width, y: off.height)
                     .allowsHitTesting(false)
             }
