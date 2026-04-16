@@ -231,8 +231,10 @@ struct TileEditorView: View {
                     .padding(.vertical, 12)
             } else if let sel = selectedSub {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 50), spacing: 6)], spacing: 6) {
-                    if currentId != nil {
+                    if let cid = currentId, let building = BuildingCatalog.find(cid) {
+                        let refund = building.price / 2
                         Button {
+                            village.addCash(refund)
                             village.removeSubCell(
                                 row: row, col: col,
                                 subRow: sel.0, subCol: sel.1,
@@ -243,7 +245,7 @@ struct TileEditorView: View {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 16))
                                     .foregroundColor(.red.opacity(0.75))
-                            }, label: L10n.remove.resolve(lang), isSelected: false, isRemove: true)
+                            }, label: "+\(refund)💰", isSelected: false, isRemove: true)
                         }
                         .buttonStyle(.plain)
                     }
