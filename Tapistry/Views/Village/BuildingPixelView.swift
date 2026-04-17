@@ -547,18 +547,48 @@ private enum Sprites {
         ]
     )
 
-    // MARK: Shop (32×32)
+    // MARK: Shop (48×48)
 
-    /// Convenience store / supermarket (편의점) — 48×48 hi-res iso building.
-    /// Flat roof with red perimeter trim, brown sign band with text dots,
-    /// blue glass storefront with cream columns, door reaching ground.
-    /// Rooftop sign (K background + n letter pixels) added on the right side.
+    /// Shop (편의점) — iso box generated via tools/build_shop.py.
+    /// Wider + flatter footprint (a=18, H=12). SHOP sign placed above the
+    /// roof like a rooftop billboard; door + flanking windows at wall bottom.
     static let shop = PixelArt(
         rows: [
             "................................................",
             "................................................",
             "................................................",
             "................................................",
+            "...........................AAA...............A..",
+            ".........................AATTTAA...........AAA..",
+            ".......................AATTTTTTTAA.......AAgnA..",
+            ".....................AATTTTTTTTTTTAA...AAgnnnA..",
+            "...................AATTTTTTTTTTTTTTTAAAgngngnA..",
+            ".................AATTTTTTTTTTTTTTTTAAgnnngnngA..",
+            "...............AATTTTTTTTTTTTTTTTAAgngngngnggA..",
+            ".............AATTTTTTTTTTTTTTTTAAgngngngngngA...",
+            "...........AATTTTTTTTTTTTTTTTAAgngngngngngATAA..",
+            "..........AATTTTTTTTTTTTTTTTTAnnggnnngnnATATTAA.",
+            "..........EeAATTTTTTTTTTTTTTTAngngngngATTTAAAwW.",
+            "..........EeeeAATTTTTTTTTTTTTAnnngngATTTTAAwwwW.",
+            "..........EeeeeeAATTTTTTTTTTTAggngATTTTAAwwwwwW.",
+            "..........EeeeeeeeAATTTTTTTTTAnnATTTTAAwwwwwwwW.",
+            "..........EeeeeeeeeeAATTTTTTTAATATTAAwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeAATTTTTTTTAAAwwwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeeeAATTTTTAAwwwwwwwwwwXwwW.",
+            "..........EeeeeeeeeeeeeeeeAATAAwwwwwwwwwwAnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeAwwwwwwwwwwwwXnAwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwwwwXnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwAwwwnXwwW.",
+            "..........EEeeeeeeeeeeeeeeeeWwwwAwwwAADwwXnAwWW.",
+            "............EEeeeeeeeeeeeeeeWwXnXwwwDDDwwXnWW...",
+            "..............EEeeeeeeeeeeeeWwXnXwwwDdnwwWW.....",
+            "................EEeeeeeeeeeeWwAnXwwwDdDWW.......",
+            "..................EEeeeeeeeeWwXnAwwwDdD.........",
+            "....................EEeeeeeeWwwnXwwWDD..........",
+            "......................EEeeeeWwXnWWW.............",
+            "........................EEeeWwWWW...............",
+            "..........................EEWWW.................",
+            "............................W...................",
             "................................................",
             "................................................",
             "................................................",
@@ -566,37 +596,6 @@ private enum Sprites {
             "................................................",
             "................................................",
             "................................................",
-            "................................................",
-            ".......................................KKK......",
-            "....................................KKKnKK......",
-            "............................A......KKKnKnK......",
-            "..........................AATAA...KKKnKKnK......",
-            "........................AATTTTTAKKKKKnKnKK......",
-            "......................AATTTTTTTKKnnKKnnKKK......",
-            "....................AATTTTTTTTKKKnKnKnKKKK......",
-            "..................AATTTTTTTTTKKKnKKnKnKKKK......",
-            "................AATTTTTTTTTKnKKKnKKnKnKKbn......",
-            "..............AATTTTTTTTTKKKnKKKKnKnKKKbXn......",
-            "............AATTTTTTTTTTKKKKnnnnKnKnKKbXXn......",
-            "..........AATTTTTTTTTTKKKKKKnKKnKnnKXnXXXn......",
-            "........AATTTTTTTTTTKKKnnKKKnKKnKKKXXnXXXn......",
-            "......EEATTTTTTTTTTKKKnKKKKKnKKnKKXXXnXXXn......",
-            "......EeEEATTTTTTTTKKKnKnnKKKnKKbXXXXnXXXn......",
-            "......EeeeEEATTTTTTKKKnnKKnKKDDKXXXXXnXXXn......",
-            "......EeeeeeEEATTTTKKKKKKnnKDDDnXXXXXnXXXn......",
-            "......EeeeeeeeEEATTKKKKKnKKXDDDnXXXXXnXXXn......",
-            "......EeeeeeeeeeEEAKKKKnKKXXDdDnXXXXXnXnnn......",
-            "......EeeeeeeeeeeeEKKKKKXnXXDdDnXXXXXnnnn.......",
-            "......EeeeeeeeeeeeEKKXXXXnXXDdDnXXXnnnn.........",
-            "......EeeeeeeeeeeeEKXXXXXnXXDdDnXnnnn...........",
-            "......EeeeeeeeeeeeEnXXXXXnXXDdDnnnn.............",
-            "......EEeeeeeeeeeeEnXXXXXnXXDdDnn...............",
-            "........EEeeeeeeeeEnXXXXXnXnDdD.................",
-            "..........EEeeeeeeEnXXXXXnnnD...................",
-            "............EEeeeeEnXXXnnnn.....................",
-            "..............EEeeEnXnnnn.......................",
-            "................EEEnnnn.........................",
-            "..................Enn...........................",
             "................................................",
             "................................................",
             "................................................",
@@ -606,14 +605,14 @@ private enum Sprites {
         ],
         colors: [
             "T": SpriteColors.stoneLight,     // flat roof (uniform gray)
-            "A": SpriteColors.shopAwning,     // red perimeter trim
-            "K": SpriteColors.plankDark,      // brown sign background
-            "b": SpriteColors.plank,          // lighter "text" dots on sign
-            "E": SpriteColors.stoneDark,      // 왼쪽벽(SW면) trim (cool gray)
+            "A": SpriteColors.shopAwning,     // red awning perimeter trim
+            "E": SpriteColors.stoneDark,      // 왼쪽벽(SW면) trim
             "e": SpriteColors.stone,          // 왼쪽벽(SW면) body
-            "W": SpriteColors.wallDark,       // 앞쪽벽(SE면) base trim
-            "n": SpriteColors.wallLight,      // cream columns + base
-            "X": SpriteColors.windowDark,     // blue glass panels
+            "W": SpriteColors.plank,          // 앞쪽벽(SE면) trim (lighter plank)
+            "w": SpriteColors.plankDark,      // 앞쪽벽(SE면) body (dark plank)
+            "g": SpriteColors.shopSign,       // rooftop sign background (gold)
+            "n": SpriteColors.wallLight,      // SHOP letter pixels (cream)
+            "X": SpriteColors.windowDark,     // window glass
             "D": SpriteColors.door,           // door frame
             "d": SpriteColors.doorLight,      // door panel
         ]

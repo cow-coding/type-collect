@@ -45,7 +45,7 @@ struct BuildingRenderSpec {
 
         // Object
         "house": .init(kind: .house, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
-        "shop": .init(kind: .shop, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
+        "shop": .init(kind: .shop, baselineRows32: 9, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
         "cafe": .init(kind: .cafe, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
         "apartment": .init(kind: .apartment, baselineRows32: 3, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
         "cityhall": .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.6),
