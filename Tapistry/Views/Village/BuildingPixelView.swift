@@ -143,6 +143,19 @@ enum SpriteColors {
     static let aptSeam      = Color(red: 0.23, green: 0.23, blue: 0.27)
     static let aptBright    = Color(red: 0.94, green: 0.94, blue: 0.96)
 
+    // City Hall — classical stone with blue-slate roof + clock tower
+    static let cityWall      = Color(red: 0.93, green: 0.90, blue: 0.82) // warm stone
+    static let cityWallDark  = Color(red: 0.68, green: 0.63, blue: 0.52)
+    static let cityRoof      = Color(red: 0.35, green: 0.42, blue: 0.55) // slate blue
+    static let cityRoofLight = Color(red: 0.52, green: 0.60, blue: 0.72)
+    static let cityRoofDark  = Color(red: 0.22, green: 0.28, blue: 0.38)
+    static let cityClock     = Color(red: 0.98, green: 0.94, blue: 0.82) // cream clock face
+    static let cityClockHand = Color(red: 0.20, green: 0.18, blue: 0.18)
+    static let cityGlass     = Color(red: 0.46, green: 0.58, blue: 0.64)
+    static let cityAccent    = Color(red: 0.82, green: 0.32, blue: 0.28) // red flag / door
+    static let cityDome      = Color(red: 0.96, green: 0.94, blue: 0.90) // bright dome
+    static let cityDomeShade = Color(red: 0.82, green: 0.78, blue: 0.70) // dome shadow
+
     // Water (well)
     static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
     static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
@@ -781,6 +794,73 @@ private enum Sprites {
         ]
     )
 
+    // MARK: City Hall (48×48)
+
+    /// City Hall — Capitol-style rotunda dome over classical colonnade.
+    static let cityhall = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".........................BD.....................",
+            ".......................BDDDDD...................",
+            ".....................BDDDDDDDDD.................",
+            ".....................BDDDDDDDDD.................",
+            "....................BDDDDDDDDDDD................",
+            "....................BDDDDDDDDDDD................",
+            "...................BDDDDDDDDDDDDD...............",
+            ".................AAAADDDDDDDDDDDD...............",
+            "...............AATTDADDDDDDDDDDAAA..............",
+            ".............AATTTTDDAADDDDDDDADDTAA............",
+            "...........AATTTTTTDDTDAAAAAAATDDTTTAA..........",
+            ".........AATTTTTTTTDDTDDTTTTDDTDDTTTTTAA........",
+            ".......AATTTTTTTTTTDDTDDTTTTDDTDDTTTTTTTAA......",
+            "......AATTTTTTTTTTTAATDDTTTTDDTAATTTTTTTTAA.....",
+            "......EeAATTTTTTTTTTTADDTTTTDDATTTTTTTTAEEE.....",
+            "......EeeeAATTTTTTTTTTAATTTTDAATTTTTTAEEWEE.....",
+            "......EeeeeeAATTTTTTTTTAAAAAAATTTTTAEEXXWEE.....",
+            "......EeeeeeeeAATTTTTTTTTTTTTTTTTAEEXWXXWEE.....",
+            "......EeeeeeeeeeAATTTTTTTTTTTTTAEEWXXWXXWEE.....",
+            "......EeeeeeeeeeeeAATTTTTTTTTAEERRWXXWXXWEE.....",
+            "......EeeeeeeeeeeeeeAATTTTTAEEXWRRWXXWXXWEE.....",
+            "......EEeeeeeeeeeeeeeeAATAEEWXXWRRWXXWeeEEE.....",
+            "........EEeeeeeeeeeeeeeeEEXXWXXWRRWXeWEEE.......",
+            "..........EEeeeeeeeeeeeeEWXXWXXWRRWeEEE.........",
+            "............EEeeeeeeeeeeEWXXWXXWRREEE...........",
+            "..............EEeeeeeeeeEWXXWXeWEEE.............",
+            "................EEeeeeeeEWXXWeEEE...............",
+            "..................EEeeeeEWeeEEE.................",
+            "....................EEeeEWEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.cityRoofLight,
+            "A": SpriteColors.cityRoof,
+            "E": SpriteColors.cityWallDark,
+            "e": SpriteColors.cityWall,
+            "X": SpriteColors.cityGlass,
+            "W": SpriteColors.cityWallDark,
+            "R": SpriteColors.cityAccent,
+            "D": SpriteColors.cityDome,
+            "B": SpriteColors.cityDomeShade,
+        ]
+    )
+
     // MARK: Flowers ground (32×32, tileable)
 
     static let flowersGround = PixelArt(
@@ -1140,6 +1220,12 @@ struct BuildingPixelView: View {
             StreetTreePixelView(size: size)
         case .apartment:
             PixelSpriteView(art: Sprites.apartment, width: size)
+        case .cityhall:
+            // Sprite is drawn at its natural position; shift SE a touch
+            // so the wide façade centers on the tile instead of hugging
+            // the NW edge.
+            PixelSpriteView(art: Sprites.cityhall, width: size)
+                .offset(x: size / 8, y: size / 16)
         case .emojiFallback:
             Text(building.emoji).font(.system(size: size * building.renderSpec.emojiScale))
         }

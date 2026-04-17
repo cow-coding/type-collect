@@ -26,6 +26,7 @@ struct MenuBarContentView: View {
             VillageGridView(village: village)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
+                .offset(y: -10)
 
             Spacer()
             footerSection
