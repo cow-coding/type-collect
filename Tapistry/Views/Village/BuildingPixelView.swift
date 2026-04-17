@@ -620,51 +620,51 @@ private enum Sprites {
 
     // MARK: Cafe (48×48)
 
-    /// Cafe (카페) — 2F terrace + rooftop coffee cup sign.
+    /// Cafe (카페) — long striped awning + rooftop mug + glass reflection.
     static let cafe = PixelArt(
         rows: [
             "................................................",
             "................................................",
             "................................................",
-            "...........................EEE..................",
-            ".........................EEKKKEE................",
-            ".......................EEKKKKKKKEE..............",
-            "......................EEKKKKKKKKKEE.............",
-            "......................EeEEKKKKKEEeEee...........",
-            "......................EeeeEEKEEeeeE.e...........",
-            "......................EeeeeeEeeeeeE.e...........",
-            ".....................AEeeeeeEeeeeeEAe...........",
-            "...................AATEeeeeeEeeeeeETeA..........",
-            "..................AATTEEeeeeEeeeeEEeeAA.........",
-            "..................EeAATTEEeeEeeEETTAAeE.........",
-            "..................EeeeAATTEEEEETTAAeeeE.........",
-            "..................EeeeeeAATTETTAAeeeeeE.........",
-            "..................EeeeeeeeAATAAeeeeeeeE.........",
-            "..................EeeeeeeeeeAeeeeeeeeeE.........",
-            ".................AEEeeeeeeeeEeeeeeeeeEEA........",
-            "...............AATTTEEeeeeeeEeeeeeeEETTTAA......",
-            ".............AATTTTTTTEEeeeeEeeeeEETTTTTTTAA....",
-            "...........AATTTTTTTTTTTEEeeEeeEETTTTTTTTTTTAA..",
-            "..........AATTTTTTTTTTTTTTEEEEETTTTTTTTTTTTTTAE.",
-            "..........EXAATTTTTTTTTTTTTTETTTTTTTTTTTTTTAEEE.",
-            "..........EXXXAATTTTTTTTTTTTTTTTTTTTTTTTTAEEXXE.",
-            "..........EXXXXXAATTTTTTTTTTTTTTTTTTTTTAEEXXnXE.",
-            "..........EXXXXXXXAATTTTTTTTTTTTTTTTTAEEXXXXXXE.",
-            "..........EXXXXXXXXXAATTTTTTTTTTTTTAEEDEXnXXXXE.",
-            "..........EXXXXXXXXXXXAATTTTTTTTTAEEDDDEXXXXKXE.",
-            "..........EXXXXXXXXXXXXXAATTTTTAEEXEDdDEXXKKXXE.",
-            "..........EXXXXXXXXXXXXXXXAATAEEXXXEDdDEXKXXXXE.",
-            "..........EXXXXXXXXXXXXXXXXXEEXXXnXEDdDEXXXXKKE.",
-            "..........EEXXXXXXXXXXXXXXXXEXnXXXXEDdDEXXKKKKE.",
-            "............EEXXXXXXXXXXXXXXEXXXXXXEDdDEKKKKEE..",
-            "..............EEXXXXXXXXXXXXEXXXKKXEDdDEKKEE....",
-            "................EEXXXXXXXXXXEXKKXXXEDdDEEE......",
-            "..................EEXXXXXXXXEXXXXXKEDdDE........",
-            "....................EEXXXXXXEXXXKKKEDD..........",
-            "......................EEXXXXEXKKKKEE............",
-            "........................EEXXEKKKEE..............",
-            "..........................EEEKEE................",
-            "............................EE..................",
+            ".....................EEE........................",
+            "...................EEKKKEE......................",
+            ".................EEKKKKKKKEE....................",
+            "................EEKKKKKKKKKEE...................",
+            "................EeEEKKKKKEEeEee.................",
+            "................EeeeEEKEEeeeE.e.................",
+            "................EeeeeeEeeeeeE.e.................",
+            "...............AEeeeeeEeeeeeEAe.................",
+            ".............AATEeeeeeEeeeeeETeA................",
+            "............AATTEEeeeeEeeeeEEeeAA...............",
+            "............EeAATTEEeeEeeEETTAEEE...............",
+            "............EeeeAATTEEEEETTAEEXEE...............",
+            "............EeeeeeAATTETTAEEXXXEE...............",
+            "............EeeeeeeeAATAEEEEXXXEE...............",
+            "............EeeeeeeeeeEEXXEELXXEE...............",
+            "...........AEEeeeeeeeeEXXLEEXXEEEA..............",
+            ".........AATTTEEeeeeeeEXXXEEEEETTTAA............",
+            ".......AATTTTTTTEEeeeeEXXXEEETTTTTTTAA..........",
+            ".....AATTTTTTTTTTTEEeeEXEEETTTTTTTTTTTAA........",
+            "....AATTTTTTTTTTTTTTEEEEETTTTTTTTTTTTTTAd.......",
+            "....EXAATTTTTTTTTTTTTTETTTTTTTTTTTTTTAddEd......",
+            "....EXXXAATTTTTTTTTTTTTTTTTTTTTTTTTAddXddd......",
+            "....EXXXXXAATTTTTTTTTTTTTTTTTTTTTAddXdddn.......",
+            "....EXXXXXXXAATTTTTTTTTTTTTTTTTAddXdddnXE.......",
+            "....EXXXXXXLXXAATTTTTTTTTTTTTAddDdddnXXXE.......",
+            "....EXXXXXLXXXXXAATTTTTTTTTAddDdddnXXXKXE.......",
+            "....EXXXXLXXXXXXXXAATTTTTAddXdddnEXXKKXXE.......",
+            "....EXXXLXXXXXXXLXXXAATAddXdddndDEXKXXXXE.......",
+            "....EXXLXXXXXXXLXXXXXXddXdddnEDdDEXXXXKKE.......",
+            "....EEXXXXXXXXLXXXXXXXEdddnXXEDdDEXXKKKKE.......",
+            "......EEXXXXXLXXXXXXXXEdnXXXXEDdDEKKKKEE........",
+            "........EEXXLXXXXXXXXXEXXXKKXEDdDEKKEE..........",
+            "..........EEXXXXXXXXXXEXKKXXXEDdDEEE............",
+            "............EEXXXXXXXXEXXXXXKEDdDE..............",
+            "..............EEXXXXXXEXXXKKKEDD................",
+            "................EEXXXXEXKKKKEE..................",
+            "..................EEXXEKKKEE....................",
+            "....................EEEKEE......................",
+            "......................EE........................",
             "................................................",
             "................................................",
             "................................................",
@@ -684,6 +684,7 @@ private enum Sprites {
             "X": SpriteColors.cafeGlass,
             "D": SpriteColors.cafeSignDark,
             "d": SpriteColors.cafeSign,
+            "L": SpriteColors.cafeLetter,
         ]
     )
 
@@ -1314,9 +1315,10 @@ private struct StreetTreePixelView: View {
 private struct CafePixelView: View {
     let size: CGFloat
 
-    // Cup center: cols 13-18, roughly col 16 center. Cup top at row 19.
+    // Rooftop mug: center_col = 22 (cup spans cols 16-28), cup top diamond
+    // apex around row 3. Steam emits from just above the cup top.
     private var pixelSize: CGFloat { size / 48 }
-    private var cupCenterX: CGFloat { pixelSize * 16.0 - size / 2 }
+    private var cupCenterX: CGFloat { pixelSize * 22.0 - size / 2 }
 
     var body: some View {
         ZStack {
@@ -1325,10 +1327,10 @@ private struct CafePixelView: View {
             ForEach(0..<3, id: \.self) { i in
                 SmokePuff(
                     baseOffsetX: cupCenterX,
-                    travelHeight: size * 0.25,
-                    puffSize: pixelSize * 1.8,
+                    travelHeight: size * 0.22,
+                    puffSize: pixelSize * 1.6,
                     phaseOffset: Double(i) * 0.33,
-                    topOfHouseY: -size / 2 + pixelSize * 14
+                    topOfHouseY: -size / 2 + pixelSize * 2
                 )
             }
         }
