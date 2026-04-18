@@ -47,6 +47,18 @@ struct MenuBarContentView: View {
             Text(L10n.appName.resolve(lang))
                 .font(.system(size: 14, weight: .bold))
                 .tracking(-0.3)
+
+            if let suffix = AppEnvironment.titleSuffix {
+                Text(suffix)
+                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .foregroundColor(.orange)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 1)
+                    .background(
+                        RoundedRectangle(cornerRadius: 3)
+                            .strokeBorder(Color.orange.opacity(0.6), lineWidth: 1)
+                    )
+            }
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .frame(height: 40)

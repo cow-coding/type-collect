@@ -15,7 +15,7 @@ final class StorageManager {
 
     private init() {
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        directory = appSupport.appendingPathComponent("Tapistry", isDirectory: true)
+        directory = appSupport.appendingPathComponent(AppEnvironment.storageFolderName, isDirectory: true)
         try? fileManager.createDirectory(
             at: directory,
             withIntermediateDirectories: true,

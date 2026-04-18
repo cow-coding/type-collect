@@ -14,9 +14,8 @@ targets:
       - Tapistry
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.tapistry.app
         PRODUCT_NAME: Tapistry
-        MARKETING_VERSION: "0.1.0"
+        MARKETING_VERSION: "0.2.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "13.0"
@@ -26,3 +25,10 @@ targets:
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Automatic
         ENABLE_HARDENED_RUNTIME: NO
+      configs:
+        Debug:
+          # Dev builds live beside the installed release — separate
+          # bundle id keeps UserDefaults / storage from colliding.
+          PRODUCT_BUNDLE_IDENTIFIER: com.tapistry.app.dev
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: com.tapistry.app
