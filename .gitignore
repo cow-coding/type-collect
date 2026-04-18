@@ -34,3 +34,6 @@ Package.resolved
 
 # Claude Code
 .claude/
+
+# Local tooling workspace (not versioned)
+tools/

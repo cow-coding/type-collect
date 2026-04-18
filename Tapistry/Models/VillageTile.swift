@@ -6,7 +6,7 @@ enum TileLayer: String, Codable, CaseIterable {
     case decoration
 }
 
-/// A single sub-cell within a tile. Each outer tile has a 3×3 grid of these.
+/// A single sub-cell within a tile. Each outer tile has a 2×2 grid of these.
 struct SubCell: Codable, Equatable {
     var object: String?       // BuildingType.id (tree, house, well, farm, shop, windmill)
     var decoration: String?   // BuildingType.id (fence, lamp)
@@ -14,18 +14,18 @@ struct SubCell: Codable, Equatable {
     var isEmpty: Bool { object == nil && decoration == nil }
 }
 
-/// A village tile: whole-tile ground layer + 3×3 grid of sub-cells for objects and decorations.
+/// A village tile: whole-tile ground layer + 2×2 grid of sub-cells for objects and decorations.
 ///
 /// Codable custom-decodes older save data (pre-sub-cell schema with flat
 /// `object` / `decoration` fields) by moving any legacy content into the
 /// center sub-cell.
 struct VillageTile: Codable, Equatable {
-    static let subGridSize = 3
+    static let subGridSize = 2
 
     /// Covers the whole tile's top face.
     var ground: String?
 
-    /// 3×3 grid indexed [subRow][subCol]. Always populated to that size.
+    /// 2×2 grid indexed [subRow][subCol]. Always populated to that size.
     var subCells: [[SubCell]]
 
     init(ground: String? = nil, subCells: [[SubCell]]? = nil) {

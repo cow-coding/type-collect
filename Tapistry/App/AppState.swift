@@ -10,6 +10,16 @@ final class AppState: ObservableObject {
     @Published var keystrokeCount: Int = 0
     @Published var todayKeystrokeCount: Int = 0
 
+    /// Coin drop table: (amount, per-keystroke probability). Higher amounts are rarer.
+    /// Total drop rate ≈ 15%, average ≈ 0.19 coin per keystroke.
+    private static let coinDropTable: [(amount: Int, chance: Double)] = [
+        (1, 0.100),
+        (2, 0.030),
+        (3, 0.015),
+        (4, 0.004),
+        (5, 0.001),
+    ]
+
     private var lastKnownTotal: Int = 0
     private var currentDay: String = ""
     private var reEnableTimer: Timer?
@@ -55,6 +65,19 @@ final class AppState: ObservableObject {
                     self.todayKeystrokeCount += delta
                     self.lastKnownTotal = newTotal
                     self.village.addXP(delta)
+
+                    // Coin drops: roll for each keystroke in the delta
+                    for _ in 0..<delta {
+                        let roll = Double.random(in: 0..<1)
+                        var cumulative = 0.0
+                        for drop in Self.coinDropTable {
+                            cumulative += drop.chance
+                            if roll < cumulative {
+                                self.village.addCash(drop.amount)
+                                break
+                            }
+                        }
+                    }
                 }
             }
             .store(in: &cancellables)

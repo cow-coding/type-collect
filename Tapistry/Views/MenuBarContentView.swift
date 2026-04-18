@@ -3,6 +3,9 @@ import SwiftUI
 struct MenuBarContentView: View {
     @ObservedObject var appState: AppState
     @ObservedObject var settings = AppSettings.shared
+    /// Observe village directly so cashBar/xpBar re-render immediately
+    /// when cash or xp changes (appState doesn't re-publish nested changes).
+    @ObservedObject var village: VillageState
 
     @State private var isSettingsHovering = false
     @State private var isQuitHovering = false
@@ -15,13 +18,15 @@ struct MenuBarContentView: View {
 
             if appState.isMonitoring {
                 xpBar
+                cashBar
             } else {
                 permissionBanner
             }
 
-            VillageGridView(village: appState.village)
+            VillageGridView(village: village)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
+                .offset(y: -10)
 
             Spacer()
             footerSection
@@ -49,7 +54,7 @@ struct MenuBarContentView: View {
 
     private var xpBar: some View {
         HStack(spacing: 8) {
-            Text("Lv.\(appState.village.level)")
+            Text("Lv.\(village.level)")
                 .font(.system(size: 12, weight: .heavy, design: .rounded))
                 .foregroundColor(.orange)
 
@@ -65,13 +70,13 @@ struct MenuBarContentView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .frame(width: geo.size.width * appState.village.levelProgress)
+                        .frame(width: geo.size.width * village.levelProgress)
                 }
             }
             .frame(height: 6)
 
-            if let nextXP = appState.village.xpForNextLevel {
-                Text("\(appState.village.xp)/\(nextXP)")
+            if let nextXP = village.xpForNextLevel {
+                Text("\(village.xp)/\(nextXP)")
                     .font(.system(size: 9, weight: .medium, design: .monospaced))
                     .foregroundColor(.secondary)
             } else {
@@ -82,6 +87,31 @@ struct MenuBarContentView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+    }
+
+    private var cashBar: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "dollarsign.circle.fill")
+                .font(.system(size: 11))
+                .foregroundColor(.yellow)
+            Text("\(village.cash)")
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundColor(.yellow)
+                .contentTransition(.numericText())
+                .animation(.spring(duration: 0.3), value: village.cash)
+            Text(L10n.coins.resolve(lang))
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+            Spacer()
+            Image(systemName: "keyboard")
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+            Text("\(appState.todayKeystrokeCount) \(L10n.todayLabel.resolve(lang))")
+                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 6)
     }
 
     private var permissionBanner: some View {

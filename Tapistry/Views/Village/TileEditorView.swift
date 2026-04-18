@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Zoomed tile editor — a popover that shows a single tile at ~3× size with its 3×3
+/// Zoomed tile editor — a popover that shows a single tile at ~3× size with its 2×2
 /// sub-cell grid. The user picks a ground (whole-tile layer), then taps a sub-cell and
 /// places an object or decoration into that specific cell.
 ///
@@ -15,13 +15,21 @@ struct TileEditorView: View {
 
     /// Snapshot of the tile taken on appear so Cancel can restore it.
     @State private var snapshot: VillageTile? = nil
-    @State private var selectedSub: (Int, Int) = (1, 1)
+    @State private var selectedSub: (Int, Int)? = (1, 1)
     @State private var layer: TileLayer = .object
+    @State private var coinsSpent: Int = 0  // track for cancel-refund
 
     private var lang: AppLanguage { settings.language }
 
     /// Enlarged block size for the editor preview. Matches the popover width roughly.
     private let editorBlockSize: CGFloat = 200
+    /// Preview frame height — intentionally tall so skyscraper-class sprites
+    /// have room to render upward above the tile block.
+    private var previewFrameHeight: CGFloat { editorBlockSize * 2.5 }
+    /// How much the preview frame extends BELOW its layout box via negative
+    /// bottom padding. This keeps the tile anchored low in the popover while
+    /// still giving tall sprites the vertical rendering space they need.
+    private let previewOverflow: CGFloat = 170
 
     private var tile: VillageTile { village.grid[row][col] }
 
@@ -31,6 +39,7 @@ struct TileEditorView: View {
             groundRow
             Divider()
             previewArea
+                .padding(.bottom, -previewOverflow)
             Divider()
             subCellCaption
             layerTabs
@@ -67,7 +76,7 @@ struct TileEditorView: View {
     // MARK: - Ground row (whole-tile layer)
 
     private var groundRow: some View {
-        let unlockedGrounds = village.unlockedBuildings.filter { $0.layer == .ground }
+        let unlockedGrounds = village.unlockedBuildings(for: .ground)
         let currentGround = tile.ground
 
         return VStack(alignment: .leading, spacing: 4) {
@@ -94,22 +103,31 @@ struct TileEditorView: View {
                 .buttonStyle(.plain)
 
                 ForEach(unlockedGrounds) { g in
+                    let canAfford = village.cash >= g.price
                     Button {
-                        village.placeGround(g, row: row, col: col)
+                        if village.spendCash(g.price) {
+                            coinsSpent += g.price
+                            village.placeGround(g, row: row, col: col)
+                        }
                     } label: {
                         VStack(spacing: 1) {
                             BuildingPixelView(building: g, size: 26)
                                 .clipShape(IsometricDiamond())
                                 .frame(width: 26, height: 14)
+                                .opacity(canAfford ? 1.0 : 0.4)
                             Text(g.name.resolve(lang))
-                                .font(.system(size: 8))
+                                .font(.system(size: 7))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
+                            Text("\(g.price)💰")
+                                .font(.system(size: 7, weight: .medium))
+                                .foregroundColor(canAfford ? .yellow : .secondary)
                         }
-                        .frame(width: 44, height: 38)
+                        .frame(width: 44, height: 42)
                         .background(groundButtonBg(isSelected: currentGround == g.id))
                     }
                     .buttonStyle(.plain)
+                    .disabled(!canAfford)
                 }
             }
         }
@@ -136,9 +154,20 @@ struct TileEditorView: View {
                 selectedSubCell: selectedSub,
                 onSubCellTap: { sr, sc in selectedSub = (sr, sc) }
             )
+            // Frame is tall enough to fit the tallest sprites (skyscraper)
+            // extending above the tile block. Bottom alignment keeps the
+            // tile anchored so short buildings don't float.
             .frame(
                 width: editorBlockSize,
-                height: editorBlockSize * 0.75 + 8
+                height: previewFrameHeight,
+                alignment: .bottom
+            )
+            .clipped()
+            .background(
+                // Tap outside the diamond to deselect sub-cell
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedSub = nil }
             )
             Spacer()
         }
@@ -147,6 +176,14 @@ struct TileEditorView: View {
     // MARK: - Sub-cell caption + layer tabs
 
     private var subCellCaption: some View {
+        guard let sel = selectedSub else {
+            return AnyView(
+                Text(L10n.tapSubCell.resolve(lang))
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+            )
+        }
+
         let currentId = currentSubCellId()
         let label: String = {
             if let id = currentId, let b = BuildingCatalog.find(id) {
@@ -155,8 +192,8 @@ struct TileEditorView: View {
             return L10n.tapSubCell.resolve(lang)
         }()
 
-        return HStack(spacing: 6) {
-            Text("\(L10n.subCellLabel.resolve(lang)) (\(selectedSub.0 + 1), \(selectedSub.1 + 1))")
+        return AnyView(HStack(spacing: 6) {
+            Text("\(L10n.subCellLabel.resolve(lang)) (\(sel.0 + 1), \(sel.1 + 1))")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundColor(.secondary)
             Text("—")
@@ -164,7 +201,7 @@ struct TileEditorView: View {
             Text(label)
                 .font(.system(size: 10))
                 .foregroundColor(.primary)
-        }
+        })
     }
 
     private var layerTabs: some View {
@@ -189,23 +226,31 @@ struct TileEditorView: View {
     // MARK: - Palette (object or decoration)
 
     private var palette: some View {
-        let unlocked = village.unlockedBuildings.filter { $0.layer == layer }
+        let unlocked = village.unlockedBuildings(for: layer)
         let currentId = currentSubCellId()
 
         return Group {
-            if unlocked.isEmpty {
+            if selectedSub == nil {
+                Text(L10n.tapSubCell.resolve(lang))
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            } else if unlocked.isEmpty {
                 Text(L10n.noUnlocked.resolve(lang))
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-            } else {
+            } else if let sel = selectedSub {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 50), spacing: 6)], spacing: 6) {
-                    if currentId != nil {
+                    if let cid = currentId, let building = BuildingCatalog.find(cid) {
+                        let refund = building.price / 2
                         Button {
+                            village.addCash(refund)
                             village.removeSubCell(
                                 row: row, col: col,
-                                subRow: selectedSub.0, subCol: selectedSub.1,
+                                subRow: sel.0, subCol: sel.1,
                                 layer: layer
                             )
                         } label: {
@@ -213,26 +258,32 @@ struct TileEditorView: View {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 16))
                                     .foregroundColor(.red.opacity(0.75))
-                            }, label: L10n.remove.resolve(lang), isSelected: false, isRemove: true)
+                            }, label: "+\(refund)💰", isSelected: false, isRemove: true)
                         }
                         .buttonStyle(.plain)
                     }
 
                     ForEach(unlocked) { b in
+                        let canAfford = village.cash >= b.price
                         Button {
-                            village.placeSubCell(
-                                b,
-                                row: row, col: col,
-                                subRow: selectedSub.0, subCol: selectedSub.1,
-                                layer: layer
-                            )
+                            if village.spendCash(b.price) {
+                                coinsSpent += b.price
+                                village.placeSubCell(
+                                    b,
+                                    row: row, col: col,
+                                    subRow: sel.0, subCol: sel.1,
+                                    layer: layer
+                                )
+                            }
                         } label: {
                             paletteCell(content: {
-                                BuildingPixelView(building: b, size: 28)
+                                BuildingPixelView(building: b, size: b.thumbnailSize(maxDim: 28))
                                     .frame(width: 28, height: 28)
-                            }, label: b.name.resolve(lang), isSelected: currentId == b.id, isRemove: false)
+                                    .opacity(canAfford ? 1.0 : 0.4)
+                            }, label: b.name.resolve(lang), price: b.price, canAfford: canAfford, isSelected: currentId == b.id, isRemove: false)
                         }
                         .buttonStyle(.plain)
+                        .disabled(!canAfford)
                     }
                 }
             }
@@ -242,18 +293,25 @@ struct TileEditorView: View {
     private func paletteCell<Content: View>(
         @ViewBuilder content: () -> Content,
         label: String,
+        price: Int = 0,
+        canAfford: Bool = true,
         isSelected: Bool,
         isRemove: Bool
     ) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 1) {
             content()
-                .frame(height: 28)
+                .frame(height: 24)
             Text(label)
-                .font(.system(size: 9))
+                .font(.system(size: 8))
                 .foregroundColor(.secondary)
                 .lineLimit(1)
+            if !isRemove {
+                Text("\(price)💰")
+                    .font(.system(size: 7, weight: .medium))
+                    .foregroundColor(canAfford ? .yellow : .secondary)
+            }
         }
-        .frame(width: 46, height: 48)
+        .frame(width: 46, height: 52)
         .background(
             RoundedRectangle(cornerRadius: 6)
                 .fill(
@@ -288,6 +346,10 @@ struct TileEditorView: View {
     private func closeKeep() { onClose() }
 
     private func cancel() {
+        // Refund coins spent during this editor session
+        if coinsSpent > 0 {
+            village.addCash(coinsSpent)
+        }
         if let snap = snapshot {
             village.replaceTile(snap, row: row, col: col)
         }
@@ -305,7 +367,8 @@ struct TileEditorView: View {
     }
 
     private func currentSubCellId() -> String? {
-        let cell = tile.subCells[selectedSub.0][selectedSub.1]
+        guard let sel = selectedSub else { return nil }
+        let cell = tile.subCells[sel.0][sel.1]
         switch layer {
         case .ground: return nil  // ground is tile-wide
         case .object: return cell.object

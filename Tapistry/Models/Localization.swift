@@ -96,6 +96,11 @@ enum L10n {
     static let welcomeNext          = LocalizedString("Next", ko: "다음")
     static let welcomeGetStarted    = LocalizedString("Get Started", ko: "시작하기")
 
+    // Cash / Coins
+    static let coins           = LocalizedString("coins", ko: "코인")
+    static let todayLabel      = LocalizedString("today", ko: "오늘")
+    static let notEnoughCoins  = LocalizedString("Not enough coins", ko: "코인 부족")
+
     // Settings
     static let settingsTitle  = LocalizedString("Settings", ko: "설정")
     static let general        = LocalizedString("General", ko: "일반")

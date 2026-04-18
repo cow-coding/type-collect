@@ -119,10 +119,13 @@ struct VillageGridView: View {
                 height: blockH + stepY * CGFloat(village.gridSize * 2)
             )
         }
-        .popover(isPresented: Binding(
-            get: { selectedCell != nil },
-            set: { if !$0 { selectedCell = nil } }
-        )) {
+        .popover(
+            isPresented: Binding(
+                get: { selectedCell != nil },
+                set: { if !$0 { selectedCell = nil } }
+            ),
+            arrowEdge: .leading  // popover opens to the right of the menu
+        ) {
             if let (row, col) = selectedCell {
                 TileEditorView(
                     village: village,
@@ -135,7 +138,7 @@ struct VillageGridView: View {
     }
 }
 
-/// A single tile: grass block + whole-tile ground + 3×3 sub-cells of objects & decorations.
+/// A single tile: grass block + whole-tile ground + 2×2 sub-cells of objects & decorations.
 struct VillageTileView: View {
     let tile: VillageTile
     let blockSize: CGFloat
@@ -152,15 +155,15 @@ struct VillageTileView: View {
     // In a centered ZStack, the top face center sits at -blockSize/8 relative to ZStack center
     private var topFaceOffsetY: CGFloat { -blockSize / 8 }
 
-    // Iso geometry for the 3×3 sub-grid on top of the tile's top-face diamond.
-    // Each sub-cell is a mini diamond of size (blockSize/3 × blockSize/6).
+    // Iso geometry for the 2×2 sub-grid on top of the tile's top-face diamond.
+    // Each sub-cell is a mini diamond of size (blockSize/2 × blockSize/4).
     // Half-step between sub-cells:
-    private var subStepX: CGFloat { blockSize / 6 }
-    private var subStepY: CGFloat { blockSize / 12 }
+    private var subStepX: CGFloat { blockSize / 4 }
+    private var subStepY: CGFloat { blockSize / 8 }
     /// Y of the (row=0, col=0) sub-cell center, relative to ZStack center.
-    private var subOriginY: CGFloat { topFaceOffsetY - blockSize / 6 }
-    /// Rendered size of a sub-cell object sprite (intentionally larger than a sub-cell so
-    /// neighbors overlap slightly for a dense village feel).
+    private var subOriginY: CGFloat { topFaceOffsetY - blockSize / 8 }
+    /// Rendered size of a sub-cell object sprite — sized to fit within the sub-cell
+    /// diamond (blockSize/2 wide) so neighbors don't spill into each other.
     private var subObjectSize: CGFloat { blockSize / 2 }
 
     private struct Renderable: Identifiable {
@@ -193,25 +196,6 @@ struct VillageTileView: View {
         let x = CGFloat(subCol - subRow) * subStepX
         let y = CGFloat(subCol + subRow) * subStepY + subOriginY
         return CGSize(width: x, height: y)
-    }
-
-    /// Iso Y-shear applied to each sprite.
-    ///
-    /// Negative b=-0.5 aligns the sprite's horizontal edges with the top-LEFT diamond
-    /// edge (slope -1:2), so the building's south/front face is visible — i.e. it
-    /// "faces" the viewer who looks from the south-east. This is the correct orientation
-    /// for a building sitting on the tile with its entrance/windows facing the camera.
-    ///
-    /// Billboards (tree, lamp) and ground layers return 0 (no shear).
-    private func isoShearY(for building: BuildingType) -> CGFloat {
-        switch building.id {
-        case "tree", "lamp":
-            return 0
-        case "flowers", "stone_path":
-            return 0
-        default:
-            return -0.5       // south face visible — top-right corner rises to match left diamond edge
-        }
     }
 
     var body: some View {
@@ -249,21 +233,24 @@ struct VillageTileView: View {
 
             // Sub-cell contents — objects and decorations painted back-to-front.
             //
-            // Structures get a negative Y-shear (b = -0.5) so their front/south face
+            // Structures get a negative Y-shear (b = -0.5) so their 앞쪽벽(SE면)
             // is visible to the SE-looking camera. A hard-edged shadow offset to the
-            // right (+x) and slightly down (+y) along the iso east slope simulates the
-            // east/right wall of the building, giving genuine 3-D depth perception.
+            // right (+x) and slightly down (+y) simulates the 왼쪽벽(SW면) depth,
+            // giving genuine 3-D depth perception.
             //
             // Billboards (tree, lamp) stay upright — iso convention for tall elements.
             // Ground layers are already diamond-clipped.
             ForEach(renderables) { item in
                 let off = subCellOffset(subRow: item.subRow, subCol: item.subCol)
-                let shear = isoShearY(for: item.building)
+                let renderSpec = item.building.renderSpec
+                let shear = renderSpec.isoShearY
+                let baselineShift = CGFloat(renderSpec.baselineRows32) * subObjectSize / 32.0
+                let placementOffset = renderSpec.placementOffset(blockSize: blockSize)
                 BuildingPixelView(building: item.building, size: subObjectSize)
                     .transformEffect(
                         CGAffineTransform(a: 1, b: shear, c: 0, d: 1, tx: 0, ty: 0)
                     )
-                    // East-face depth: hard shadow offset along the iso +0.5 east slope.
+                    // 왼쪽벽(SW면) depth: hard shadow offset along the iso slope.
                     // Only applied to structures (shear != 0); billboards and ground omit it.
                     .shadow(
                         color: shear != 0 ? Color(white: 0.12).opacity(0.50) : .clear,
@@ -271,7 +258,12 @@ struct VillageTileView: View {
                         x: subObjectSize * 0.12,
                         y: subObjectSize * 0.06
                     )
-                    .offset(x: off.width, y: off.height - subObjectSize / 2)
+                    // Decorations: centered on sub-cell.
+                    // Buildings/fence: shifted forward from center.
+                    .offset(
+                        x: off.width + placementOffset.width,
+                        y: off.height + placementOffset.height - subObjectSize / 2 + baselineShift
+                    )
                     .allowsHitTesting(false)
             }
 
@@ -284,7 +276,7 @@ struct VillageTileView: View {
                         IsometricDiamond()
                             .stroke(Color.yellow, lineWidth: 1.5)
                     )
-                    .frame(width: blockSize / 3, height: blockSize / 6)
+                    .frame(width: blockSize / 2, height: blockSize / 4)
                     .offset(x: off.width, y: off.height)
                     .allowsHitTesting(false)
             }

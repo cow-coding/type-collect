@@ -119,6 +119,65 @@ enum SpriteColors {
     static let shopSign     = Color(red: 0.82, green: 0.68, blue: 0.36)
     static let shopSignDark = Color(red: 0.50, green: 0.38, blue: 0.18)
 
+    // Cafe
+    static let cafeRoof      = Color(red: 0.35, green: 0.45, blue: 0.39) // deep sage trim
+    static let cafeRoofLight = Color(red: 0.63, green: 0.72, blue: 0.64) // soft sage top
+    static let cafeWall      = Color(red: 0.95, green: 0.92, blue: 0.85) // plaster cream
+    static let cafeWallDark  = Color(red: 0.75, green: 0.69, blue: 0.58)
+    static let cafeUpper     = Color(red: 0.84, green: 0.88, blue: 0.82)
+    static let cafeUpperDark = Color(red: 0.58, green: 0.64, blue: 0.57)
+    static let cafeSign      = Color(red: 0.91, green: 0.58, blue: 0.36) // coral accent
+    static let cafeSignDark  = Color(red: 0.52, green: 0.27, blue: 0.19)
+    static let cafeLetter    = Color(red: 0.99, green: 0.96, blue: 0.90)
+    static let cafeGlass     = Color(red: 0.53, green: 0.73, blue: 0.76)
+    static let cafeGlassDark = Color(red: 0.33, green: 0.52, blue: 0.56)
+
+    // Apartment
+    static let aptRoof      = Color(red: 0.91, green: 0.91, blue: 0.93)
+    static let aptRoofDark  = Color(red: 0.82, green: 0.82, blue: 0.85)
+    static let aptRoofEdge  = Color(red: 0.78, green: 0.78, blue: 0.82)
+    static let aptWallTrim  = Color(red: 0.54, green: 0.54, blue: 0.58)
+    static let aptWall      = Color(red: 0.66, green: 0.66, blue: 0.70)
+    static let aptGlass     = Color(red: 0.29, green: 0.33, blue: 0.41)
+    static let aptGlassBrt  = Color(red: 0.35, green: 0.42, blue: 0.50)
+    static let aptSeam      = Color(red: 0.23, green: 0.23, blue: 0.27)
+    static let aptBright    = Color(red: 0.94, green: 0.94, blue: 0.96)
+
+    // City Hall — classical stone with blue-slate roof + clock tower
+    static let cityWall      = Color(red: 0.93, green: 0.90, blue: 0.82) // warm stone
+    static let cityWallDark  = Color(red: 0.68, green: 0.63, blue: 0.52)
+    static let cityRoof      = Color(red: 0.35, green: 0.42, blue: 0.55) // slate blue
+    static let cityRoofLight = Color(red: 0.52, green: 0.60, blue: 0.72)
+    static let cityRoofDark  = Color(red: 0.22, green: 0.28, blue: 0.38)
+    static let cityClock     = Color(red: 0.98, green: 0.94, blue: 0.82) // cream clock face
+    static let cityClockHand = Color(red: 0.20, green: 0.18, blue: 0.18)
+    static let cityGlass     = Color(red: 0.46, green: 0.58, blue: 0.64)
+    static let cityAccent    = Color(red: 0.82, green: 0.32, blue: 0.28) // red flag / door
+    static let cityDome      = Color(red: 0.96, green: 0.94, blue: 0.90) // bright dome
+    static let cityDomeShade = Color(red: 0.82, green: 0.78, blue: 0.70) // dome shadow
+
+    // Skyscraper — Art Deco limestone (Empire State Building feel)
+    static let skyWall       = Color(red: 0.86, green: 0.83, blue: 0.75) // warm limestone
+    static let skyWallDark   = Color(red: 0.58, green: 0.54, blue: 0.46) // trim / vertical ribs
+    static let skyWallLight  = Color(red: 0.95, green: 0.92, blue: 0.84) // lit edge
+    static let skyWindow     = Color(red: 0.24, green: 0.28, blue: 0.38) // dark glass
+    static let skyWindowBrt  = Color(red: 0.48, green: 0.58, blue: 0.68)
+    static let skyRoof       = Color(red: 0.46, green: 0.45, blue: 0.48) // setback caps
+    static let skySpire      = Color(red: 0.28, green: 0.28, blue: 0.30) // antenna
+    static let skyBeacon     = Color(red: 0.95, green: 0.30, blue: 0.24) // red light
+
+    // Hotel — heritage/boutique downtown hotel, warm brick + cream trim
+    static let hotelBrick     = Color(red: 0.68, green: 0.36, blue: 0.28) // warm brick body
+    static let hotelBrickDark = Color(red: 0.48, green: 0.24, blue: 0.18) // trim/shadow
+    static let hotelTrim      = Color(red: 0.94, green: 0.90, blue: 0.80) // cream stone trim
+    static let hotelTrimDark  = Color(red: 0.72, green: 0.66, blue: 0.55)
+    static let hotelRoof      = Color(red: 0.34, green: 0.28, blue: 0.32) // dark slate mansard
+    static let hotelRoofLight = Color(red: 0.48, green: 0.42, blue: 0.45)
+    static let hotelGlass     = Color(red: 0.32, green: 0.38, blue: 0.46) // dark window
+    static let hotelGlassBrt  = Color(red: 0.58, green: 0.72, blue: 0.78)
+    static let hotelSign      = Color(red: 0.96, green: 0.78, blue: 0.28) // gold HOTEL sign
+    static let hotelCanopy    = Color(red: 0.80, green: 0.30, blue: 0.28) // red canopy
+
     // Water (well)
     static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
     static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
@@ -133,109 +192,202 @@ enum SpriteColors {
 private enum Sprites {
     // MARK: Tree (32×32, split into canopy + trunk for sway)
 
-    static let treeCanopy = PixelArt(
+    /// Tree — 48×48 round canopy with leaf texture, thin trunk.
+    /// Larger grid allows visible leaf highlights and shadow detail.
+    static let tree = PixelArt(
         rows: [
-            "................................",
-            "............gGGGGGGgg...........",
-            "..........gGGGLLLLLGGGg.........",
-            ".........gGGGLLLLLLGGGGg........",
-            "........gGLLLGGGGGLLLLGGg.......",
-            ".......gGLLGGGGddGGLLLGGGGg.....",
-            "......gGGLGGGddGGGGLLGGGGGGg....",
-            "......gGGGGGddGGGGGGGGGGGGGGg...",
-            ".....gGLGGGGGGGGGLLGGGGLGGGGGg..",
-            ".....gGGGGLLGGdGGLLGGGGGGGGGGGg.",
-            "....gGGGGLLLGGGdGGGGGGLGGGGGGGg.",
-            "....gGGLLGGGGGGGGGGGGLLGGdGGGGg.",
-            "....gGGGGGGGGGGdGGGGLLGGGGGGGg..",
-            "....gGGdGGGGGGddGGGGGGGGGGGGg...",
-            ".....gGGGddGGGGGGGGGLLGGGGGGg...",
-            "......gGGGGGGGGGGGGGLLGGGGg.....",
-            ".......gGGGGGGGGGGGGGGGGg.......",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "............................GGG.................",
+            "............................GGGGG...............",
+            "..........................GGGLGGG...............",
+            "..........................GGGLLGGGG.............",
+            "........................GGGLLLGGGGG.............",
+            "........................GGGGLGGGGGG.............",
+            "........................GGGGGGGdGGGGG...........",
+            "........................GGGLGGGGGGGGg...........",
+            "........................GGGGGGdGGGG.............",
+            ".........................GGGGGGGGGg.............",
+            "..........................gGGGGGg...............",
+            "............................ggGgg...............",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            "............................bBBb................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "G": SpriteColors.leaf,
+            "g": SpriteColors.leafDark,
+            "d": SpriteColors.leafDark,
+            "L": SpriteColors.leafLight,
+            "B": SpriteColors.bark,
+            "b": SpriteColors.barkDark,
+        ]
+    )
+
+    /// Street tree (가로수) — 48×48 tall columnar canopy, thinner than tree.
+    static let streetTree = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".............................GG.................",
+            "............................GGGG................",
+            "............................GLGG................",
+            "...........................GGLGGG...............",
+            "...........................GGLLGG...............",
+            "...........................GGLGGG...............",
+            "...........................GGGGGG...............",
+            "...........................GGGGGG...............",
+            "...........................GGGGGG...............",
+            "............................GGGG................",
+            "............................GGGg................",
+            "............................gGg.................",
+            ".............................gg.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            "............................bBBb................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
             "G": SpriteColors.leaf,
             "g": SpriteColors.leafDark,
             "L": SpriteColors.leafLight,
-            "d": SpriteColors.leafDark,
-        ]
-    )
-
-    static let treeTrunk = PixelArt(
-        rows: [
-            "..............BBBB..............",
-            "..............BBBB..............",
-            ".............bBBBBb.............",
-            ".............bBBBBb.............",
-            ".............bBBBBb.............",
-            "............bBBBBBBb............",
-            "............bBBBBBBb............",
-            "...........bbBBBBBBbb...........",
-            "..........bbbBBBBBBbbb..........",
-            ".........bbbbbbbbbbbbbb.........",
-            "........xxxxxxxxxxxxxxxx........",
-            ".........xxxxxxxxxxxxxx.........",
-            "...........xxxxxxxxxx...........",
-            "................................",
-            "................................",
-        ],
-        colors: [
             "B": SpriteColors.bark,
             "b": SpriteColors.barkDark,
-            "x": SpriteColors.shadow,
         ]
     )
 
-    // MARK: House (32×32)
+    // MARK: House (48×48)
 
+    /// Iso house — 48×48 upscale/redraw of the original approved house geometry.
+    /// Keeps the original 2:1 wall and roof slopes, then adds only light detail
+    /// so the sprite stays aligned with the Tapistry iso guide.
     static let house = PixelArt(
         rows: [
-            "................................",
-            "................................",
-            "....................cCCc........",
-            ".....................CC.........",
-            ".....................CC.........",
-            "..............rRRRr..CC.........",
-            ".............rRRRRRr.CC.........",
-            "............rRRRRRRRrCC.........",
-            "...........rRRRRRRRRRr..........",
-            "..........rRRRRRRRRRRRr.........",
-            ".........rRRRRRRRRRRRRRr........",
-            "........rRRRRRRRRRRRRRRRr.......",
-            ".......rRRRRRRRRRRRRRRRRRr......",
-            "......rRRRRRRRRRRRRRRRRRRRr.....",
-            ".....rRRRRRRRRRRRRRRRRRRRRRr....",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnnXXXXnnnnnnXXXXnnW......",
-            "......WnnXXXXnnnnnnXXXXnnW......",
-            "......WnnXXXXnnnnnnXXXXnnW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDdhDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            ".....KKKKKKKKKKKKKKKKKKKKKK.....",
-            "....xxxxxxxxxxxxxxxxxxxxxxxx....",
-            ".....xxxxxxxxxxxxxxxxxxxxxx.....",
-            "................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "..............cCCCcc............................",
+            "..............cCCCcc............................",
+            "...............CCC..............................",
+            "...............CCC..............................",
+            "...............CCC..............................",
+            "...............CCC.........RL...................",
+            "...............CCC......rrrRRRRL................",
+            "...............CCC......rrrRRRRL................",
+            "...............CCC...rrrrrrRRRRRRRR.............",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRR.........",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRR.........",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRRRRW......",
+            "............rrrrrrrrrrrrRRRRRRRRRRRRRRWWWn......",
+            "............rrrrrrrrrrrrRRRRRRRRRRRRRRWWWn......",
+            ".........rrrrrrrrrrrrrrrRRRRRRRRRRRWWWnnnn......",
+            "......EEErrrrrrrrrrrrrrRRRRRRRRRWWWnnnnnnn......",
+            "......EEErrrrrrrrrrrrrrRRRRRRRRRWWWnnnnnnn......",
+            "......eeeEEErrrrrrrrrrrRRRRRRWWWnnnnnnnnnn......",
+            "......eeeeeeEEErrrrrrRRRRRWWWnnnXXxxnnnnnn......",
+            "......eeeeeeEEErrrrrrRRRRRWWWnnnXXxxnnnnnn......",
+            "......eeeXXxxXeEEErrrRRWWWnnnnnnXXxxnnnnnn......",
+            "......eeeXXxxXeEEErrWWWnnnnnnnnnnnnnnnnnnn......",
+            "......eeeXXxxXeEEErrWWWnnnnnnnnnnnnnnnnnnn......",
+            "......EEeeeeeeeeeeEEKnnnDDDDDnnnnnnnnnnnnK......",
+            "......EEeeeeeeeeeeEEKnnnDDdDDnnnnnnnWW..........",
+            "......EEeeeeeeeeeeEEKnnnDDdDDnnnnnnnWW..........",
+            "......EEeeeeeeeeeeEEKnnnDDhDDnnnnWW.............",
+            ".........EEeeeeeeeEEKnnnDDdDDnWW................",
+            ".........EEeeeeeeeEEKnnnDDdDDnWW................",
+            "............EEeeeeEEKnnnDDDDD...................",
+            "...............EEeEEKnnnWW......................",
+            "...............EEeEEKnnnWW......................",
+            "..................EEKKK.........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
             "R": SpriteColors.roof,
             "r": SpriteColors.roofDark,
+            "L": SpriteColors.roofLight,
             "C": SpriteColors.chimney,
             "c": SpriteColors.chimneyDark,
             "W": SpriteColors.wallDark,
             "n": SpriteColors.wall,
+            "E": SpriteColors.plankDark,
+            "e": SpriteColors.wallDark,
+            "K": SpriteColors.plankDark,
             "X": SpriteColors.window,
+            "x": SpriteColors.windowDark,
             "D": SpriteColors.door,
             "d": SpriteColors.doorLight,
-            "h": SpriteColors.shopSign,  // gold doorknob
-            "K": SpriteColors.plankDark,
-            "x": SpriteColors.shadow,
+            "h": SpriteColors.shopSign,
         ]
     )
 
@@ -243,94 +395,122 @@ private enum Sprites {
 
     static let windmillTower = PixelArt(
         rows: [
-            "................................",
-            "...............rr...............",
-            "..............rRRr..............",
-            ".............rRRRRr.............",
-            "............rRRRRRRr............",
-            "...........rRRRRRRRRr...........",
-            "..........rRRRRRRRRRRr..........",
-            ".........rRRRHHHHHHRRRr.........",
-            "........rRRRHHHHHHHHRRRr........",
-            ".......rRRRRHHHHHHHHRRRRr.......",
-            "........WWWWWWWWWWWWWWWW........",
-            "........WnnnnnnnnnnnnnnW........",
-            "........WnnnnnnnnnnnnnnW........",
-            "........WnXXXnnnnnnnXXXW........",
-            "........WnXXXnnnnnnnXXXW........",
-            "........WnXXXnnnnnnnXXXW........",
-            "........WnnnnnnnnnnnnnnW........",
-            "........WnnnnnnnnnnnnnnW........",
-            "........WnnnnnnnnnnnnnnW........",
-            "........WnnnnnDDDDnnnnnW........",
-            "........WnnnnnDddDnnnnnW........",
-            "........WnnnnnDdhDnnnnnW........",
-            "........WnnnnnDddDnnnnnW........",
-            "........WnnnnnDddDnnnnnW........",
-            "........WnnnnnDDDDnnnnnW........",
-            "........WWWWWWWWWWWWWWWW........",
-            ".......KKKKKKKKKKKKKKKKKK.......",
-            "......xxxxxxxxxxxxxxxxxxxx......",
-            ".......xxxxxxxxxxxxxxxxxx.......",
-            "................................",
-            "................................",
-            "................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "........................A.......................",
+            ".......................ATT......................",
+            "......................ATTTT.....................",
+            ".....................ATTTTTT....................",
+            ".....................AATTTAAH...................",
+            "....................AATTTTTAHH..................",
+            "....................WnAATAAnWH..................",
+            "....................WnnnAnnnW...................",
+            "...................AWnnnWnnnWA..................",
+            "..................AAWWnnWnnWWAA.................",
+            "..................WnAAWWWWWAAnW.................",
+            "..................WnnnAAWAAnnnW.................",
+            "..................WnnnnnAnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnXXnW.................",
+            "..................WnnnnnWnXXXnW.................",
+            "..................WnnnnnWnXXXnW.................",
+            "..................WnnnnnWnXXnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnDnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WWnnnnWnnDWWW.................",
+            "....................WWnnWnWWW...................",
+            "......................WWWWW.....................",
+            "........................W.......................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
-            "R": SpriteColors.millRoof,
-            "r": SpriteColors.millRoofDark,
+            "T": SpriteColors.millRoof,
+            "A": SpriteColors.millRoofDark,
             "H": SpriteColors.millHub,
             "W": SpriteColors.millBodyDark,
             "n": SpriteColors.millBody,
             "X": SpriteColors.window,
             "D": SpriteColors.door,
             "d": SpriteColors.doorLight,
-            "h": SpriteColors.shopSign,
-            "K": SpriteColors.plankDark,
-            "x": SpriteColors.shadow,
         ]
     )
 
     static let windmillBlades = PixelArt(
         rows: [
-            "..............BBB...............",
-            "..............BBB...............",
-            "..............BBB...............",
-            "..............BBB...............",
-            "..............BBB...............",
-            "..............BBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "BBBBBBBBBBBBBBHHHBBBBBBBBBBBBBBB",
-            "bbbbbbbbbbbbbbhhhBBBBBBBBBBBBBBB",
-            "..............bbbbbbbbbbbbbbbbbb",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "..............bBB...............",
-            "................................",
-            "................................",
+            "................................................",
+            ".............................H..................",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".................bbbbbbbbbb..HBBBb..............",
+            ".................BBBBBBBBBB..HBBBb..............",
+            ".................BBBBBBBBBB..H..................",
+            ".................BBBBBBBBBB.HHH.................",
+            "................HHHHHHHHHHHHHHHHHHHHHHHHHHH.....",
+            "............................HHH.BBBBBBBBBB......",
+            ".............................H..BBBBBBBBBB......",
+            ".........................bBBBH..BBBBBBBBBB......",
+            ".........................bBBBH..bbbbbbbbbb......",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".............................H..................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
             "B": SpriteColors.millBlade,
             "b": SpriteColors.millBladeDark,
             "H": SpriteColors.millHub,
-            "h": SpriteColors.millHub,
         ]
     )
 
@@ -430,57 +610,505 @@ private enum Sprites {
         ]
     )
 
-    // MARK: Shop (32×32)
+    // MARK: Shop (48×48)
 
+    /// Shop (편의점) — iso box generated via tools/build_shop.py.
+    /// Wider + flatter footprint (a=18, H=12). SHOP sign placed above the
+    /// roof like a rooftop billboard; door + flanking windows at wall bottom.
     static let shop = PixelArt(
         rows: [
-            "................................",
-            "................................",
-            "................................",
-            ".........gggggggggggggggg.......",
-            ".........gSSSSSSSSSSSSSSg.......",
-            ".........gSgSggSgSSgSgSSg.......",
-            ".........gSggSggSSggSSggg.......",
-            ".........gSSSSSSSSSSSSSSg.......",
-            ".........gggggggggggggggg.......",
-            "........aAAAAAAAAAAAAAAAAa......",
-            "........aBBBBBBBBBBBBBBBBa......",
-            "........aAAAAAAAAAAAAAAAAa......",
-            "........aBBBBBBBBBBBBBBBBa......",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnXXXXnnnnnnnnXXXXnW......",
-            "......WnnnnnnnnnnnnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDdhDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDddDnnnnnnnW......",
-            "......WnnnnnnnDDDDnnnnnnnW......",
-            "......WWWWWWWWWWWWWWWWWWWW......",
-            ".....KKKKKKKKKKKKKKKKKKKKKK.....",
-            "....xxxxxxxxxxxxxxxxxxxxxxxx....",
-            ".....xxxxxxxxxxxxxxxxxxxxxx.....",
-            "................................",
-            "................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "...........................AAA...............A..",
+            ".........................AATTTAA...........AAA..",
+            ".......................AATTTTTTTAA.......AAgnA..",
+            ".....................AATTTTTTTTTTTAA...AAgnnnA..",
+            "...................AATTTTTTTTTTTTTTTAAAgngngnA..",
+            ".................AATTTTTTTTTTTTTTTTAAgnnngnngA..",
+            "...............AATTTTTTTTTTTTTTTTAAgngngngnggA..",
+            ".............AATTTTTTTTTTTTTTTTAAgngngngngngA...",
+            "...........AATTTTTTTTTTTTTTTTAAgngngngngngATAA..",
+            "..........AATTTTTTTTTTTTTTTTTAnnggnnngnnATATTAA.",
+            "..........EeAATTTTTTTTTTTTTTTAngngngngATTTAAAwW.",
+            "..........EeeeAATTTTTTTTTTTTTAnnngngATTTTAAwwwW.",
+            "..........EeeeeeAATTTTTTTTTTTAggngATTTTAAwwwwwW.",
+            "..........EeeeeeeeAATTTTTTTTTAnnATTTTAAwwwwwwwW.",
+            "..........EeeeeeeeeeAATTTTTTTAATATTAAwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeAATTTTTTTTAAAwwwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeeeAATTTTTAAwwwwwwwwwwXwwW.",
+            "..........EeeeeeeeeeeeeeeeAATAAwwwwwwwwwwAnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeAwwwwwwwwwwwwXnAwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwwwwXnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwAwwwnXwwW.",
+            "..........EEeeeeeeeeeeeeeeeeWwwwAwwwAADwwXnAwWW.",
+            "............EEeeeeeeeeeeeeeeWwXnXwwwDDDwwXnWW...",
+            "..............EEeeeeeeeeeeeeWwXnXwwwDdnwwWW.....",
+            "................EEeeeeeeeeeeWwAnXwwwDdDWW.......",
+            "..................EEeeeeeeeeWwXnAwwwDdD.........",
+            "....................EEeeeeeeWwwnXwwWDD..........",
+            "......................EEeeeeWwXnWWW.............",
+            "........................EEeeWwWWW...............",
+            "..........................EEWWW.................",
+            "............................W...................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
-            "S": SpriteColors.shopSign,
-            "g": SpriteColors.shopSignDark,
-            "A": SpriteColors.shopAwning,
-            "a": SpriteColors.shopSignDark,
-            "B": SpriteColors.shopAwning2,
-            "W": SpriteColors.shopWallDark,
-            "n": SpriteColors.shopWall,
-            "X": SpriteColors.window,
-            "D": SpriteColors.door,
-            "d": SpriteColors.doorLight,
-            "h": SpriteColors.shopSign,
-            "K": SpriteColors.plankDark,
-            "x": SpriteColors.shadow,
+            "T": SpriteColors.stoneLight,     // flat roof (uniform gray)
+            "A": SpriteColors.shopAwning,     // red awning perimeter trim
+            "E": SpriteColors.stoneDark,      // 왼쪽벽(SW면) trim
+            "e": SpriteColors.stone,          // 왼쪽벽(SW면) body
+            "W": SpriteColors.plank,          // 앞쪽벽(SE면) trim (lighter plank)
+            "w": SpriteColors.plankDark,      // 앞쪽벽(SE면) body (dark plank)
+            "g": SpriteColors.shopSign,       // rooftop sign background (gold)
+            "n": SpriteColors.wallLight,      // SHOP letter pixels (cream)
+            "X": SpriteColors.windowDark,     // window glass
+            "D": SpriteColors.door,           // door frame
+            "d": SpriteColors.doorLight,      // door panel
+        ]
+    )
+
+    // MARK: Cafe (48×48)
+
+    /// Cafe (카페) — long striped awning + rooftop mug + glass reflection.
+    static let cafe = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            ".....................EEE........................",
+            "...................EEKKKEE......................",
+            ".................EEKKKKKKKEE....................",
+            "................EEKKKKKKKKKEE...................",
+            "................EeEEKKKKKEEeEee.................",
+            "................EeeeEEKEEeeeE.e.................",
+            "................EeeeeeEeeeeeE.e.................",
+            "...............AEeeeeeEeeeeeEAe.................",
+            ".............AATEeeeeeEeeeeeETeA................",
+            "............AATTEEeeeeEeeeeEEeeAA...............",
+            "............EeAATTEEeeEeeEETTAEEE...............",
+            "............EeeeAATTEEEEETTAEEXEE...............",
+            "............EeeeeeAATTETTAEEXXXEE...............",
+            "............EeeeeeeeAATAEEEEXXXEE...............",
+            "............EeeeeeeeeeEEXXEELXXEE...............",
+            "...........AEEeeeeeeeeEXXLEEXXEEEA..............",
+            ".........AATTTEEeeeeeeEXXXEEEEETTTAA............",
+            ".......AATTTTTTTEEeeeeEXXXEEETTTTTTTAA..........",
+            ".....AATTTTTTTTTTTEEeeEXEEETTTTTTTTTTTAA........",
+            "....AATTTTTTTTTTTTTTEEEEETTTTTTTTTTTTTTAd.......",
+            "....EXAATTTTTTTTTTTTTTETTTTTTTTTTTTTTAddEd......",
+            "....EXXXAATTTTTTTTTTTTTTTTTTTTTTTTTAddXddd......",
+            "....EXXXXXAATTTTTTTTTTTTTTTTTTTTTAddXdddn.......",
+            "....EXXXXXXXAATTTTTTTTTTTTTTTTTAddXdddnXE.......",
+            "....EXXXXXXLXXAATTTTTTTTTTTTTAddDdddnXXXE.......",
+            "....EXXXXXLXXXXXAATTTTTTTTTAddDdddnXXXKXE.......",
+            "....EXXXXLXXXXXXXXAATTTTTAddXdddnEXXKKXXE.......",
+            "....EXXXLXXXXXXXLXXXAATAddXdddndDEXKXXXXE.......",
+            "....EXXLXXXXXXXLXXXXXXddXdddnEDdDEXXXXKKE.......",
+            "....EEXXXXXXXXLXXXXXXXEdddnXXEDdDEXXKKKKE.......",
+            "......EEXXXXXLXXXXXXXXEdnXXXXEDdDEKKKKEE........",
+            "........EEXXLXXXXXXXXXEXXXKKXEDdDEKKEE..........",
+            "..........EEXXXXXXXXXXEXKKXXXEDdDEEE............",
+            "............EEXXXXXXXXEXXXXXKEDdDE..............",
+            "..............EEXXXXXXEXXXKKKEDD................",
+            "................EEXXXXEXKKKKEE..................",
+            "..................EEXXEKKKEE....................",
+            "....................EEEKEE......................",
+            "......................EE........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.cafeRoofLight,
+            "A": SpriteColors.cafeRoof,
+            "K": SpriteColors.cafeSignDark,
+            "b": SpriteColors.cafeSign,
+            "E": SpriteColors.cafeWallDark,
+            "e": SpriteColors.cafeWall,
+            "W": SpriteColors.cafeWallDark,
+            "n": SpriteColors.cafeWall,
+            "X": SpriteColors.cafeGlass,
+            "D": SpriteColors.cafeSignDark,
+            "d": SpriteColors.cafeSign,
+            "L": SpriteColors.cafeLetter,
+        ]
+    )
+
+    // MARK: Apartment (48×48)
+
+    /// Apartment (아파트) — tall modern tower with iso floor bands.
+    static let apartment = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            ".......................AAA......................",
+            ".....................AATTTAA....................",
+            "...................AATTTTTTTAA..................",
+            ".................AATTTTTTTTTTTAA................",
+            "................AATTTTTTTTTTTTTAA...............",
+            "................EeAATTTTTTTTTAKKE...............",
+            "................EeeeAATTTTTAKKnEE...............",
+            "................EeeeeeAATAKKnneEE...............",
+            "................EeeeeeeeKKnneeeEE...............",
+            "................EeeeeeeeEneeeeEEE...............",
+            "................EeeeeeeeEeeeEEKKE...............",
+            "................EeeeeeeeEeEEKKXEE...............",
+            "................EeeeeeeeEEKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................eeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................KKeeeeeeEXXXXXeEE...............",
+            "................EeKKeeeeEXXXeeKKE...............",
+            "................EXeeKKeeEXeeKKXEE...............",
+            "................EXXKeeKKEeKKXXXEE...............",
+            "................EXXKKKeEKKXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................KKXKKKXEEXXXXXXEE...............",
+            "................EEKKKKXEEXXXXXeEE...............",
+            "..................EEKKXEEXXXeeE.................",
+            "....................EEKKEXeeE...................",
+            "......................EEEeE.....................",
+            "........................E.......................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.aptRoof,
+            "t": SpriteColors.aptRoofDark,
+            "W": SpriteColors.aptRoofEdge,
+            "A": SpriteColors.aptRoofEdge,
+            "E": SpriteColors.aptWallTrim,
+            "e": SpriteColors.aptWall,
+            "x": SpriteColors.aptGlass,
+            "K": SpriteColors.aptSeam,
+            "n": SpriteColors.aptBright,
+            "X": SpriteColors.aptGlassBrt,
+        ]
+    )
+
+    // MARK: City Hall (48×48)
+
+    /// City Hall — Capitol-style rotunda dome over classical colonnade.
+    static let cityhall = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".........................BD.....................",
+            ".......................BDDDDD...................",
+            ".....................BDDDDDDDDD.................",
+            ".....................BDDDDDDDDD.................",
+            "....................BDDDDDDDDDDD................",
+            "....................BDDDDDDDDDDD................",
+            "...................BDDDDDDDDDDDDD...............",
+            ".................AAAADDDDDDDDDDDD...............",
+            "...............AATTDADDDDDDDDDDAAA..............",
+            ".............AATTTTDDAADDDDDDDADDTAA............",
+            "...........AATTTTTTDDTDAAAAAAATDDTTTAA..........",
+            ".........AATTTTTTTTDDTDDTTTTDDTDDTTTTTAA........",
+            ".......AATTTTTTTTTTDDTDDTTTTDDTDDTTTTTTTAA......",
+            "......AATTTTTTTTTTTAATDDTTTTDDTAATTTTTTTTAA.....",
+            "......EeAATTTTTTTTTTTADDTTTTDDATTTTTTTTAEEE.....",
+            "......EeeeAATTTTTTTTTTAATTTTDAATTTTTTAEEWEE.....",
+            "......EeeeeeAATTTTTTTTTAAAAAAATTTTTAEEXXWEE.....",
+            "......EeeeeeeeAATTTTTTTTTTTTTTTTTAEEXWXXWEE.....",
+            "......EeeeeeeeeeAATTTTTTTTTTTTTAEEWXXWXXWEE.....",
+            "......EeeeeeeeeeeeAATTTTTTTTTAEERRWXXWXXWEE.....",
+            "......EeeeeeeeeeeeeeAATTTTTAEEXWRRWXXWXXWEE.....",
+            "......EEeeeeeeeeeeeeeeAATAEEWXXWRRWXXWeeEEE.....",
+            "........EEeeeeeeeeeeeeeeEEXXWXXWRRWXeWEEE.......",
+            "..........EEeeeeeeeeeeeeEWXXWXXWRRWeEEE.........",
+            "............EEeeeeeeeeeeEWXXWXXWRREEE...........",
+            "..............EEeeeeeeeeEWXXWXeWEEE.............",
+            "................EEeeeeeeEWXXWeEEE...............",
+            "..................EEeeeeEWeeEEE.................",
+            "....................EEeeEWEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.cityRoofLight,
+            "A": SpriteColors.cityRoof,
+            "E": SpriteColors.cityWallDark,
+            "e": SpriteColors.cityWall,
+            "X": SpriteColors.cityGlass,
+            "W": SpriteColors.cityWallDark,
+            "R": SpriteColors.cityAccent,
+            "D": SpriteColors.cityDome,
+            "B": SpriteColors.cityDomeShade,
+        ]
+    )
+
+    // MARK: Hotel (48×64)
+
+    /// Hotel — boutique downtown: brick walls, mansard roof dormers,
+    /// red lobby canopy, and a vertical gold HOTEL sign on the SW face.
+    static let hotel = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".....................AAA........................",
+            "...................AATTTAA......................",
+            ".................AATTTTTTTAA....................",
+            "...............AATTTTTTTTTTTAA..................",
+            ".............AATTTTTTTTTTTTTTTAA................",
+            "...........AATTTeTTTTTeTTTTTeTTTAA..............",
+            "..........AATTTTXTTTTTXTTTTTXTTTTAB.............",
+            "..........BbAATTTTTTTTTTTTTTTTTAeEB.............",
+            "..........BbbbAATTTTTTTTTTTTTAeeBBB.............",
+            "..........BbbbbbAATTTTTTTTTAeeBBXXB.............",
+            "..........BbbbbbbbAATTTTTAeeBBBbXXB.............",
+            "..........BbbbbbbbbbAATAeeBBXXBbXXB.............",
+            "..........BbbbbbbbbGbbBEBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGBGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGGGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbBGGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbBGBBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBBBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGBBbXXBbbbBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbRReeB.............",
+            "..........BbbbbbbbbGGBBbbbBbRRXXeeB.............",
+            "..........BbbbbbbbbBBGBbbbRRBBXXeeB.............",
+            "..........BBbbbbbbbGBBBbbRXBBBXXeeB.............",
+            "............BBbbbbbGBBBbeXXBBBXXBB..............",
+            "..............BBbbbGBBBeeXXBBBBB................",
+            "................BBbGBBBeeXXBBB..................",
+            "..................BGGBBeeXBB....................",
+            "....................BGBeBB......................",
+            "......................BB........................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.hotelRoofLight,
+            "A": SpriteColors.hotelRoof,
+            "B": SpriteColors.hotelBrickDark,
+            "b": SpriteColors.hotelBrick,
+            "E": SpriteColors.hotelTrimDark,
+            "e": SpriteColors.hotelTrim,
+            "X": SpriteColors.hotelGlass,
+            "x": SpriteColors.hotelGlassBrt,
+            "R": SpriteColors.hotelCanopy,
+            "G": SpriteColors.hotelSign,
+        ]
+    )
+
+    // MARK: Skyscraper (48×96)
+
+    /// Skyscraper — Empire State Building style: multi-tier Art Deco
+    /// tower with vertical rib façade and red-beacon antenna spire.
+    static let skyscraper = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "........................R.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            ".......................SSS......................",
+            ".......................SSS......................",
+            ".....................AASSSAA....................",
+            "...................AATTSSSTTAA..................",
+            "..................AATTTSSSTTTAA.................",
+            "..................EeAATTTTTAEEE.................",
+            "..................EeeeAATAEEEXE.................",
+            "..................EeeeeeEEEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            ".................AEeeeeeEXEXEXEA................",
+            "................AAEEeeeeEXEXEEEAA...............",
+            "................EeAAEEeeEXEEEAEEE...............",
+            "................EeeeAAEEEEEAEEEXE...............",
+            "................EeeeeeAAEAEEEXEXE...............",
+            "................EeeeeeeeEEEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "...............AEeeeeeeeEXEXEXEXEA..............",
+            "..............AAEEeeeeeeEXEXEXEEEAA.............",
+            "..............EeAAEEeeeeEXEXEEEAEEE.............",
+            "..............EeeeAAEEeeEXEEEAEEEXE.............",
+            "..............EeeeeeAAEEEEEAEEEXEXE.............",
+            "..............EeeeeeeeAAEAEEEXEXEXE.............",
+            "..............EeeeeeeeeeEEEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            ".............AEeeeeeeeeeEXEXEXEXEXEA............",
+            "............AAEEeeeeeeeeEXEXEXEXEEEAA...........",
+            "............EeAAEEeeeeeeEXEXEXEEEAEEE...........",
+            "............EeeeAAEEeeeeEXEXEEEAEEEXE...........",
+            "...........AEeeeeeAAEEeeEXEEEAEEEXEXEA..........",
+            "..........AAEEeeeeeeAAEEEEEAEEEXEXEEEAA.........",
+            "..........EeAAEEeeeeeeAAEAEEEXEXEEEAEEE.........",
+            "..........EeeeAAEEeeeeeeEEEXEXEEEAEEEXE.........",
+            "..........EeeeeeAAEEeeeeEXEXEEEAEEEXEXE.........",
+            "..........EeeeeeeeAAEEeeEXEEEAEEEXEXEXE.........",
+            "..........EeeeeeeeeeAAEEEEEAEEEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeAAEAEEEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEEEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EEeeeeeeeeeeeeEXEXEXEXEXEXEEE.........",
+            "............EEeeeeeeeeeeEXEXEXEXEXEEE...........",
+            "..............EEeeeeeeeeEXEXEXEXEEE.............",
+            "................EEeeeeeeEXEXEXEEE...............",
+            "..................EEeeeeEXEXEEE.................",
+            "....................EEeeEXEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+        ],
+        colors: [
+            "T": SpriteColors.skyRoof,
+            "A": SpriteColors.skyWallDark,
+            "E": SpriteColors.skyWallDark,
+            "e": SpriteColors.skyWall,
+            "n": SpriteColors.skyWallLight,
+            "X": SpriteColors.skyWindow,
+            "x": SpriteColors.skyWindowBrt,
+            "S": SpriteColors.skySpire,
+            "R": SpriteColors.skyBeacon,
         ]
     )
 
@@ -576,42 +1204,60 @@ private enum Sprites {
         ]
     )
 
-    // MARK: Fence (32×32 decoration)
+    // MARK: Fence (48×48 decoration)
 
+    /// Iso fence — 48×48 upscale. Two vertical posts with two rails sloping -0.5
+    /// (upper-right → lower-left). Same direction as original 32×32 version.
     static let fence = PixelArt(
         rows: [
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP...",
-            "ppppppppppppppppppppppppppppp...",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP...",
-            "ppppppppppppppppppppppppppppp...",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "....pPp............pPp..........",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "...................................ppp..........",
+            "...................................PPp..........",
+            "..................................pPPp..........",
+            "................................ppPPPp..........",
+            "..............................ppPP.PPp..........",
+            "............................ppPP...PPp..........",
+            "..........................ppPP....pPPp..........",
+            "........................ppPP....ppPPPp..........",
+            "......................ppPP....ppPP.PPp..........",
+            "....................ppPP....ppPP...PPp..........",
+            "...........ppp....ppPP....ppPP.....PPp..........",
+            "...........PPp..ppPP....ppPP.......PPp..........",
+            "...........PPpppPP....ppPP.........PPp..........",
+            "...........PPpPP....ppPP...........PPp..........",
+            "...........PPP....ppPP.............PPp..........",
+            "...........PPp..ppPP...............PPp..........",
+            "...........PPpppPP..............................",
+            "...........PPpPP................................",
+            "...........PPP..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
         ],
         colors: [
             "P": SpriteColors.plank,
@@ -624,25 +1270,21 @@ private enum Sprites {
     static let lamp = PixelArt(
         rows: [
             "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
             ".............YYYY...............",
-            "............YyyyyY..............",
-            "...........YyyyyyyY.............",
-            "...........YyyyyyyY.............",
-            "...........YyyyyyyY.............",
-            "............YyyyyY..............",
+            ".............YLLY...............",
+            ".............YLLY...............",
             ".............YYYY...............",
-            "............HHHHHH..............",
-            "............HHLLHH..............",
-            "............HHLLHH..............",
-            "............HHHHHH..............",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
-            "..............PP................",
+            ".............HHHH...............",
+            ".............HHHH...............",
             "..............PP................",
             "..............PP................",
             "..............PP................",
@@ -651,7 +1293,11 @@ private enum Sprites {
             "..............PP................",
             ".............pPPp...............",
             "............ppPPpp..............",
-            "...........pppPPppp.............",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
             "................................",
             "................................",
             "................................",
@@ -680,7 +1326,7 @@ private enum Sprites {
             "...G....G...G..G...G.G..G.G.....",
             "...G....G...G..G...G.GGG..G.....",
             "...G....G...G..G...G.G....G.....",
-            "...G.....G.G..G...G.G...........",
+            "...G.....G.G...G...G.G..........",
             "...GGGG...G.....GGG..G....G.....",
             "................................",
             "................................",
@@ -802,20 +1448,41 @@ struct BuildingPixelView: View {
     let size: CGFloat
 
     var body: some View {
-        switch building.id {
-        case "tree":       TreePixelView(size: size)
-        case "house":      HousePixelView(size: size)
-        case "windmill":   WindmillPixelView(size: size)
-        case "well":       WellPixelView(size: size)
-        case "farm":       FarmPixelView(size: size)
-        case "shop":       ShopPixelView(size: size)
-        case "fence":      PixelSpriteView(art: Sprites.fence, width: size)
-        case "lamp":       LampPixelView(size: size)
-        case "flowers":    FlowersGroundView(size: size)
-        case "stone_path": GroundPixelView(art: Sprites.stonePathGround, size: size)
-        default:
-            // Fallback to emoji for any unexpected id
-            Text(building.emoji).font(.system(size: size * 0.8))
+        switch building.renderSpec.kind {
+        case .tree:
+            TreePixelView(size: size)
+        case .house:
+            HousePixelView(size: size)
+        case .windmill:
+            WindmillPixelView(size: size)
+        case .shop:
+            ShopPixelView(size: size)
+        case .cafe:
+            CafePixelView(size: size)
+        case .fence:
+            PixelSpriteView(art: Sprites.fence, width: size)
+        case .lamp:
+            LampPixelView(size: size)
+        case .flowersGround:
+            FlowersGroundView(size: size)
+        case .stonePathGround:
+            GroundPixelView(art: Sprites.stonePathGround, size: size)
+        case .streetTree:
+            StreetTreePixelView(size: size)
+        case .apartment:
+            PixelSpriteView(art: Sprites.apartment, width: size)
+        case .cityhall:
+            // Sprite is drawn at its natural position; shift SE a touch
+            // so the wide façade centers on the tile instead of hugging
+            // the NW edge.
+            PixelSpriteView(art: Sprites.cityhall, width: size)
+                .offset(x: size / 8, y: size / 16)
+        case .hotel:
+            PixelSpriteView(art: Sprites.hotel, width: size)
+        case .skyscraper:
+            PixelSpriteView(art: Sprites.skyscraper, width: size)
+        case .emojiFallback:
+            Text(building.emoji).font(.system(size: size * building.renderSpec.emojiScale))
         }
     }
 }
@@ -834,18 +1501,75 @@ private struct GroundPixelView: View {
     }
 }
 
-// MARK: - Flowers (gentle breathing scale)
+// MARK: - Flowers (individual flower sway)
 
-/// Flowers ground layer with a sin-wave scale pulse — makes the petals "breathe"
-/// subtly so they don't feel static. Period ≈ 3.2 s, amplitude ±4%.
+/// Flowers ground layer where each individual flower sways left-right
+/// independently, with slightly staggered phases so the meadow ripples
+/// like a real breeze moving through. Grass background stays static.
+/// Period ≈ 5 s, each flower offset up to ±1 pixel.
 private struct FlowersGroundView: View {
     let size: CGFloat
+
+    /// Flower positions: (col, row, color char). Row is the center row of
+    /// each 3×3 cross. Colors: y=yellow, p=pink, w=white, u=purple.
+    private static let flowers: [(col: Int, row: Int, color: Character)] = [
+        (2,  3, "y"), (10, 3, "p"), (19, 3, "w"), (27, 3, "u"),
+        (7,  7, "p"), (15, 7, "u"), (22, 7, "y"),
+        (2, 11, "w"), (11, 11, "y"), (20, 11, "p"), (29, 11, "u"),
+        (5, 15, "p"), (13, 15, "y"), (21, 15, "w"),
+        (2, 19, "u"), (10, 19, "p"), (19, 19, "w"), (27, 19, "y"),
+        (7, 23, "y"), (15, 23, "u"), (22, 23, "p"),
+        (2, 27, "w"), (11, 27, "p"), (20, 27, "y"), (29, 27, "u"),
+    ]
+
+    private static let flowerColors: [Character: Color] = [
+        "y": SpriteColors.flowerYellow,
+        "p": SpriteColors.flowerPink,
+        "w": SpriteColors.flowerWhite,
+        "u": SpriteColors.flowerPurple,
+    ]
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+        TimelineView(.animation(minimumInterval: 1.0 / 20.0, paused: false)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate
-            let scale = 1.0 + 0.04 * sin(t * 2.0 * .pi / 3.2)
-            GroundPixelView(art: Sprites.flowersGround, size: size)
-                .scaleEffect(scale)
+            Canvas { context, cs in
+                let px = cs.width / 32
+
+                // Static grass background — only G and g cells from the sprite.
+                for (r, row) in Sprites.flowersGround.rows.enumerated() {
+                    for (c, ch) in row.enumerated() {
+                        guard ch == "G" || ch == "g",
+                              let color = Sprites.flowersGround.colors[ch] else { continue }
+                        let rect = CGRect(x: CGFloat(c) * px,
+                                          y: CGFloat(r) * px,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+
+                // Animated flowers — each with its own phase.
+                let period = 5.0
+                let maxSway = 1.0 * px  // ±1 pixel of sway
+                for (i, f) in Self.flowers.enumerated() {
+                    guard let color = Self.flowerColors[f.color] else { continue }
+                    let phase = Double(i) * 0.4
+                    let sway = maxSway * CGFloat(sin(t * 2.0 * .pi / period + phase))
+
+                    // 5-pixel cross: center + 4 cardinals
+                    let cx = CGFloat(f.col) * px + sway
+                    let cy = CGFloat(f.row) * px
+                    for (dx, dy): (CGFloat, CGFloat) in [(0, 0), (0, -px), (0, px), (-px, 0), (px, 0)] {
+                        let rect = CGRect(x: cx + dx,
+                                          y: cy + dy,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+            }
+            .frame(width: size, height: size / 2)
+            .clipShape(DiamondMask())
         }
     }
 }
@@ -886,15 +1610,11 @@ private struct WellPixelView: View {
 /// Shop with a tiny rotational sway concentrated near the awning — 0.9° amplitude,
 /// period ≈ 2.1 s, anchored slightly above center so the base of the building stays
 /// planted while the cloth awning appears to catch a light breeze.
+/// Convenience store — static render (no awning animation, clean modern look).
 private struct ShopPixelView: View {
     let size: CGFloat
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
-            let t = ctx.date.timeIntervalSinceReferenceDate
-            let deg = 0.9 * sin(t * 2.0 * .pi / 2.1)
-            PixelSpriteView(art: Sprites.shop, width: size)
-                .rotationEffect(.degrees(deg), anchor: .init(x: 0.5, y: 0.75))
-        }
+        PixelSpriteView(art: Sprites.shop, width: size)
     }
 }
 
@@ -914,27 +1634,74 @@ private struct FarmPixelView: View {
     }
 }
 
-// MARK: - Tree (canopy sway)
+// MARK: - Tree (gentle breeze sway)
 
+/// Compact tree with gentle rotation around the trunk base, giving a
+/// "leaves in the breeze" feel. Period 5s, amplitude ±1.5° — 산들바람.
 private struct TreePixelView: View {
     let size: CGFloat
     @State private var sway: Double = 0
 
-    // Full tree: 32 wide × (17 canopy + 15 trunk) = 32×32 at size scale
-    private var spriteWidth: CGFloat { size }
+    var body: some View {
+        PixelSpriteView(art: Sprites.tree, width: size)
+            .rotationEffect(
+                .degrees(sway),
+                anchor: .init(x: 0.5, y: 0.62)  // trunk base row 29/48
+            )
+            .onAppear {
+                withAnimation(.easeInOut(duration: 5.0).repeatForever(autoreverses: true)) {
+                    sway = 1.5
+                }
+            }
+    }
+}
+
+// MARK: - Street Tree (gentle breeze sway)
+
+/// Taller columnar street tree — same breeze sway as regular tree.
+private struct StreetTreePixelView: View {
+    let size: CGFloat
+    @State private var sway: Double = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            PixelSpriteView(art: Sprites.treeCanopy, width: spriteWidth)
-                .rotationEffect(.degrees(sway), anchor: .bottom)
-            PixelSpriteView(art: Sprites.treeTrunk, width: spriteWidth)
-        }
-        .frame(width: size, height: size)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-                sway = 2.5
+        PixelSpriteView(art: Sprites.streetTree, width: size)
+            .rotationEffect(
+                .degrees(sway),
+                anchor: .init(x: 0.5, y: 0.60)  // trunk base row 28/48
+            )
+            .onAppear {
+                withAnimation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true)) {
+                    sway = 1.2
+                }
+            }
+    }
+}
+
+// MARK: - Cafe (coffee steam)
+
+private struct CafePixelView: View {
+    let size: CGFloat
+
+    // Rooftop mug: center_col = 22 (cup spans cols 16-28), cup top diamond
+    // apex around row 3. Steam emits from just above the cup top.
+    private var pixelSize: CGFloat { size / 48 }
+    private var cupCenterX: CGFloat { pixelSize * 22.0 - size / 2 }
+
+    var body: some View {
+        ZStack {
+            PixelSpriteView(art: Sprites.cafe, width: size)
+
+            ForEach(0..<3, id: \.self) { i in
+                SmokePuff(
+                    baseOffsetX: cupCenterX,
+                    travelHeight: size * 0.22,
+                    puffSize: pixelSize * 1.6,
+                    phaseOffset: Double(i) * 0.33,
+                    topOfHouseY: -size / 2 + pixelSize * 2
+                )
             }
         }
+        .frame(width: size, height: size)
     }
 }
 
@@ -943,9 +1710,9 @@ private struct TreePixelView: View {
 private struct HousePixelView: View {
     let size: CGFloat
 
-    // House grid 32×32. Chimney at cols 22-23, rows 1-3.
-    private var pixelSize: CGFloat { size / 32 }
-    private var chimneyCenterX: CGFloat { pixelSize * 22.5 - size / 2 }
+    // House grid 48×48. Chimney centered around col 17 on the left roof ridge.
+    private var pixelSize: CGFloat { size / 48 }
+    private var chimneyCenterX: CGFloat { pixelSize * 17.0 - size / 2 }
 
     var body: some View {
         ZStack {
@@ -996,24 +1763,25 @@ private struct WindmillPixelView: View {
     let size: CGFloat
     @State private var angle: Double = 0
 
-    // Tower grid (32×32): hub at col 15.5, row 8 (center of rows 7-9).
-    // Blades grid (32×32): hub cross at col 15.5, row 13.5.
-    private let bladeAnchor = UnitPoint(x: 15.5 / 32.0, y: 13.5 / 32.0)
+    // Tower + blades are both 48×48 and share the hub pixel at (29, 14)
+    // so no positional offset is needed between the two layers.
+    private let hubAnchor = UnitPoint(x: 29.5 / 48.0, y: 14.5 / 48.0)
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             PixelSpriteView(art: Sprites.windmillTower, width: size)
 
-            // Blade frame is size×size. For the blade's hub pixel to sit at the
-            // tower's hub pixel, shift blade up by (13.5 - 8) × pixelSize.
+            // Rotate blades around the hub, then compress horizontally so
+            // the wheel reads as a vertical disc (shaft pointing left-right)
+            // rather than a horizontal helicopter rotor.
             PixelSpriteView(art: Sprites.windmillBlades, width: size)
-                .rotationEffect(.degrees(angle), anchor: bladeAnchor)
-                .offset(y: size * (8.0 - 13.5) / 32.0)
+                .rotationEffect(.degrees(angle), anchor: hubAnchor)
+                .scaleEffect(x: 0.5, y: 1.0, anchor: hubAnchor)
         }
         .frame(width: size, height: size)
         .onAppear {
             withAnimation(.linear(duration: 4.5).repeatForever(autoreverses: false)) {
-                angle = 360
+                angle = -360   // counter-clockwise
             }
         }
     }

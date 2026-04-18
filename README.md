@@ -1,124 +1,90 @@
 <p align="center">
-  <img src="CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="CapCha Icon">
+  <img src="Tapistry/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="Tapistry Icon">
 </p>
 
-<h1 align="center">CapCha</h1>
+<h1 align="center">Tapistry</h1>
 
 <p align="center">
-  <strong>Type to collect keycaps. Every keystroke counts.</strong>
+  <strong>Type to weave a tiny village. Every keystroke becomes progress.</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/cow-coding/CapCha/releases/latest"><img src="https://img.shields.io/github/v/release/cow-coding/CapCha?style=flat-square&color=6C5CE7&labelColor=2D3436&label=release" alt="Release"></a>
-  <a href="https://github.com/cow-coding/CapCha/releases"><img src="https://img.shields.io/github/downloads/cow-coding/CapCha/total?style=flat-square&color=00B894&labelColor=2D3436" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/platform-macOS%2013%2B-0984E3?style=flat-square&labelColor=2D3436" alt="Platform">
   <img src="https://img.shields.io/badge/swift-5.9-F97F51?style=flat-square&labelColor=2D3436" alt="Swift">
+  <img src="https://img.shields.io/badge/ui-SwiftUI%20%2B%20Canvas-2ECC71?style=flat-square&labelColor=2D3436" alt="UI">
 </p>
 
 <p align="center">
-  <a href="docs/README.ko.md">한국어</a> · <a href="https://github.com/cow-coding/CapCha/releases/latest">Download</a> · <a href="docs/DESIGN.en.md">Design Doc</a>
+  <a href="docs/README.ko.md">한국어</a> · <a href="docs/pivot-context.md">Product Context</a> · <a href="docs/iso-pixel-art-guide.md">Iso Pixel Art Guide</a>
 </p>
 
 ---
 
-<!-- TODO: Add demo GIF here -->
-<!-- <p align="center"><img src="docs/assets/demo.gif" width="600" alt="CapCha Demo"></p> -->
+## What is Tapistry?
 
-## What is CapCha?
+Tapistry is a macOS menu bar app that turns everyday typing into a tiny isometric village builder.
+As you type, the app awards XP and coins. XP raises your village level, and new buildings unlock over time. Coins let you place those buildings onto a 4×4 isometric village grid that lives right inside the menu bar popover.
 
-CapCha is a macOS menu bar app that turns your everyday typing into a collectible keycap gacha game. Just type as you normally do — coding, writing, chatting — and watch virtual keycaps drop into your collection.
+> **Privacy first** — Tapistry never reads what you type. It only counts key-down events through a listen-only `CGEvent tap`. No network access, no key content capture, and all data stays on your Mac.
 
-> **🔒 Privacy first** — CapCha never reads what you type. It only counts keystrokes using `CGEvent tap` in listen-only mode. Zero network access, all data stays local.
+## Highlights
 
-### Highlights
+- **Typing-powered progression** — `1 keystroke = 1 XP`, with coin drops layered on top.
+- **4×4 isometric village** — Build a compact pixel-art town directly from the menu bar.
+- **Layered tile editing** — Each tile supports `ground`, `object`, and `decoration`, with 2×2 sub-cell placement for finer layout control.
+- **Animated pixel art** — Trees sway, lamps flicker, smoke rises, and windmill blades rotate.
+- **Bilingual UI** — English and Korean are both supported in-app, with instant language switching in Settings.
+- **Local-first persistence** — Village state, coins, and typing stats are stored locally in Application Support.
+- **macOS-native settings** — Launch at login, notification toggle, onboarding, and permission guidance are built in.
 
-- 🎲 **2,610 keycap combinations** — 87 TKL keys × 5 themed sets × 6 rarity tiers
-- 🌈 **6 rarity tiers** — Common → Uncommon → Rare → Epic → **Legendary** → ***Eternal***
-- 🎯 **Pity system** — Guaranteed drop within 2,000 keystrokes, no endless droughts
-- 🔔 **Drop notifications** — Popover bubble right below your menu bar icon
-- 📦 **Collection window** — Browse keycaps with isometric 3D card views
-- ⚙️ **Settings** — Launch at login, notification toggle
-- 🔐 **Security audited** — No key content reading, no network, no data collection
+## Gameplay Loop
 
----
-
-## Installation
-
-### 1. Download
-
-> **[Download Latest DMG](https://github.com/cow-coding/CapCha/releases/latest)**
-
-### 2. Install
-
-Open the DMG → Drag **CapCha** to **Applications**.
-
-### 3. First Launch
-
-macOS will block the app since it's not notarized:
-
-```
-System Settings → Privacy & Security → Open Anyway → Open
+```text
+⌨️ Keystroke → ⭐ XP + 💰 coin rolls → ⬆️ Level up → 🏡 Unlock buildings → 🧱 Place them in your village
 ```
 
-### 4. Grant Permission
+### Progression
 
-```
-System Settings → Privacy & Security → Input Monitoring → CapCha → ON
-```
+- Every keystroke grants XP.
+- Leveling up unlocks new village content.
+- Coins are earned probabilistically from typing and spent when placing buildings.
+- The village is persistent, so your layout stays across launches.
 
-> **💡 Updating?** Remove the old CapCha entry from Input Monitoring first, then add the new one.
+### Current unlock path
 
----
+| Level | Unlock |
+|:------|:-------|
+| 1 | Tree |
+| 2 | Flowers |
+| 3 | Fence |
+| 5 | House |
+| 7 | Stone Path |
+| 8 | Lamp |
+| 10 | Street Tree |
+| 12 | Shop |
+| 14 | Cafe |
+| 15 | Apartment |
+| 17 | City Hall |
+| 18 | Hotel |
+| 19 | Skyscraper |
+| 20 | Windmill |
 
-## How It Works
+### Village building rules
 
-```
-⌨️ Keystroke → 🎲 Drop Check (0.25%) → 🎰 Rarity Roll → 🎁 Keycap! → 🔔 Notification
-```
+- `ground` fills the tile's top face, for surfaces like flowers or stone paths.
+- `object` is the main structure placed into a tile sub-cell.
+- `decoration` adds accents such as fences and lamps around the main object.
+- Objects and decorations are placed inside a 2×2 sub-grid per tile, so layouts can feel denser than a single-item-per-tile system.
 
-### Drop Mechanics
+## Privacy
 
-Every keystroke rolls a **0.25% base chance**. On success, the system picks a random **rarity → set → key** combination and generates a unique keycap.
+Tapistry uses macOS Input Monitoring only to count keystrokes.
 
-### Rarity Tiers
-
-| Rarity | Weight | Visual Effect |
-|:-------|:------:|:-------------|
-| ⚪ Common | 59.4% | Plain keycap |
-| 🟢 Uncommon | 25% | Green glow + tinted outline |
-| 🔵 Rare | 10% | Blue glow + thick outline |
-| 🟣 Epic | 4% | Purple glow + inner shine |
-| 🟠 Legendary | 1% | Gold glow + inner shine |
-| 🌈 Eternal | 0.6% | Animated prismatic rainbow |
-
-### Pity System
-
-No more bad luck streaks. Drop chance increases automatically:
-
-| Keystrokes Without Drop | Drop Chance |
-|:-----------------------|:-----------|
-| 0 – 499 | 0.25% (base) |
-| 500 – 999 | 0.25% → 0.5% |
-| 1,000 – 1,999 | 0.5% → 1.0% |
-| 2,000+ | **100% guaranteed** |
-
-> 🎁 **First-time bonus** — New users get a guaranteed Common keycap within 100 keystrokes.
-
-### Keycap Sets
-
-| Set | Theme | Color |
-|:----|:------|:-----:|
-| Mechanical Classics | Cherry-inspired switches | 🔴 |
-| Retro Computing | Vintage terminals | 🟤 |
-| Artisan Collection | Handcrafted artisans | 🟣 |
-| Nature Elements | Earth and forest | 🟢 |
-| Space Theme | Deep cosmos | 🔵 |
-
-Each set has all **87 TKL keys**. Same key can appear in any rarity — collect them all!
-
-Duplicates stack as count. Save them for future trading!
-
----
+- Only key press counts are observed.
+- Typed content is never read or stored.
+- No analytics, ads, or telemetry are included.
+- No network access is required for the core app.
+- All local data is stored under `~/Library/Application Support/Tapistry/`.
 
 ## Build from Source
 
@@ -128,43 +94,52 @@ brew install xcodegen
 
 # Generate & Build
 xcodegen generate
-xcodebuild -project CapCha.xcodeproj -scheme CapCha -configuration Release build
+xcodebuild -project Tapistry.xcodeproj -scheme Tapistry -configuration Release build
 ```
 
----
+### First Launch
+
+If macOS blocks the app on first run:
+
+```text
+System Settings → Privacy & Security → Open Anyway → Open
+```
+
+Then grant Input Monitoring:
+
+```text
+System Settings → Privacy & Security → Input Monitoring → Tapistry → ON
+```
+
+If you are replacing an older build, remove the previous Tapistry entry from Input Monitoring and enable the new one again.
 
 ## Tech Stack
 
 | | Technology |
 |:--|:----------|
 | **Language** | Swift 5.9 |
-| **UI** | SwiftUI + Canvas (isometric keycap rendering) |
-| **Input** | CGEvent tap (listen-only, tailAppend) |
+| **UI** | SwiftUI + Canvas |
+| **App Model** | macOS menu bar app (`LSUIElement`) |
+| **Input** | `CGEvent tap` in listen-only mode |
 | **Reactive** | Combine |
-| **Storage** | JSON (`~/Library/Application Support/CapCha/`) |
-| **CI/CD** | GitHub Actions + create-dmg |
-
----
+| **Persistence** | JSON in Application Support |
+| **Project Generation** | XcodeGen |
 
 ## Documentation
 
 | | |
 |:--|:--|
-| 📄 [Design Doc (EN)](docs/DESIGN.en.md) | Architecture, data models, drop engine |
-| 📄 [Design Doc (KR)](DESIGN.md) | 아키텍처, 데이터 모델, 드롭 엔진 |
+| [docs/README.ko.md](docs/README.ko.md) | Korean product overview |
+| [docs/pivot-context.md](docs/pivot-context.md) | Current Tapistry product and implementation context |
+| [docs/iso-pixel-art-guide.md](docs/iso-pixel-art-guide.md) | Iso sprite workflow and rendering rules |
+| [DESIGN.md](DESIGN.md) | Legacy CapCha design document (Korean) |
+| [docs/DESIGN.en.md](docs/DESIGN.en.md) | Legacy CapCha design document (English) |
 
----
+## Current Focus
 
-## Privacy
-
-CapCha uses macOS Input Monitoring to count keystrokes.
-
-- ✅ Only counts key presses — never reads content
-- ✅ Zero network access — all data stays local
-- ✅ Open source — verify it yourself
-- ✅ Security audited — [see audit report](https://github.com/cow-coding/CapCha/pull/3)
-
----
+- Polish late-game building sprites so the full unlock path matches the early-game pixel-art quality.
+- Keep the Tapistry documentation aligned with the actual app instead of the older CapCha concept.
+- Continue refining onboarding and village-building clarity while preserving the privacy-first typing loop.
 
 ## License
 

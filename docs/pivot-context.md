@@ -1,196 +1,167 @@
-# Tapistry Pivot — Context Document
+# Tapistry Product Context
 
-> **Name note:** Project was renamed from working title `TypeVillage` → final name **Tapistry** (tap + tapestry — keystrokes weave the village). Bundle ID, App Support directory, and all user-facing strings switched over. "TypeVillage" below is kept as historical shorthand.
+> Historical note: this project started as `CapCha`, a keycap collection concept, and pivoted into **Tapistry**, a typing-powered village builder. The current product direction is now fixed as **Tapistry only**.
 
-## Overview
+## Product summary
 
-**Pivot direction**: `CapCha` (keyboard keycap gacha collection) → `Tapistry` (keyboard-typing-powered village builder, formerly working title `TypeVillage`).
+Tapistry is a macOS menu bar app where everyday typing powers the growth of a tiny isometric village.
 
-Typing keystrokes is still the core input, but instead of dropping keycaps to collect, each keystroke awards XP that levels up a tiny village shown in a 4×4 isometric grid inside the menu bar popover.
+- Typing grants XP.
+- XP increases village level.
+- Leveling unlocks new content.
+- Typing also rolls coin rewards.
+- Coins are spent to place buildings on a persistent 4×4 village grid.
 
-**Branch**: `feat/village-pivot`
-**Not merged to main yet** — will merge only when pivot is complete.
-
----
-
-## Journey (what happened today)
-
-### Phase 1 — Keyboard Assembly attempt (rolled back)
-
-The original CapCha plan was a **Keyboard Assembly** feature: mount collected keycaps onto a TKL keyboard view.
-
-- Designed 3D voxel keycaps, 5 sets × 6 rarities = 30 sprites via OpenAI `gpt-image-1`
-- Hit the OpenAI billing hard-limit after 5 images; filled the remaining 25 via PIL HSV hue shift
-- Built 90 width-variant sprites via 9-slice stretch (wide / xwide / space)
-- SwiftUI `KeySlotView` iterated several times: flat box → sprite image → tapered Cherry profile
-- **Decision: spec out.** SwiftUI-rendered keycaps looked janky; sprite stretching looked like "flat pancakes" on wider keys. Assembly feature didn't feel valuable enough to keep iterating.
-- **Rolled back** to `main`-equivalent state. All assembly files, 120 voxel keycap assets deleted.
-
-### Phase 2 — Village pivot design
-
-Agreed concepts after brainstorming:
-- Keystroke → XP → level-up → unlocks new building
-- Menu bar popover (280px wide) shows a tiny 4×4 isometric grid
-- One tile has **3 stackable layers**: `ground` + `object` + `decoration`
-- Aesthetic: cute / charming (Animal Crossing-lite), with some animated elements so the village isn't static
-- Keep keyboard monitoring but treat it as an input tap, not the whole game loop
-
-### Phase 3 — Implementation (current state of branch)
-
-#### Project rename
-- `CapCha/` → `TypeVillage/`
-- `CapChaApp.swift` → `TypeVillageApp.swift` (struct name too)
-- Bundle ID: `com.capcha.app` → `com.typevillage.app`
-- App Support dir: `~/Library/Application Support/CapCha/` → `.../TypeVillage/`
-- `xcodegen` config (`project.yml`) updated; `*.xcodeproj` regenerated
-- Old `TypeCollect.xcodeproj` (stale) deleted
-
-#### Core model (new)
-- `Models/VillageState.swift` — ObservableObject with XP, level, 4×4 grid, unlocks, persistence to `village.json`
-- `Models/VillageTile.swift` — `VillageTile { ground, object, decoration }` + `TileLayer` enum
-- `Models/BuildingCatalog.swift` — 10 building types with `LocalizedString` names
-- `Models/Localization.swift` — `AppLanguage` enum (en/ko) + `LocalizedString` + `L10n` namespace
-
-#### Views (new)
-- `Views/Village/VillageGridView.swift` — isometric 4×4 grid, per-tile selection with yellow diamond glow
-- `Views/Village/GrassBlockView` — pure SwiftUI `Canvas` isometric grass block (top + L/R faces, grass edge strip)
-- `Views/Village/BuildingPixelView.swift` — placeholder emoji renderer (size = 0.8 × block)
-- `Views/Village/BuildingPickerView.swift` — tile-tap popover, 3-layer tabs, unlocked / locked sections
-- `Views/Village/LevelUpToast.swift` — level-up popover bubble anchored to menu bar status item (⭐ + `Lv.N → Lv.N+1` + unlocked building chips)
-
-#### Reworked
-- `MenuBarContentView` — header + (XP bar OR permission banner) + grid + `#if DEBUG` level buttons + footer (Settings / Quit)
-- `SettingsView` — Language segmented picker (English / 한국어), Launch at login, Show notifications, About
-- `AppSettings` — added `@Published var language` with system-default fallback
-- `AppState` — wires `keystrokeMonitor.totalCount` delta into `village.addXP`; still monitors + saves stats, but drop engine / collection is idle (old CapCha code preserved, not wired to Village yet)
+The keyboard remains the base progression input, but the product is no longer a collectible keycap game. It is a single-product village builder with a privacy-first typing loop.
 
 ---
 
-## Level / XP Table
+## Current architecture
 
-1 keystroke = 1 XP.
+### App shell
 
-| Lv | Cum XP | Unlock | Layer | Animated? |
-|----|--------|--------|-------|-----------|
-| 1  | 0      | 🌳 Tree (나무)       | object     | ✅ |
-| 2  | 100    | 🌸 Flowers (꽃밭)    | ground     |    |
-| 3  | 300    | 🪵 Fence (울타리)    | decoration |    |
-| 4  | 500    | —                    |            |    |
-| 5  | 800    | 🏠 House (나무집)    | object     | ✅ |
-| 6  | 1,100  | —                    |            |    |
-| 7  | 1,500  | 🪨 Stone Path (돌길) | ground     |    |
-| 8  | 2,500  | 💡 Lamp (가로등)     | decoration | ✅ |
-| 9  | 3,200  | —                    |            |    |
-| 10 | 4,000  | 🪣 Well (우물)       | object     | ✅ |
-| 11 | 5,000  | —                    |            |    |
-| 12 | 6,000  | 🌱 Farm (텃밭)       | object     | ✅ |
-| 13 | 7,500  | —                    |            |    |
-| 14 | 9,000  | —                    |            |    |
-| 15 | 10,000 | 🏪 Shop (상점)       | object     | ✅ |
-| 16–19 | 12k–18.5k | —             |            |    |
-| 20 | 20,000 | 🌾 Windmill (풍차)   | object     | ✅ |
+- `Tapistry/App/TapistryApp.swift`
+  - Creates the menu bar status item and main popover.
+  - Wires the level-up toast to the status item anchor.
+  - Opens the first-launch onboarding window.
 
-Empty levels (4, 6, 9, 11, 13, 14, 16–19) still fire level-up toast but with no unlock chip.
+### Typing and progression
 
----
+- `Tapistry/Core/KeystrokeMonitor.swift`
+  - Counts global `keyDown` events via listen-only `CGEvent tap`.
+- `Tapistry/App/AppState.swift`
+  - Restores persisted typing stats.
+  - Converts keystroke deltas into XP and daily counts.
+  - Rolls coin drops and adds them to the village economy.
 
-## Building Layer Rules
+### Village state
 
-- `ground` — covers the grass top face (flowers, stone path). Replaces default grass visual.
-- `object` — the main building; one per tile (tree, house, etc.)
-- `decoration` — goes on top / around (fence, lamp)
+- `Tapistry/Models/VillageState.swift`
+  - Owns XP, level progression, cash, and the 4×4 tile grid.
+  - Persists village data to `~/Library/Application Support/Tapistry/village.json`.
+- `Tapistry/Models/VillageTile.swift`
+  - Stores `ground` plus a 2×2 `subCells` matrix for `object` and `decoration`.
+- `Tapistry/Models/BuildingCatalog.swift`
+  - Defines unlock order, prices, animation flags, and layer type.
 
-**Data model supports all 3 layers today; rendering currently only draws the `object` layer.** Ground + decoration rendering is TODO.
+### UI
 
----
+- `Tapistry/Views/MenuBarContentView.swift`
+  - Renders the header, XP bar, cash bar, permission banner, village grid, and footer.
+- `Tapistry/Views/Village/VillageGridView.swift`
+  - Draws the 4×4 isometric map and per-tile placement state.
+- `Tapistry/Views/Village/TileEditorView.swift`
+  - Provides ground/object/decoration editing with sub-cell placement and coin spending.
+- `Tapistry/Views/Village/BuildingPixelView.swift`
+  - Contains the pixel-art sprite renderers and lightweight animations.
+- `Tapistry/Views/Village/LevelUpToast.swift`
+  - Shows localized level-up notifications from the menu bar icon.
+- `Tapistry/Views/Onboarding/WelcomeView.swift`
+  - Introduces the product concept and privacy guarantees on first launch.
 
-## Rendering Details
+### Settings and localization
 
-### Isometric grid layout
-- `blockSize = 64` (was 56; bumped for better hit targets)
-- Tile offset: `x = (col - row) * halfW`, `y = (col + row) * quarterH`
-- Draw order sorted by `row + col` ascending so foreground tiles z-order on top
-- Hit area limited to the diamond top face via `.contentShape(TopFaceDiamondHitArea())` to avoid rectangular overlap between adjacent tiles
-
-### Selection highlight
-- Yellow diamond fill + pulsing stroke on top face
-- `topFaceOffsetY = -blockSize / 8` to align with the grass top face within the centered ZStack
-
-### Object placement
-- Emoji scaled to 0.8 × blockSize
-- Drop-shadow + spring bounce animation on `onChange(of: objectId)` — 0.1 → 1.0 scale
-
-### Level-up toast
-- `NSPopover` anchored to the status item button (mirrors the old CapCha drop-notification pattern — the earlier free-floating `NSWindow` toast caused crashes)
-- Shows `Lv.from → Lv.to`; if unlocks exist, stays longer (4.5s vs 3.0s) and lists unlock chips
-
-### Menu bar icon
-- 16×16 pixel-art house (simple roof overhang + chimney, no window since the earlier window version read as a face)
-- Rendered as `template` image (single-color auto-tint)
+- `Tapistry/Models/AppSettings.swift`
+  - Stores launch-at-login, notifications, onboarding completion, and language.
+- `Tapistry/Models/Localization.swift`
+  - Provides the English/Korean localized string layer.
+- `Tapistry/Views/SettingsView.swift`
+  - Exposes language switching, launch at login, and notification settings.
 
 ---
 
-## Localization
+## Current progression table
 
-- `AppLanguage` = `.english | .korean`
-- `AppSettings.language` defaults to `AppLanguage.systemDefault` (Locale-derived)
-- `LocalizedString { en, ko }` struct + `.resolve(lang)` method
-- `L10n` namespace holds all UI strings + `BuildingType.name` uses it
-- Views observe `AppSettings.shared` and read `settings.language`; switching in Settings is instant
-- Picker in Settings: segmented control with `English` / `한국어`
+`1 keystroke = 1 XP`
 
----
-
-## DEBUG affordances
-
-`MenuBarContentView` under `#if DEBUG`:
-- `Lv1` / `Lv5` / `Lv10` / `Lv20` — jump directly to level (resets XP to cumulative threshold)
-- `+100XP` — increment and trigger level-up if crossing threshold
-
-`VillageState` methods exposed only in `#if DEBUG`:
-- `setLevel(_ targetLevel: Int)`
-- `unlockAll()` (sets XP to 20,000)
-
----
-
-## Known gaps / next steps
-
-1. **Ground layer rendering** — `flowers`, `stone_path` placed in data but not drawn on top face yet
-2. **Decoration layer rendering** — `fence`, `lamp` placed in data but not drawn
-3. **Pixel art for buildings** — currently placeholder emojis; plan is SwiftUI Canvas pixel painting (arrays of color chars) like the grass block, with simple animations (tree sway, windmill rotation, chimney smoke, lamp flicker)
-4. **Project name** — `TypeVillage` is a working title. Finalize before merging to `main`.
-5. **Drop engine / CollectionView** — old CapCha code still in tree (`Core/DropEngine`, `Views/Collection/*`) but not reachable from UI. Decide: delete, or keep as optional mode.
-6. **Welcome onboarding** — copy still partly references the old concept.
+| Lv | Cum XP | Unlock | Layer | Current render state |
+|---:|-------:|:-------|:------|:---------------------|
+| 1 | 0 | Tree | object | Pixel art + animation |
+| 2 | 100 | Flowers | ground | Pixel art + animation |
+| 3 | 300 | Fence | decoration | Pixel art |
+| 4 | 500 | - | - | Toast only |
+| 5 | 800 | House | object | Pixel art + animation |
+| 6 | 1,100 | - | - | Toast only |
+| 7 | 1,500 | Stone Path | ground | Pixel art |
+| 8 | 2,500 | Lamp | decoration | Pixel art + animation |
+| 9 | 3,200 | - | - | Toast only |
+| 10 | 4,000 | Street Tree | object | Pixel art + animation |
+| 11 | 5,000 | - | - | Toast only |
+| 12 | 6,000 | Shop | object | Pixel art |
+| 13 | 7,500 | - | - | Toast only |
+| 14 | 9,000 | Cafe | object | Emoji fallback |
+| 15 | 10,000 | Apartment | object | Emoji fallback |
+| 16 | 12,000 | - | - | Toast only |
+| 17 | 14,000 | City Hall | object | Emoji fallback |
+| 18 | 16,500 | Hotel | object | Emoji fallback |
+| 19 | 18,500 | Skyscraper | object | Emoji fallback |
+| 20 | 20,000 | Windmill | object | Pixel art + animation |
 
 ---
 
-## File map
+## Rendering status
 
-**Added on this branch:**
-- `TypeVillage/Models/VillageState.swift`
-- `TypeVillage/Models/VillageTile.swift`
-- `TypeVillage/Models/BuildingCatalog.swift`
-- `TypeVillage/Models/Localization.swift`
-- `TypeVillage/Views/Village/VillageGridView.swift`
-- `TypeVillage/Views/Village/BuildingPixelView.swift`
-- `TypeVillage/Views/Village/BuildingPickerView.swift`
-- `TypeVillage/Views/Village/LevelUpToast.swift`
-- `docs/pivot-context.md` (this file)
+### What is already implemented
 
-**Meaningfully changed:**
-- `TypeVillage/App/TypeVillageApp.swift` (renamed, wires level-up hook, drops collection window)
-- `TypeVillage/App/AppState.swift` (owns `VillageState`, feeds keystroke delta to `addXP`)
-- `TypeVillage/Models/AppSettings.swift` (language)
-- `TypeVillage/Persistence/StorageManager.swift` (directory name)
-- `TypeVillage/Views/MenuBarContentView.swift` (rebuilt around village)
-- `TypeVillage/Views/SettingsView.swift` (language picker, About trimmed)
-- `project.yml` (name / bundle / version reset to 0.1.0)
-- `TypeVillage/Resources/Assets.xcassets/MenuBarIcon.imageset/*` (house icon)
+- Ground, object, and decoration layers all render in the village view.
+- Tile editing supports ground placement plus 2×2 sub-cell placement for objects and decorations.
+- Ground sprites are diamond-clipped to the tile top face.
+- Baseline compensation is applied so sprites sit on the iso anchor instead of floating.
+- Late-game buildings can still be placed even when they currently use emoji fallback rendering.
 
-**Renamed in bulk:**
-- All `CapCha/**` → `TypeVillage/**`
+### Important rendering facts
 
-**Stale / to decide:**
-- `TypeVillage/Core/DropEngine.swift`, `SessionTracker.swift` — drop logic retained but not consumed
-- `TypeVillage/Views/Collection/*` — old collection UI, unreachable
-- `TypeVillage/Views/DropToastView.swift` — old keycap toast (different from `LevelUpToast`)
+- `blockSize` in the village grid is currently `72`.
+- Draw order is based on `row + col` so front tiles appear on top.
+- Some sprites are iso-native and rendered with `isoShearY == 0`.
+- Billboard-style sprites like trees and lamps remain upright by design.
+
+---
+
+## Localization status
+
+- The app currently supports English and Korean.
+- Language switching is instant from Settings.
+- Building names and core UI strings are localized through `LocalizedString` and `L10n`.
+
+---
+
+## Product decisions now locked
+
+- **Product name:** Tapistry
+- **Primary loop:** typing -> XP and coins -> level unlocks -> village placement
+- **Scope:** single-product village builder
+- **Non-goal:** reviving the old CapCha keycap collection flow as a first-class mode
+
+Legacy CapCha design documents remain in the repo only as historical reference.
+
+---
+
+## Highest-priority remaining work
+
+1. **Late-game art pass**
+   - Replace emoji fallback rendering for `cafe`, `apartment`, `cityhall`, `hotel`, and `skyscraper` with proper Tapistry pixel sprites.
+2. **Onboarding and copy polish**
+   - Continue refining first-launch messaging so the village-builder loop is immediately clear.
+3. **Logic coverage**
+   - Add tests for level progression, persistence migration, and tile placement rules.
+4. **Economy tuning**
+   - Revisit coin drop pacing and placement prices after broader playtesting.
+5. **Documentation maintenance**
+   - Keep public and internal docs aligned with the actual Tapistry implementation as the product evolves.
+
+---
+
+## Files that matter most right now
+
+- `Tapistry/App/TapistryApp.swift`
+- `Tapistry/App/AppState.swift`
+- `Tapistry/Models/VillageState.swift`
+- `Tapistry/Models/VillageTile.swift`
+- `Tapistry/Models/BuildingCatalog.swift`
+- `Tapistry/Views/MenuBarContentView.swift`
+- `Tapistry/Views/Village/VillageGridView.swift`
+- `Tapistry/Views/Village/TileEditorView.swift`
+- `Tapistry/Views/Village/BuildingPixelView.swift`
+- `Tapistry/Views/Village/LevelUpToast.swift`
+- `Tapistry/Views/Onboarding/WelcomeView.swift`

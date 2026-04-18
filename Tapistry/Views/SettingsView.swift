@@ -111,12 +111,31 @@ private struct DebugSection: View {
                         .controlSize(.small)
                 }
 
+                HStack(spacing: 6) {
+                    Text("Coins")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Button("+10") { village.addCash(10) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("+100") { village.addCash(100) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("+1000") { village.addCash(1000) }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    Button("Reset") { village.resetCash() }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                }
+
                 HStack {
                     Text("Current")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("Lv.\(village.level) · \(village.xp) XP")
+                    Text("Lv.\(village.level) · \(village.xp) XP · 💰\(village.cash)")
                         .font(.system(size: 11, design: .monospaced))
                 }
             }

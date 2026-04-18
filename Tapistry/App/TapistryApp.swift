@@ -37,7 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover = NSPopover()
         popover.contentSize = NSSize(width: 280, height: 420)
         popover.behavior = .transient
-        popover.contentViewController = NSHostingController(rootView: MenuBarContentView(appState: appState))
+        popover.contentViewController = NSHostingController(rootView: MenuBarContentView(appState: appState, village: appState.village))
         popover.delegate = self
 
         // Register notifications

@@ -4,6 +4,7 @@ import Combine
 /// Central state for the village system
 final class VillageState: ObservableObject {
     @Published var xp: Int = 0
+    @Published var cash: Int = 0
     @Published var grid: [[VillageTile]]
 
     let gridSize = 4
@@ -58,7 +59,12 @@ final class VillageState: ObservableObject {
 
     /// Building types unlocked at current level
     var unlockedBuildings: [BuildingType] {
-        BuildingCatalog.all.filter { $0.unlockLevel <= level }
+        BuildingCatalog.all.filter(isUnlocked)
+    }
+
+    /// Unlocked buildings for a specific layer.
+    func unlockedBuildings(for layer: TileLayer) -> [BuildingType] {
+        BuildingCatalog.forLayer(layer).filter(isUnlocked)
     }
 
     // MARK: - Init
@@ -87,6 +93,21 @@ final class VillageState: ObservableObject {
         scheduleSave()
     }
 
+    // MARK: - Cash
+
+    func addCash(_ amount: Int) {
+        cash += amount
+        scheduleSave()
+    }
+
+    @discardableResult
+    func spendCash(_ amount: Int) -> Bool {
+        guard cash >= amount else { return false }
+        cash -= amount
+        scheduleSave()
+        return true
+    }
+
     #if DEBUG
     func setLevel(_ targetLevel: Int) {
         let entry = Self.levelTable.first { $0.level == targetLevel }
@@ -95,6 +116,11 @@ final class VillageState: ObservableObject {
 
     func unlockAll() {
         xp = 20_000
+    }
+
+    func resetCash() {
+        cash = 0
+        scheduleSave()
     }
     #endif
 
@@ -105,7 +131,7 @@ final class VillageState: ObservableObject {
         guard isValidTile(row: row, col: col) else { return }
         if let b = buildingType {
             guard b.layer == .ground else { return }
-            guard unlockedBuildings.contains(where: { $0.id == b.id }) else { return }
+            guard isUnlocked(b) else { return }
             grid[row][col].ground = b.id
         } else {
             grid[row][col].ground = nil
@@ -113,7 +139,7 @@ final class VillageState: ObservableObject {
         scheduleSave()
     }
 
-    /// Place an object or decoration into a specific sub-cell (3×3 within a tile).
+    /// Place an object or decoration into a specific sub-cell (2×2 within a tile).
     func placeSubCell(
         _ buildingType: BuildingType,
         row: Int, col: Int,
@@ -123,7 +149,7 @@ final class VillageState: ObservableObject {
         guard isValidTile(row: row, col: col),
               isValidSub(subRow: subRow, subCol: subCol) else { return }
         guard buildingType.layer == layer else { return }
-        guard unlockedBuildings.contains(where: { $0.id == buildingType.id }) else { return }
+        guard isUnlocked(buildingType) else { return }
 
         switch layer {
         case .ground:
@@ -190,6 +216,10 @@ final class VillageState: ObservableObject {
             && subCol >= 0 && subCol < VillageTile.subGridSize
     }
 
+    private func isUnlocked(_ building: BuildingType) -> Bool {
+        building.unlockLevel <= level
+    }
+
     // MARK: - Persistence
 
     private var saveTimer: Timer?
@@ -210,11 +240,12 @@ final class VillageState: ObservableObject {
 
     private struct SaveData: Codable {
         let xp: Int
+        var cash: Int = 0       // default for migration — old saves without cash decode to 0
         let grid: [[VillageTile]]
     }
 
     func save() {
-        let data = SaveData(xp: xp, grid: grid)
+        let data = SaveData(xp: xp, cash: cash, grid: grid)
         if let encoded = try? JSONEncoder().encode(data) {
             try? encoded.write(to: saveURL, options: .atomic)
         }
@@ -225,6 +256,7 @@ final class VillageState: ObservableObject {
               let decoded = try? JSONDecoder().decode(SaveData.self, from: data)
         else { return }
         xp = decoded.xp
+        cash = decoded.cash
         if decoded.grid.count == gridSize && decoded.grid.allSatisfy({ $0.count == gridSize }) {
             grid = decoded.grid
         }
