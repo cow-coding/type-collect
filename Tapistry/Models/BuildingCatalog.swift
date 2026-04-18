@@ -23,6 +23,7 @@ enum BuildingRenderKind {
     case streetTree
     case apartment
     case cityhall
+    case hotel
     case skyscraper
     case emojiFallback
 }
@@ -51,7 +52,7 @@ struct BuildingRenderSpec {
         "cafe": .init(kind: .cafe, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
         "apartment": .init(kind: .apartment, baselineRows32: -5, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.8),
         "cityhall": .init(kind: .cityhall, baselineRows32: 4, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.6),
-        "hotel": .init(kind: .emojiFallback, baselineRows32: 0, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.6),
+        "hotel": .init(kind: .hotel, baselineRows32: -5, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.6),
         "skyscraper": .init(kind: .skyscraper, baselineRows32: -16, isoShearY: 0, anchorStyle: .structure, emojiScale: 0.6),
         "windmill": .init(kind: .windmill, baselineRows32: 3, isoShearY: -0.5, anchorStyle: .structure, emojiScale: 0.8),
 
@@ -90,6 +91,7 @@ struct BuildingRenderSpec {
     var spriteAspectRatio: CGFloat {
         switch kind {
         case .apartment:  return 48.0 / 73.0
+        case .hotel:      return 48.0 / 64.0
         case .skyscraper: return 48.0 / 96.0
         default:          return 1.0
         }

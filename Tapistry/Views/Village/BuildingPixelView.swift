@@ -166,6 +166,18 @@ enum SpriteColors {
     static let skySpire      = Color(red: 0.28, green: 0.28, blue: 0.30) // antenna
     static let skyBeacon     = Color(red: 0.95, green: 0.30, blue: 0.24) // red light
 
+    // Hotel — heritage/boutique downtown hotel, warm brick + cream trim
+    static let hotelBrick     = Color(red: 0.68, green: 0.36, blue: 0.28) // warm brick body
+    static let hotelBrickDark = Color(red: 0.48, green: 0.24, blue: 0.18) // trim/shadow
+    static let hotelTrim      = Color(red: 0.94, green: 0.90, blue: 0.80) // cream stone trim
+    static let hotelTrimDark  = Color(red: 0.72, green: 0.66, blue: 0.55)
+    static let hotelRoof      = Color(red: 0.34, green: 0.28, blue: 0.32) // dark slate mansard
+    static let hotelRoofLight = Color(red: 0.48, green: 0.42, blue: 0.45)
+    static let hotelGlass     = Color(red: 0.32, green: 0.38, blue: 0.46) // dark window
+    static let hotelGlassBrt  = Color(red: 0.58, green: 0.72, blue: 0.78)
+    static let hotelSign      = Color(red: 0.96, green: 0.78, blue: 0.28) // gold HOTEL sign
+    static let hotelCanopy    = Color(red: 0.80, green: 0.30, blue: 0.28) // red canopy
+
     // Water (well)
     static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
     static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
@@ -871,6 +883,91 @@ private enum Sprites {
         ]
     )
 
+    // MARK: Hotel (48×64)
+
+    /// Hotel — boutique downtown: brick walls, mansard roof dormers,
+    /// red lobby canopy, and a vertical gold HOTEL sign on the SW face.
+    static let hotel = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".....................AAA........................",
+            "...................AATTTAA......................",
+            ".................AATTTTTTTAA....................",
+            "...............AATTTTTTTTTTTAA..................",
+            ".............AATTTTTTTTTTTTTTTAA................",
+            "...........AATTTeTTTTTeTTTTTeTTTAA..............",
+            "..........AATTTTXTTTTTXTTTTTXTTTTAB.............",
+            "..........BbAATTTTTTTTTTTTTTTTTAeEB.............",
+            "..........BbbbAATTTTTTTTTTTTTAeeBBB.............",
+            "..........BbbbbbAATTTTTTTTTAeeBBXXB.............",
+            "..........BbbbbbbbAATTTTTAeeBBBbXXB.............",
+            "..........BbbbbbbbbbAATAeeBBXXBbXXB.............",
+            "..........BbbbbbbbbGbbBEBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGBGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGGGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbBGGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbBGBBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBBBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGBBbXXBbbbBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbRReeB.............",
+            "..........BbbbbbbbbGGBBbbbBbRRXXeeB.............",
+            "..........BbbbbbbbbBBGBbbbRRBBXXeeB.............",
+            "..........BBbbbbbbbGBBBbbRXBBBXXeeB.............",
+            "............BBbbbbbGBBBbeXXBBBXXBB..............",
+            "..............BBbbbGBBBeeXXBBBBB................",
+            "................BBbGBBBeeXXBBB..................",
+            "..................BGGBBeeXBB....................",
+            "....................BGBeBB......................",
+            "......................BB........................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.hotelRoofLight,
+            "A": SpriteColors.hotelRoof,
+            "B": SpriteColors.hotelBrickDark,
+            "b": SpriteColors.hotelBrick,
+            "E": SpriteColors.hotelTrimDark,
+            "e": SpriteColors.hotelTrim,
+            "X": SpriteColors.hotelGlass,
+            "x": SpriteColors.hotelGlassBrt,
+            "R": SpriteColors.hotelCanopy,
+            "G": SpriteColors.hotelSign,
+        ]
+    )
+
     // MARK: Skyscraper (48×96)
 
     /// Skyscraper — Empire State Building style: multi-tier Art Deco
@@ -1352,6 +1449,8 @@ struct BuildingPixelView: View {
             // the NW edge.
             PixelSpriteView(art: Sprites.cityhall, width: size)
                 .offset(x: size / 8, y: size / 16)
+        case .hotel:
+            PixelSpriteView(art: Sprites.hotel, width: size)
         case .skyscraper:
             PixelSpriteView(art: Sprites.skyscraper, width: size)
         case .emojiFallback:
