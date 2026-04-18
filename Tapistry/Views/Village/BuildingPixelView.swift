@@ -156,6 +156,16 @@ enum SpriteColors {
     static let cityDome      = Color(red: 0.96, green: 0.94, blue: 0.90) // bright dome
     static let cityDomeShade = Color(red: 0.82, green: 0.78, blue: 0.70) // dome shadow
 
+    // Skyscraper — Art Deco limestone (Empire State Building feel)
+    static let skyWall       = Color(red: 0.86, green: 0.83, blue: 0.75) // warm limestone
+    static let skyWallDark   = Color(red: 0.58, green: 0.54, blue: 0.46) // trim / vertical ribs
+    static let skyWallLight  = Color(red: 0.95, green: 0.92, blue: 0.84) // lit edge
+    static let skyWindow     = Color(red: 0.24, green: 0.28, blue: 0.38) // dark glass
+    static let skyWindowBrt  = Color(red: 0.48, green: 0.58, blue: 0.68)
+    static let skyRoof       = Color(red: 0.46, green: 0.45, blue: 0.48) // setback caps
+    static let skySpire      = Color(red: 0.28, green: 0.28, blue: 0.30) // antenna
+    static let skyBeacon     = Color(red: 0.95, green: 0.30, blue: 0.24) // red light
+
     // Water (well)
     static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
     static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
@@ -861,6 +871,122 @@ private enum Sprites {
         ]
     )
 
+    // MARK: Skyscraper (48×96)
+
+    /// Skyscraper — Empire State Building style: multi-tier Art Deco
+    /// tower with vertical rib façade and red-beacon antenna spire.
+    static let skyscraper = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "........................R.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            ".......................SSS......................",
+            ".......................SSS......................",
+            ".....................AASSSAA....................",
+            "...................AATTSSSTTAA..................",
+            "..................AATTTSSSTTTAA.................",
+            "..................EeAATTTTTAEEE.................",
+            "..................EeeeAATAEEEXE.................",
+            "..................EeeeeeEEEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            ".................AEeeeeeEXEXEXEA................",
+            "................AAEEeeeeEXEXEEEAA...............",
+            "................EeAAEEeeEXEEEAEEE...............",
+            "................EeeeAAEEEEEAEEEXE...............",
+            "................EeeeeeAAEAEEEXEXE...............",
+            "................EeeeeeeeEEEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "...............AEeeeeeeeEXEXEXEXEA..............",
+            "..............AAEEeeeeeeEXEXEXEEEAA.............",
+            "..............EeAAEEeeeeEXEXEEEAEEE.............",
+            "..............EeeeAAEEeeEXEEEAEEEXE.............",
+            "..............EeeeeeAAEEEEEAEEEXEXE.............",
+            "..............EeeeeeeeAAEAEEEXEXEXE.............",
+            "..............EeeeeeeeeeEEEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            ".............AEeeeeeeeeeEXEXEXEXEXEA............",
+            "............AAEEeeeeeeeeEXEXEXEXEEEAA...........",
+            "............EeAAEEeeeeeeEXEXEXEEEAEEE...........",
+            "............EeeeAAEEeeeeEXEXEEEAEEEXE...........",
+            "...........AEeeeeeAAEEeeEXEEEAEEEXEXEA..........",
+            "..........AAEEeeeeeeAAEEEEEAEEEXEXEEEAA.........",
+            "..........EeAAEEeeeeeeAAEAEEEXEXEEEAEEE.........",
+            "..........EeeeAAEEeeeeeeEEEXEXEEEAEEEXE.........",
+            "..........EeeeeeAAEEeeeeEXEXEEEAEEEXEXE.........",
+            "..........EeeeeeeeAAEEeeEXEEEAEEEXEXEXE.........",
+            "..........EeeeeeeeeeAAEEEEEAEEEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeAAEAEEEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEEEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EEeeeeeeeeeeeeEXEXEXEXEXEXEEE.........",
+            "............EEeeeeeeeeeeEXEXEXEXEXEEE...........",
+            "..............EEeeeeeeeeEXEXEXEXEEE.............",
+            "................EEeeeeeeEXEXEXEEE...............",
+            "..................EEeeeeEXEXEEE.................",
+            "....................EEeeEXEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+        ],
+        colors: [
+            "T": SpriteColors.skyRoof,
+            "A": SpriteColors.skyWallDark,
+            "E": SpriteColors.skyWallDark,
+            "e": SpriteColors.skyWall,
+            "n": SpriteColors.skyWallLight,
+            "X": SpriteColors.skyWindow,
+            "x": SpriteColors.skyWindowBrt,
+            "S": SpriteColors.skySpire,
+            "R": SpriteColors.skyBeacon,
+        ]
+    )
+
     // MARK: Flowers ground (32×32, tileable)
 
     static let flowersGround = PixelArt(
@@ -1226,6 +1352,8 @@ struct BuildingPixelView: View {
             // the NW edge.
             PixelSpriteView(art: Sprites.cityhall, width: size)
                 .offset(x: size / 8, y: size / 16)
+        case .skyscraper:
+            PixelSpriteView(art: Sprites.skyscraper, width: size)
         case .emojiFallback:
             Text(building.emoji).font(.system(size: size * building.renderSpec.emojiScale))
         }
