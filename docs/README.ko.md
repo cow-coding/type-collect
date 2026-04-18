@@ -1,121 +1,92 @@
 <p align="center">
-  <img src="../CapCha/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="CapCha Icon">
+  <img src="../Tapistry/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" height="128" alt="Tapistry Icon">
 </p>
 
-<h1 align="center">CapCha</h1>
+<h1 align="center">Tapistry</h1>
 
 <p align="center">
-  <strong>타이핑하면 키캡이 모입니다. 모든 키 입력이 수집이 됩니다.</strong>
+  <strong>타이핑으로 작은 마을을 엮어가는 macOS 메뉴바 빌더입니다.</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/cow-coding/CapCha/releases/latest"><img src="https://img.shields.io/github/v/release/cow-coding/CapCha?style=flat-square&color=6C5CE7&labelColor=2D3436&label=release" alt="Release"></a>
-  <a href="https://github.com/cow-coding/CapCha/releases"><img src="https://img.shields.io/github/downloads/cow-coding/CapCha/total?style=flat-square&color=00B894&labelColor=2D3436" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/platform-macOS%2013%2B-0984E3?style=flat-square&labelColor=2D3436" alt="Platform">
   <img src="https://img.shields.io/badge/swift-5.9-F97F51?style=flat-square&labelColor=2D3436" alt="Swift">
+  <img src="https://img.shields.io/badge/ui-SwiftUI%20%2B%20Canvas-2ECC71?style=flat-square&labelColor=2D3436" alt="UI">
 </p>
 
 <p align="center">
-  <a href="../README.md">English</a> · <a href="https://github.com/cow-coding/CapCha/releases/latest">다운로드</a> · <a href="DESIGN.en.md">설계 문서</a>
+  <a href="../README.md">English</a> · <a href="pivot-context.md">제품 문맥</a> · <a href="iso-pixel-art-guide.md">아이소 픽셀아트 가이드</a>
 </p>
 
----
-
-## CapCha란?
-
-CapCha는 일상적인 타이핑을 가상 키캡 가챠 게임으로 바꿔주는 macOS 메뉴바 앱입니다. 개발하고, 업무하고, 글 쓰면서 — 키캡을 모으세요.
-
-> **🔒 프라이버시 최우선** — CapCha는 입력 내용을 절대 읽지 않습니다. `CGEvent tap` listen-only 모드로 카운트만 합니다. 네트워크 접근 없음, 모든 데이터는 로컬에 저장.
-
-### 주요 기능
-
-- 🎲 **2,610가지 키캡 조합** — 87 TKL키 × 5 테마 세트 × 6 등급
-- 🌈 **6단계 등급** — Common → Uncommon → Rare → Epic → **Legendary** → ***Eternal***
-- 🎯 **천장(Pity) 시스템** — 2,000타 내 확정 드롭, 가뭄 걱정 없음
-- 🔔 **드롭 알림** — 메뉴바 아이콘 아래 말풍선 팝업
-- 📦 **컬렉션 윈도우** — 아이소메트릭 3D 카드로 키캡 탐색
-- ⚙️ **설정** — 로그인 시 자동 실행, 알림 토글
-- 🔐 **보안 감사 완료** — 키 내용 미접근, 네트워크 없음, 데이터 수집 없음
+https://github.com/user-attachments/assets/95f25153-f32f-453e-8181-6663cacb54d4
 
 ---
 
-## 설치 방법
+## Tapistry란?
 
-### 1. 다운로드
+Tapistry는 일상적인 타이핑을 작은 아이소메트릭 마을 빌딩으로 바꿔주는 macOS 메뉴바 앱입니다.
+키를 입력하면 XP와 코인이 쌓이고, XP로 레벨이 오르며 새로운 건물이 해금됩니다. 해금한 건물은 코인을 사용해 메뉴바 팝오버 안의 4×4 마을 그리드에 배치할 수 있습니다.
 
-> **[최신 DMG 다운로드](https://github.com/cow-coding/CapCha/releases/latest)**
+> **프라이버시 우선** — Tapistry는 입력 내용을 절대 읽지 않습니다. listen-only `CGEvent tap`으로 key-down 이벤트 수만 카운트합니다. 네트워크 접근이 없고, 모든 데이터는 Mac 내부에만 저장됩니다.
 
-### 2. 설치
+## 주요 기능
 
-DMG 열기 → **CapCha**를 **Applications**로 드래그
+- **타이핑 기반 성장** — `1 키스트로크 = 1 XP`를 기본으로 진행됩니다.
+- **4×4 아이소 마을** — 메뉴바 안에서 바로 마을을 키우고 꾸밀 수 있습니다.
+- **레이어 기반 타일 편집** — 각 타일은 `ground`, `object`, `decoration`을 지원하며, `object`와 `decoration`은 2×2 서브셀 단위로 배치됩니다.
+- **애니메이션 픽셀아트** — 나무 흔들림, 가로등 점멸, 굴뚝 연기, 풍차 회전이 들어가 있습니다.
+- **한국어/영어 지원** — 설정에서 즉시 언어를 전환할 수 있습니다.
+- **로컬 저장** — 마을 상태, 코인, 타이핑 통계가 모두 로컬에 저장됩니다.
+- **macOS 네이티브 설정** — 로그인 시 자동 실행, 알림 토글, 온보딩, 권한 안내를 포함합니다.
 
-### 3. 첫 실행
+## 진행 구조
 
-Apple Developer ID로 서명되지 않아 macOS가 차단합니다:
-
-```
-시스템 설정 → 개인정보 보호 및 보안 → 확인 없이 열기 → 열기
-```
-
-### 4. 권한 부여
-
-```
-시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링 → CapCha → 켜기
-```
-
-> **💡 업데이트 시** 기존 CapCha 항목을 입력 모니터링에서 먼저 삭제하고, 새 버전에 권한을 다시 부여하세요.
-
----
-
-## 작동 원리
-
-```
-⌨️ 키 입력 → 🎲 드롭 판정 (0.25%) → 🎰 등급 결정 → 🎁 키캡 획득! → 🔔 알림
+```text
+⌨️ 키 입력 → ⭐ XP + 💰 코인 획득 → ⬆️ 레벨 업 → 🏡 건물 해금 → 🧱 마을 배치
 ```
 
-### 드롭 시스템
+### 성장 방식
 
-매 키 입력마다 **0.25% 기본 확률**로 판정합니다. 성공하면 랜덤 **등급 → 세트 → 키** 조합으로 키캡이 생성됩니다.
+- 모든 키 입력은 XP가 됩니다.
+- 레벨이 오르면 새 건물이 해금됩니다.
+- 코인은 타이핑 중 확률적으로 획득되며, 건물 배치에 사용됩니다.
+- 마을 레이아웃은 저장되므로 앱을 다시 열어도 유지됩니다.
 
-### 등급 시스템
+### 현재 해금 경로
 
-| 등급 | 가중치 | 시각 효과 |
-|:-----|:-----:|:---------|
-| ⚪ Common | 59.4% | 기본 키캡 |
-| 🟢 Uncommon | 25% | 초록 글로우 + 테두리 |
-| 🔵 Rare | 10% | 파란 글로우 + 두꺼운 테두리 |
-| 🟣 Epic | 4% | 보라 글로우 + 내부 광택 |
-| 🟠 Legendary | 1% | 골드 글로우 + 내부 광택 |
-| 🌈 Eternal | 0.6% | 프리즘 무지개 애니메이션 |
+| 레벨 | 해금 |
+|:-----|:-----|
+| 1 | 나무 |
+| 2 | 꽃밭 |
+| 3 | 울타리 |
+| 5 | 집 |
+| 7 | 돌길 |
+| 8 | 가로등 |
+| 10 | 가로수 |
+| 12 | 상점 |
+| 14 | 카페 |
+| 15 | 아파트 |
+| 17 | 시청 |
+| 18 | 호텔 |
+| 19 | 고층빌딩 |
+| 20 | 풍차 |
 
-### 천장(Pity) 시스템
+### 마을 배치 규칙
 
-운이 나빠도 걱정 없습니다. 드롭 확률이 자동으로 올라갑니다:
+- `ground`는 타일 상면 전체를 덮는 지면 레이어입니다.
+- `object`는 메인 구조물입니다.
+- `decoration`은 울타리나 가로등 같은 보조 장식입니다.
+- 타일마다 2×2 서브셀이 있어서 한 칸 안에서도 더 촘촘한 배치가 가능합니다.
 
-| 드롭 없이 지난 키스트로크 | 드롭 확률 |
-|:----------------------|:---------|
-| 0 – 499 | 0.25% (기본) |
-| 500 – 999 | 0.25% → 0.5% |
-| 1,000 – 1,999 | 0.5% → 1.0% |
-| 2,000+ | **100% 확정** |
+## 개인정보 보호
 
-> 🎁 **첫 드롭 보장** — 신규 사용자는 100타 안에 Common 키캡 1개가 확정됩니다.
+Tapistry는 macOS 입력 모니터링 권한을 사용하지만, 오직 키 입력 횟수만 셉니다.
 
-### 키캡 세트
-
-| 세트 | 테마 | 색상 |
-|:----|:-----|:---:|
-| Mechanical Classics | 체리 스위치 계열 | 🔴 |
-| Retro Computing | 빈티지 터미널 | 🟤 |
-| Artisan Collection | 아티산 키캡 | 🟣 |
-| Nature Elements | 자연과 숲 | 🟢 |
-| Space Theme | 우주 | 🔵 |
-
-각 세트에 **TKL 87키** 전체가 포함됩니다. 같은 키가 모든 등급으로 나올 수 있어요!
-
-중복 키캡은 수량으로 쌓입니다. 나중에 거래에 활용하세요!
-
----
+- 어떤 키를 눌렀는지 읽지 않습니다.
+- 입력한 텍스트를 저장하지 않습니다.
+- 분석, 광고, 텔레메트리가 없습니다.
+- 핵심 기능에 네트워크가 필요하지 않습니다.
+- 데이터는 `~/Library/Application Support/Tapistry/` 아래에 저장됩니다.
 
 ## 소스에서 빌드
 
@@ -123,45 +94,38 @@ Apple Developer ID로 서명되지 않아 macOS가 차단합니다:
 # 사전 설치
 brew install xcodegen
 
-# 생성 & 빌드
+# 프로젝트 생성 및 빌드
 xcodegen generate
-xcodebuild -project CapCha.xcodeproj -scheme CapCha -configuration Release build
+xcodebuild -project Tapistry.xcodeproj -scheme Tapistry -configuration Release build
 ```
 
----
+### 첫 실행
+
+macOS가 처음 실행을 차단할 수 있습니다:
+
+```text
+시스템 설정 → 개인정보 보호 및 보안 → 확인 없이 열기 → 열기
+```
+
+이후 입력 모니터링 권한을 허용합니다:
+
+```text
+시스템 설정 → 개인정보 보호 및 보안 → 입력 모니터링 → Tapistry → 켜기
+```
+
+이전 빌드를 교체하는 경우에는 기존 Tapistry 항목을 입력 모니터링에서 제거한 뒤 다시 허용해주시면 됩니다.
 
 ## 기술 스택
 
 | | 기술 |
 |:--|:-----|
 | **언어** | Swift 5.9 |
-| **UI** | SwiftUI + Canvas (아이소메트릭 키캡 렌더링) |
-| **입력** | CGEvent tap (listen-only, tailAppend) |
+| **UI** | SwiftUI + Canvas |
+| **앱 형태** | macOS 메뉴바 앱 (`LSUIElement`) |
+| **입력 감지** | listen-only `CGEvent tap` |
 | **리액티브** | Combine |
-| **저장** | JSON (`~/Library/Application Support/CapCha/`) |
-| **CI/CD** | GitHub Actions + create-dmg |
-
----
-
-## 문서
-
-| | |
-|:--|:--|
-| 📄 [설계 문서 (EN)](DESIGN.en.md) | Architecture, data models, drop engine |
-| 📄 [설계 문서 (KR)](../DESIGN.md) | 아키텍처, 데이터 모델, 드롭 엔진 |
-
----
-
-## 개인정보 보호
-
-CapCha는 macOS 입력 모니터링으로 키스트로크를 카운트합니다.
-
-- ✅ 키 입력 횟수만 측정 — 내용은 절대 읽지 않음
-- ✅ 네트워크 접근 없음 — 모든 데이터 로컬 저장
-- ✅ 오픈소스 — 직접 확인 가능
-- ✅ 보안 감사 완료 — [감사 보고서 보기](https://github.com/cow-coding/CapCha/pull/3)
-
----
+| **저장** | Application Support 기반 JSON |
+| **프로젝트 생성** | XcodeGen |
 
 ## 라이선스
 

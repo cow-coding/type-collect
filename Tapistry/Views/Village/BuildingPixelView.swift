@@ -1,0 +1,1805 @@
+import SwiftUI
+
+// MARK: - Pixel art primitives
+
+/// A multi-line string sprite + color map. Each char in `rows` resolves to a color via `colors`.
+/// Characters not in the map render as transparent.
+struct PixelArt {
+    let rows: [String]
+    let colors: [Character: Color]
+
+    var gridWidth: Int { rows.first?.count ?? 0 }
+    var gridHeight: Int { rows.count }
+}
+
+/// Renders a PixelArt as crisp filled rectangles via a single Canvas pass.
+/// Sized by `width`; height is derived from the sprite's aspect ratio so pixels stay square.
+struct PixelSpriteView: View {
+    let art: PixelArt
+    let width: CGFloat
+
+    var height: CGFloat {
+        guard art.gridWidth > 0, art.gridHeight > 0 else { return 0 }
+        return width * CGFloat(art.gridHeight) / CGFloat(art.gridWidth)
+    }
+
+    var body: some View {
+        Canvas { ctx, cs in
+            let cols = CGFloat(art.gridWidth)
+            let rowsN = CGFloat(art.gridHeight)
+            guard cols > 0, rowsN > 0 else { return }
+            let pw = cs.width / cols
+            let ph = cs.height / rowsN
+
+            for (y, row) in art.rows.enumerated() {
+                for (x, ch) in row.enumerated() {
+                    guard let color = art.colors[ch] else { continue }
+                    let rect = CGRect(
+                        x: CGFloat(x) * pw,
+                        y: CGFloat(y) * ph,
+                        width: pw + 0.5,
+                        height: ph + 0.5
+                    )
+                    ctx.fill(Path(rect), with: .color(color))
+                }
+            }
+        }
+        .frame(width: width, height: height)
+    }
+}
+
+// MARK: - Color palette
+
+enum SpriteColors {
+    // Foliage
+    static let leaf         = Color(red: 0.36, green: 0.68, blue: 0.28)
+    static let leafDark     = Color(red: 0.22, green: 0.48, blue: 0.16)
+    static let leafLight    = Color(red: 0.55, green: 0.82, blue: 0.40)
+
+    // Wood
+    static let bark         = Color(red: 0.48, green: 0.30, blue: 0.15)
+    static let barkDark     = Color(red: 0.30, green: 0.18, blue: 0.08)
+    static let barkLight    = Color(red: 0.62, green: 0.42, blue: 0.22)
+    static let plank        = Color(red: 0.72, green: 0.54, blue: 0.32)
+    static let plankDark    = Color(red: 0.50, green: 0.34, blue: 0.16)
+
+    // House
+    static let roof         = Color(red: 0.80, green: 0.30, blue: 0.24)
+    static let roofDark     = Color(red: 0.58, green: 0.18, blue: 0.14)
+    static let roofLight    = Color(red: 0.92, green: 0.46, blue: 0.36)
+    static let wall         = Color(red: 0.94, green: 0.86, blue: 0.66)
+    static let wallDark     = Color(red: 0.72, green: 0.60, blue: 0.40)
+    static let wallLight    = Color(red: 1.0,  green: 0.96, blue: 0.82)
+    static let window       = Color(red: 0.48, green: 0.76, blue: 0.94)
+    static let windowDark   = Color(red: 0.28, green: 0.52, blue: 0.72)
+    static let door         = Color(red: 0.42, green: 0.24, blue: 0.12)
+    static let doorLight    = Color(red: 0.58, green: 0.36, blue: 0.18)
+    static let chimney      = Color(red: 0.52, green: 0.50, blue: 0.52)
+    static let chimneyDark  = Color(red: 0.30, green: 0.28, blue: 0.30)
+
+    // Stone
+    static let stone        = Color(red: 0.62, green: 0.62, blue: 0.64)
+    static let stoneDark    = Color(red: 0.42, green: 0.42, blue: 0.46)
+    static let stoneLight   = Color(red: 0.78, green: 0.78, blue: 0.80)
+
+    // Windmill
+    static let millRoof     = Color(red: 0.58, green: 0.32, blue: 0.20)
+    static let millRoofDark = Color(red: 0.38, green: 0.20, blue: 0.12)
+    static let millBody     = Color(red: 0.94, green: 0.90, blue: 0.80)
+    static let millBodyDark = Color(red: 0.72, green: 0.66, blue: 0.54)
+    static let millBlade    = Color(red: 0.98, green: 0.96, blue: 0.90)
+    static let millBladeDark = Color(red: 0.72, green: 0.68, blue: 0.54)
+    static let millHub      = Color(red: 0.32, green: 0.22, blue: 0.14)
+
+    // Flowers / nature
+    static let grass        = Color(red: 0.44, green: 0.76, blue: 0.30)
+    static let grassDark    = Color(red: 0.30, green: 0.58, blue: 0.18)
+    static let flowerPink   = Color(red: 0.96, green: 0.56, blue: 0.72)
+    static let flowerYellow = Color(red: 0.98, green: 0.86, blue: 0.30)
+    static let flowerWhite  = Color(red: 0.98, green: 0.96, blue: 0.94)
+    static let flowerPurple = Color(red: 0.74, green: 0.56, blue: 0.92)
+
+    // Farm / dirt
+    static let dirt         = Color(red: 0.46, green: 0.30, blue: 0.18)
+    static let dirtDark     = Color(red: 0.30, green: 0.20, blue: 0.12)
+    static let dirtLight    = Color(red: 0.60, green: 0.42, blue: 0.26)
+    static let sprout       = Color(red: 0.40, green: 0.72, blue: 0.30)
+
+    // Lamp
+    static let lampPole     = Color(red: 0.28, green: 0.28, blue: 0.30)
+    static let lampHead     = Color(red: 0.44, green: 0.44, blue: 0.48)
+    static let lampGlow     = Color(red: 1.0,  green: 0.94, blue: 0.62)
+    static let lampGlowSoft = Color(red: 1.0,  green: 0.88, blue: 0.42).opacity(0.55)
+
+    // Shop
+    static let shopAwning   = Color(red: 0.92, green: 0.36, blue: 0.36)
+    static let shopAwning2  = Color(red: 0.98, green: 0.96, blue: 0.90)
+    static let shopWall     = Color(red: 0.96, green: 0.82, blue: 0.58)
+    static let shopWallDark = Color(red: 0.72, green: 0.58, blue: 0.36)
+    static let shopSign     = Color(red: 0.82, green: 0.68, blue: 0.36)
+    static let shopSignDark = Color(red: 0.50, green: 0.38, blue: 0.18)
+
+    // Cafe
+    static let cafeRoof      = Color(red: 0.35, green: 0.45, blue: 0.39) // deep sage trim
+    static let cafeRoofLight = Color(red: 0.63, green: 0.72, blue: 0.64) // soft sage top
+    static let cafeWall      = Color(red: 0.95, green: 0.92, blue: 0.85) // plaster cream
+    static let cafeWallDark  = Color(red: 0.75, green: 0.69, blue: 0.58)
+    static let cafeUpper     = Color(red: 0.84, green: 0.88, blue: 0.82)
+    static let cafeUpperDark = Color(red: 0.58, green: 0.64, blue: 0.57)
+    static let cafeSign      = Color(red: 0.91, green: 0.58, blue: 0.36) // coral accent
+    static let cafeSignDark  = Color(red: 0.52, green: 0.27, blue: 0.19)
+    static let cafeLetter    = Color(red: 0.99, green: 0.96, blue: 0.90)
+    static let cafeGlass     = Color(red: 0.53, green: 0.73, blue: 0.76)
+    static let cafeGlassDark = Color(red: 0.33, green: 0.52, blue: 0.56)
+
+    // Apartment
+    static let aptRoof      = Color(red: 0.91, green: 0.91, blue: 0.93)
+    static let aptRoofDark  = Color(red: 0.82, green: 0.82, blue: 0.85)
+    static let aptRoofEdge  = Color(red: 0.78, green: 0.78, blue: 0.82)
+    static let aptWallTrim  = Color(red: 0.54, green: 0.54, blue: 0.58)
+    static let aptWall      = Color(red: 0.66, green: 0.66, blue: 0.70)
+    static let aptGlass     = Color(red: 0.29, green: 0.33, blue: 0.41)
+    static let aptGlassBrt  = Color(red: 0.35, green: 0.42, blue: 0.50)
+    static let aptSeam      = Color(red: 0.23, green: 0.23, blue: 0.27)
+    static let aptBright    = Color(red: 0.94, green: 0.94, blue: 0.96)
+
+    // City Hall — classical stone with blue-slate roof + clock tower
+    static let cityWall      = Color(red: 0.93, green: 0.90, blue: 0.82) // warm stone
+    static let cityWallDark  = Color(red: 0.68, green: 0.63, blue: 0.52)
+    static let cityRoof      = Color(red: 0.35, green: 0.42, blue: 0.55) // slate blue
+    static let cityRoofLight = Color(red: 0.52, green: 0.60, blue: 0.72)
+    static let cityRoofDark  = Color(red: 0.22, green: 0.28, blue: 0.38)
+    static let cityClock     = Color(red: 0.98, green: 0.94, blue: 0.82) // cream clock face
+    static let cityClockHand = Color(red: 0.20, green: 0.18, blue: 0.18)
+    static let cityGlass     = Color(red: 0.46, green: 0.58, blue: 0.64)
+    static let cityAccent    = Color(red: 0.82, green: 0.32, blue: 0.28) // red flag / door
+    static let cityDome      = Color(red: 0.96, green: 0.94, blue: 0.90) // bright dome
+    static let cityDomeShade = Color(red: 0.82, green: 0.78, blue: 0.70) // dome shadow
+
+    // Skyscraper — Art Deco limestone (Empire State Building feel)
+    static let skyWall       = Color(red: 0.86, green: 0.83, blue: 0.75) // warm limestone
+    static let skyWallDark   = Color(red: 0.58, green: 0.54, blue: 0.46) // trim / vertical ribs
+    static let skyWallLight  = Color(red: 0.95, green: 0.92, blue: 0.84) // lit edge
+    static let skyWindow     = Color(red: 0.24, green: 0.28, blue: 0.38) // dark glass
+    static let skyWindowBrt  = Color(red: 0.48, green: 0.58, blue: 0.68)
+    static let skyRoof       = Color(red: 0.46, green: 0.45, blue: 0.48) // setback caps
+    static let skySpire      = Color(red: 0.28, green: 0.28, blue: 0.30) // antenna
+    static let skyBeacon     = Color(red: 0.95, green: 0.30, blue: 0.24) // red light
+
+    // Hotel — heritage/boutique downtown hotel, warm brick + cream trim
+    static let hotelBrick     = Color(red: 0.68, green: 0.36, blue: 0.28) // warm brick body
+    static let hotelBrickDark = Color(red: 0.48, green: 0.24, blue: 0.18) // trim/shadow
+    static let hotelTrim      = Color(red: 0.94, green: 0.90, blue: 0.80) // cream stone trim
+    static let hotelTrimDark  = Color(red: 0.72, green: 0.66, blue: 0.55)
+    static let hotelRoof      = Color(red: 0.34, green: 0.28, blue: 0.32) // dark slate mansard
+    static let hotelRoofLight = Color(red: 0.48, green: 0.42, blue: 0.45)
+    static let hotelGlass     = Color(red: 0.32, green: 0.38, blue: 0.46) // dark window
+    static let hotelGlassBrt  = Color(red: 0.58, green: 0.72, blue: 0.78)
+    static let hotelSign      = Color(red: 0.96, green: 0.78, blue: 0.28) // gold HOTEL sign
+    static let hotelCanopy    = Color(red: 0.80, green: 0.30, blue: 0.28) // red canopy
+
+    // Water (well)
+    static let water        = Color(red: 0.22, green: 0.42, blue: 0.64)
+    static let waterDark    = Color(red: 0.14, green: 0.28, blue: 0.44)
+
+    // Shadow
+    static let shadow       = Color.black.opacity(0.22)
+    static let shadowLight  = Color.black.opacity(0.12)
+}
+
+// MARK: - Sprite definitions
+
+private enum Sprites {
+    // MARK: Tree (32×32, split into canopy + trunk for sway)
+
+    /// Tree — 48×48 round canopy with leaf texture, thin trunk.
+    /// Larger grid allows visible leaf highlights and shadow detail.
+    static let tree = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "............................GGG.................",
+            "............................GGGGG...............",
+            "..........................GGGLGGG...............",
+            "..........................GGGLLGGGG.............",
+            "........................GGGLLLGGGGG.............",
+            "........................GGGGLGGGGGG.............",
+            "........................GGGGGGGdGGGGG...........",
+            "........................GGGLGGGGGGGGg...........",
+            "........................GGGGGGdGGGG.............",
+            ".........................GGGGGGGGGg.............",
+            "..........................gGGGGGg...............",
+            "............................ggGgg...............",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            "............................bBBb................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "G": SpriteColors.leaf,
+            "g": SpriteColors.leafDark,
+            "d": SpriteColors.leafDark,
+            "L": SpriteColors.leafLight,
+            "B": SpriteColors.bark,
+            "b": SpriteColors.barkDark,
+        ]
+    )
+
+    /// Street tree (가로수) — 48×48 tall columnar canopy, thinner than tree.
+    static let streetTree = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".............................GG.................",
+            "............................GGGG................",
+            "............................GLGG................",
+            "...........................GGLGGG...............",
+            "...........................GGLLGG...............",
+            "...........................GGLGGG...............",
+            "...........................GGGGGG...............",
+            "...........................GGGGGG...............",
+            "...........................GGGGGG...............",
+            "............................GGGG................",
+            "............................GGGg................",
+            "............................gGg.................",
+            ".............................gg.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            ".............................BB.................",
+            "............................bBBb................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "G": SpriteColors.leaf,
+            "g": SpriteColors.leafDark,
+            "L": SpriteColors.leafLight,
+            "B": SpriteColors.bark,
+            "b": SpriteColors.barkDark,
+        ]
+    )
+
+    // MARK: House (48×48)
+
+    /// Iso house — 48×48 upscale/redraw of the original approved house geometry.
+    /// Keeps the original 2:1 wall and roof slopes, then adds only light detail
+    /// so the sprite stays aligned with the Tapistry iso guide.
+    static let house = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "..............cCCCcc............................",
+            "..............cCCCcc............................",
+            "...............CCC..............................",
+            "...............CCC..............................",
+            "...............CCC..............................",
+            "...............CCC.........RL...................",
+            "...............CCC......rrrRRRRL................",
+            "...............CCC......rrrRRRRL................",
+            "...............CCC...rrrrrrRRRRRRRR.............",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRR.........",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRR.........",
+            "...............CCCrrrrrrrrRRRRRRRRRRRRRRRW......",
+            "............rrrrrrrrrrrrRRRRRRRRRRRRRRWWWn......",
+            "............rrrrrrrrrrrrRRRRRRRRRRRRRRWWWn......",
+            ".........rrrrrrrrrrrrrrrRRRRRRRRRRRWWWnnnn......",
+            "......EEErrrrrrrrrrrrrrRRRRRRRRRWWWnnnnnnn......",
+            "......EEErrrrrrrrrrrrrrRRRRRRRRRWWWnnnnnnn......",
+            "......eeeEEErrrrrrrrrrrRRRRRRWWWnnnnnnnnnn......",
+            "......eeeeeeEEErrrrrrRRRRRWWWnnnXXxxnnnnnn......",
+            "......eeeeeeEEErrrrrrRRRRRWWWnnnXXxxnnnnnn......",
+            "......eeeXXxxXeEEErrrRRWWWnnnnnnXXxxnnnnnn......",
+            "......eeeXXxxXeEEErrWWWnnnnnnnnnnnnnnnnnnn......",
+            "......eeeXXxxXeEEErrWWWnnnnnnnnnnnnnnnnnnn......",
+            "......EEeeeeeeeeeeEEKnnnDDDDDnnnnnnnnnnnnK......",
+            "......EEeeeeeeeeeeEEKnnnDDdDDnnnnnnnWW..........",
+            "......EEeeeeeeeeeeEEKnnnDDdDDnnnnnnnWW..........",
+            "......EEeeeeeeeeeeEEKnnnDDhDDnnnnWW.............",
+            ".........EEeeeeeeeEEKnnnDDdDDnWW................",
+            ".........EEeeeeeeeEEKnnnDDdDDnWW................",
+            "............EEeeeeEEKnnnDDDDD...................",
+            "...............EEeEEKnnnWW......................",
+            "...............EEeEEKnnnWW......................",
+            "..................EEKKK.........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "R": SpriteColors.roof,
+            "r": SpriteColors.roofDark,
+            "L": SpriteColors.roofLight,
+            "C": SpriteColors.chimney,
+            "c": SpriteColors.chimneyDark,
+            "W": SpriteColors.wallDark,
+            "n": SpriteColors.wall,
+            "E": SpriteColors.plankDark,
+            "e": SpriteColors.wallDark,
+            "K": SpriteColors.plankDark,
+            "X": SpriteColors.window,
+            "x": SpriteColors.windowDark,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+            "h": SpriteColors.shopSign,
+        ]
+    )
+
+    // MARK: Windmill tower + blades (32×32 each)
+
+    static let windmillTower = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "........................A.......................",
+            ".......................ATT......................",
+            "......................ATTTT.....................",
+            ".....................ATTTTTT....................",
+            ".....................AATTTAAH...................",
+            "....................AATTTTTAHH..................",
+            "....................WnAATAAnWH..................",
+            "....................WnnnAnnnW...................",
+            "...................AWnnnWnnnWA..................",
+            "..................AAWWnnWnnWWAA.................",
+            "..................WnAAWWWWWAAnW.................",
+            "..................WnnnAAWAAnnnW.................",
+            "..................WnnnnnAnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnXXnW.................",
+            "..................WnnnnnWnXXXnW.................",
+            "..................WnnnnnWnXXXnW.................",
+            "..................WnnnnnWnXXnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnnnW.................",
+            "..................WnnnnnWnnnDnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WnnnnnWnnDdnW.................",
+            "..................WWnnnnWnnDWWW.................",
+            "....................WWnnWnWWW...................",
+            "......................WWWWW.....................",
+            "........................W.......................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.millRoof,
+            "A": SpriteColors.millRoofDark,
+            "H": SpriteColors.millHub,
+            "W": SpriteColors.millBodyDark,
+            "n": SpriteColors.millBody,
+            "X": SpriteColors.window,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+        ]
+    )
+
+    static let windmillBlades = PixelArt(
+        rows: [
+            "................................................",
+            ".............................H..................",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".............................HBBBb..............",
+            ".................bbbbbbbbbb..HBBBb..............",
+            ".................BBBBBBBBBB..HBBBb..............",
+            ".................BBBBBBBBBB..H..................",
+            ".................BBBBBBBBBB.HHH.................",
+            "................HHHHHHHHHHHHHHHHHHHHHHHHHHH.....",
+            "............................HHH.BBBBBBBBBB......",
+            ".............................H..BBBBBBBBBB......",
+            ".........................bBBBH..BBBBBBBBBB......",
+            ".........................bBBBH..bbbbbbbbbb......",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".........................bBBBH..................",
+            ".............................H..................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "B": SpriteColors.millBlade,
+            "b": SpriteColors.millBladeDark,
+            "H": SpriteColors.millHub,
+        ]
+    )
+
+    // MARK: Well (32×32)
+
+    static let well = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "..........WWWWWWWWWWWW..........",
+            ".........WRRRRRRRRRRRRW.........",
+            "........WRRRRRRRRRRRRRRW........",
+            ".......WRRRRRRRRRRRRRRRRW.......",
+            "......WRRRRRRRRRRRRRRRRRRW......",
+            "......WrrrrrrrrrrrrrrrrrrW......",
+            "................................",
+            ".............BBBBBB.............",
+            ".............BbbbbB.............",
+            ".............BbbbbB.............",
+            ".............BbbbbB.............",
+            ".............BbbbbB.............",
+            ".......SSSSSSSSSSSSSSSSSS.......",
+            "......SssssssssssssssssssS......",
+            ".....SssSSSSSSSSSSSSSSSSssS.....",
+            ".....Sswwwwwwwwwwwwwwwwwws......",
+            ".....SsOOOOOOOOOOOOOOOOOOs......",
+            ".....SsOOOOOOOOOOOOOOOOOOs......",
+            ".....SssSSSSSSSSSSSSSSSSssS.....",
+            ".....SssssssssssssssssssS.......",
+            "......SSSSSSSSSSSSSSSSSS........",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "W": SpriteColors.millRoofDark,
+            "R": SpriteColors.millRoof,
+            "r": SpriteColors.millRoofDark,
+            "B": SpriteColors.bark,
+            "b": SpriteColors.barkDark,
+            "S": SpriteColors.stoneDark,
+            "s": SpriteColors.stone,
+            "w": SpriteColors.water,
+            "O": SpriteColors.waterDark,
+            "x": SpriteColors.shadow,
+        ]
+    )
+
+    // MARK: Farm (32×32)
+
+    static let farm = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "......ssssssssssssssssssssss....",
+            ".....sSSSSSSSSSSSSSSSSSSSSSSs...",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSDDsssDssssDssssDssssDDSs..",
+            "....sSDdDDDdDDDdDDDdDDDdDDDDSs..",
+            "....sSDDDDDDDDDDDDDDDDDDDDDDSs..",
+            "....sSSSSSSSSSSSSSSSSSSSSSSSSs..",
+            "....ssssssssssssssssssssssssss..",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "D": SpriteColors.dirt,
+            "d": SpriteColors.dirtLight,
+            "S": SpriteColors.dirtDark,
+            "s": SpriteColors.sprout,
+        ]
+    )
+
+    // MARK: Shop (48×48)
+
+    /// Shop (편의점) — iso box generated via tools/build_shop.py.
+    /// Wider + flatter footprint (a=18, H=12). SHOP sign placed above the
+    /// roof like a rooftop billboard; door + flanking windows at wall bottom.
+    static let shop = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "...........................AAA...............A..",
+            ".........................AATTTAA...........AAA..",
+            ".......................AATTTTTTTAA.......AAgnA..",
+            ".....................AATTTTTTTTTTTAA...AAgnnnA..",
+            "...................AATTTTTTTTTTTTTTTAAAgngngnA..",
+            ".................AATTTTTTTTTTTTTTTTAAgnnngnngA..",
+            "...............AATTTTTTTTTTTTTTTTAAgngngngnggA..",
+            ".............AATTTTTTTTTTTTTTTTAAgngngngngngA...",
+            "...........AATTTTTTTTTTTTTTTTAAgngngngngngATAA..",
+            "..........AATTTTTTTTTTTTTTTTTAnnggnnngnnATATTAA.",
+            "..........EeAATTTTTTTTTTTTTTTAngngngngATTTAAAwW.",
+            "..........EeeeAATTTTTTTTTTTTTAnnngngATTTTAAwwwW.",
+            "..........EeeeeeAATTTTTTTTTTTAggngATTTTAAwwwwwW.",
+            "..........EeeeeeeeAATTTTTTTTTAnnATTTTAAwwwwwwwW.",
+            "..........EeeeeeeeeeAATTTTTTTAATATTAAwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeAATTTTTTTTAAAwwwwwwwwwwwW.",
+            "..........EeeeeeeeeeeeeeAATTTTTAAwwwwwwwwwwXwwW.",
+            "..........EeeeeeeeeeeeeeeeAATAAwwwwwwwwwwAnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeAwwwwwwwwwwwwXnAwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwwwwXnXwwW.",
+            "..........EeeeeeeeeeeeeeeeeeWwwwwwwwwwAwwwnXwwW.",
+            "..........EEeeeeeeeeeeeeeeeeWwwwAwwwAADwwXnAwWW.",
+            "............EEeeeeeeeeeeeeeeWwXnXwwwDDDwwXnWW...",
+            "..............EEeeeeeeeeeeeeWwXnXwwwDdnwwWW.....",
+            "................EEeeeeeeeeeeWwAnXwwwDdDWW.......",
+            "..................EEeeeeeeeeWwXnAwwwDdD.........",
+            "....................EEeeeeeeWwwnXwwWDD..........",
+            "......................EEeeeeWwXnWWW.............",
+            "........................EEeeWwWWW...............",
+            "..........................EEWWW.................",
+            "............................W...................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.stoneLight,     // flat roof (uniform gray)
+            "A": SpriteColors.shopAwning,     // red awning perimeter trim
+            "E": SpriteColors.stoneDark,      // 왼쪽벽(SW면) trim
+            "e": SpriteColors.stone,          // 왼쪽벽(SW면) body
+            "W": SpriteColors.plank,          // 앞쪽벽(SE면) trim (lighter plank)
+            "w": SpriteColors.plankDark,      // 앞쪽벽(SE면) body (dark plank)
+            "g": SpriteColors.shopSign,       // rooftop sign background (gold)
+            "n": SpriteColors.wallLight,      // SHOP letter pixels (cream)
+            "X": SpriteColors.windowDark,     // window glass
+            "D": SpriteColors.door,           // door frame
+            "d": SpriteColors.doorLight,      // door panel
+        ]
+    )
+
+    // MARK: Cafe (48×48)
+
+    /// Cafe (카페) — long striped awning + rooftop mug + glass reflection.
+    static let cafe = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            ".....................EEE........................",
+            "...................EEKKKEE......................",
+            ".................EEKKKKKKKEE....................",
+            "................EEKKKKKKKKKEE...................",
+            "................EeEEKKKKKEEeEee.................",
+            "................EeeeEEKEEeeeE.e.................",
+            "................EeeeeeEeeeeeE.e.................",
+            "...............AEeeeeeEeeeeeEAe.................",
+            ".............AATEeeeeeEeeeeeETeA................",
+            "............AATTEEeeeeEeeeeEEeeAA...............",
+            "............EeAATTEEeeEeeEETTAEEE...............",
+            "............EeeeAATTEEEEETTAEEXEE...............",
+            "............EeeeeeAATTETTAEEXXXEE...............",
+            "............EeeeeeeeAATAEEEEXXXEE...............",
+            "............EeeeeeeeeeEEXXEELXXEE...............",
+            "...........AEEeeeeeeeeEXXLEEXXEEEA..............",
+            ".........AATTTEEeeeeeeEXXXEEEEETTTAA............",
+            ".......AATTTTTTTEEeeeeEXXXEEETTTTTTTAA..........",
+            ".....AATTTTTTTTTTTEEeeEXEEETTTTTTTTTTTAA........",
+            "....AATTTTTTTTTTTTTTEEEEETTTTTTTTTTTTTTAd.......",
+            "....EXAATTTTTTTTTTTTTTETTTTTTTTTTTTTTAddEd......",
+            "....EXXXAATTTTTTTTTTTTTTTTTTTTTTTTTAddXddd......",
+            "....EXXXXXAATTTTTTTTTTTTTTTTTTTTTAddXdddn.......",
+            "....EXXXXXXXAATTTTTTTTTTTTTTTTTAddXdddnXE.......",
+            "....EXXXXXXLXXAATTTTTTTTTTTTTAddDdddnXXXE.......",
+            "....EXXXXXLXXXXXAATTTTTTTTTAddDdddnXXXKXE.......",
+            "....EXXXXLXXXXXXXXAATTTTTAddXdddnEXXKKXXE.......",
+            "....EXXXLXXXXXXXLXXXAATAddXdddndDEXKXXXXE.......",
+            "....EXXLXXXXXXXLXXXXXXddXdddnEDdDEXXXXKKE.......",
+            "....EEXXXXXXXXLXXXXXXXEdddnXXEDdDEXXKKKKE.......",
+            "......EEXXXXXLXXXXXXXXEdnXXXXEDdDEKKKKEE........",
+            "........EEXXLXXXXXXXXXEXXXKKXEDdDEKKEE..........",
+            "..........EEXXXXXXXXXXEXKKXXXEDdDEEE............",
+            "............EEXXXXXXXXEXXXXXKEDdDE..............",
+            "..............EEXXXXXXEXXXKKKEDD................",
+            "................EEXXXXEXKKKKEE..................",
+            "..................EEXXEKKKEE....................",
+            "....................EEEKEE......................",
+            "......................EE........................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.cafeRoofLight,
+            "A": SpriteColors.cafeRoof,
+            "K": SpriteColors.cafeSignDark,
+            "b": SpriteColors.cafeSign,
+            "E": SpriteColors.cafeWallDark,
+            "e": SpriteColors.cafeWall,
+            "W": SpriteColors.cafeWallDark,
+            "n": SpriteColors.cafeWall,
+            "X": SpriteColors.cafeGlass,
+            "D": SpriteColors.cafeSignDark,
+            "d": SpriteColors.cafeSign,
+            "L": SpriteColors.cafeLetter,
+        ]
+    )
+
+    // MARK: Apartment (48×48)
+
+    /// Apartment (아파트) — tall modern tower with iso floor bands.
+    static let apartment = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            ".......................AAA......................",
+            ".....................AATTTAA....................",
+            "...................AATTTTTTTAA..................",
+            ".................AATTTTTTTTTTTAA................",
+            "................AATTTTTTTTTTTTTAA...............",
+            "................EeAATTTTTTTTTAKKE...............",
+            "................EeeeAATTTTTAKKnEE...............",
+            "................EeeeeeAATAKKnneEE...............",
+            "................EeeeeeeeKKnneeeEE...............",
+            "................EeeeeeeeEneeeeEEE...............",
+            "................EeeeeeeeEeeeEEKKE...............",
+            "................EeeeeeeeEeEEKKXEE...............",
+            "................EeeeeeeeEEKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................eeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXeEE...............",
+            "................EeeeeeeeEXXXeeKKE...............",
+            "................EeeeeeeeEXeeKKXEE...............",
+            "................EeeeeeeeEeKKXXXEE...............",
+            "................EeeeeeeeKKXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................EeeeeeeeEXXXXXXEE...............",
+            "................KKeeeeeeEXXXXXeEE...............",
+            "................EeKKeeeeEXXXeeKKE...............",
+            "................EXeeKKeeEXeeKKXEE...............",
+            "................EXXKeeKKEeKKXXXEE...............",
+            "................EXXKKKeEKKXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................EXXKKKXEEXXXXXXEE...............",
+            "................KKXKKKXEEXXXXXXEE...............",
+            "................EEKKKKXEEXXXXXeEE...............",
+            "..................EEKKXEEXXXeeE.................",
+            "....................EEKKEXeeE...................",
+            "......................EEEeE.....................",
+            "........................E.......................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.aptRoof,
+            "t": SpriteColors.aptRoofDark,
+            "W": SpriteColors.aptRoofEdge,
+            "A": SpriteColors.aptRoofEdge,
+            "E": SpriteColors.aptWallTrim,
+            "e": SpriteColors.aptWall,
+            "x": SpriteColors.aptGlass,
+            "K": SpriteColors.aptSeam,
+            "n": SpriteColors.aptBright,
+            "X": SpriteColors.aptGlassBrt,
+        ]
+    )
+
+    // MARK: City Hall (48×48)
+
+    /// City Hall — Capitol-style rotunda dome over classical colonnade.
+    static let cityhall = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".........................BD.....................",
+            ".......................BDDDDD...................",
+            ".....................BDDDDDDDDD.................",
+            ".....................BDDDDDDDDD.................",
+            "....................BDDDDDDDDDDD................",
+            "....................BDDDDDDDDDDD................",
+            "...................BDDDDDDDDDDDDD...............",
+            ".................AAAADDDDDDDDDDDD...............",
+            "...............AATTDADDDDDDDDDDAAA..............",
+            ".............AATTTTDDAADDDDDDDADDTAA............",
+            "...........AATTTTTTDDTDAAAAAAATDDTTTAA..........",
+            ".........AATTTTTTTTDDTDDTTTTDDTDDTTTTTAA........",
+            ".......AATTTTTTTTTTDDTDDTTTTDDTDDTTTTTTTAA......",
+            "......AATTTTTTTTTTTAATDDTTTTDDTAATTTTTTTTAA.....",
+            "......EeAATTTTTTTTTTTADDTTTTDDATTTTTTTTAEEE.....",
+            "......EeeeAATTTTTTTTTTAATTTTDAATTTTTTAEEWEE.....",
+            "......EeeeeeAATTTTTTTTTAAAAAAATTTTTAEEXXWEE.....",
+            "......EeeeeeeeAATTTTTTTTTTTTTTTTTAEEXWXXWEE.....",
+            "......EeeeeeeeeeAATTTTTTTTTTTTTAEEWXXWXXWEE.....",
+            "......EeeeeeeeeeeeAATTTTTTTTTAEERRWXXWXXWEE.....",
+            "......EeeeeeeeeeeeeeAATTTTTAEEXWRRWXXWXXWEE.....",
+            "......EEeeeeeeeeeeeeeeAATAEEWXXWRRWXXWeeEEE.....",
+            "........EEeeeeeeeeeeeeeeEEXXWXXWRRWXeWEEE.......",
+            "..........EEeeeeeeeeeeeeEWXXWXXWRRWeEEE.........",
+            "............EEeeeeeeeeeeEWXXWXXWRREEE...........",
+            "..............EEeeeeeeeeEWXXWXeWEEE.............",
+            "................EEeeeeeeEWXXWeEEE...............",
+            "..................EEeeeeEWeeEEE.................",
+            "....................EEeeEWEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.cityRoofLight,
+            "A": SpriteColors.cityRoof,
+            "E": SpriteColors.cityWallDark,
+            "e": SpriteColors.cityWall,
+            "X": SpriteColors.cityGlass,
+            "W": SpriteColors.cityWallDark,
+            "R": SpriteColors.cityAccent,
+            "D": SpriteColors.cityDome,
+            "B": SpriteColors.cityDomeShade,
+        ]
+    )
+
+    // MARK: Hotel (48×64)
+
+    /// Hotel — boutique downtown: brick walls, mansard roof dormers,
+    /// red lobby canopy, and a vertical gold HOTEL sign on the SW face.
+    static let hotel = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            ".....................AAA........................",
+            "...................AATTTAA......................",
+            ".................AATTTTTTTAA....................",
+            "...............AATTTTTTTTTTTAA..................",
+            ".............AATTTTTTTTTTTTTTTAA................",
+            "...........AATTTeTTTTTeTTTTTeTTTAA..............",
+            "..........AATTTTXTTTTTXTTTTTXTTTTAB.............",
+            "..........BbAATTTTTTTTTTTTTTTTTAeEB.............",
+            "..........BbbbAATTTTTTTTTTTTTAeeBBB.............",
+            "..........BbbbbbAATTTTTTTTTAeeBBXXB.............",
+            "..........BbbbbbbbAATTTTTAeeBBBbXXB.............",
+            "..........BbbbbbbbbbAATAeeBBXXBbXXB.............",
+            "..........BbbbbbbbbGbbBEBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGBGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbGGGBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBGBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbBGGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBbBBB.............",
+            "..........BbbbbbbbbBGBBbXXBbbbBBXXB.............",
+            "..........BbbbbbbbbBGBBbbbBbBBBbXXB.............",
+            "..........BbbbbbbbbBBBBbbbBBXXBbXXB.............",
+            "..........BbbbbbbbbGGBBbBBBbXXBbbbB.............",
+            "..........BbbbbbbbbGBGBBXXBbXXBbbbB.............",
+            "..........BbbbbbbbbGGBBbXXBbbbBbbbB.............",
+            "..........BbbbbbbbbGBGBbXXBbbbRReeB.............",
+            "..........BbbbbbbbbGGBBbbbBbRRXXeeB.............",
+            "..........BbbbbbbbbBBGBbbbRRBBXXeeB.............",
+            "..........BBbbbbbbbGBBBbbRXBBBXXeeB.............",
+            "............BBbbbbbGBBBbeXXBBBXXBB..............",
+            "..............BBbbbGBBBeeXXBBBBB................",
+            "................BBbGBBBeeXXBBB..................",
+            "..................BGGBBeeXBB....................",
+            "....................BGBeBB......................",
+            "......................BB........................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "T": SpriteColors.hotelRoofLight,
+            "A": SpriteColors.hotelRoof,
+            "B": SpriteColors.hotelBrickDark,
+            "b": SpriteColors.hotelBrick,
+            "E": SpriteColors.hotelTrimDark,
+            "e": SpriteColors.hotelTrim,
+            "X": SpriteColors.hotelGlass,
+            "x": SpriteColors.hotelGlassBrt,
+            "R": SpriteColors.hotelCanopy,
+            "G": SpriteColors.hotelSign,
+        ]
+    )
+
+    // MARK: Skyscraper (48×96)
+
+    /// Skyscraper — Empire State Building style: multi-tier Art Deco
+    /// tower with vertical rib façade and red-beacon antenna spire.
+    static let skyscraper = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "........................R.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            "........................S.......................",
+            ".......................SSS......................",
+            ".......................SSS......................",
+            ".....................AASSSAA....................",
+            "...................AATTSSSTTAA..................",
+            "..................AATTTSSSTTTAA.................",
+            "..................EeAATTTTTAEEE.................",
+            "..................EeeeAATAEEEXE.................",
+            "..................EeeeeeEEEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            "..................EeeeeeEXEXEXE.................",
+            ".................AEeeeeeEXEXEXEA................",
+            "................AAEEeeeeEXEXEEEAA...............",
+            "................EeAAEEeeEXEEEAEEE...............",
+            "................EeeeAAEEEEEAEEEXE...............",
+            "................EeeeeeAAEAEEEXEXE...............",
+            "................EeeeeeeeEEEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "................EeeeeeeeEXEXEXEXE...............",
+            "...............AEeeeeeeeEXEXEXEXEA..............",
+            "..............AAEEeeeeeeEXEXEXEEEAA.............",
+            "..............EeAAEEeeeeEXEXEEEAEEE.............",
+            "..............EeeeAAEEeeEXEEEAEEEXE.............",
+            "..............EeeeeeAAEEEEEAEEEXEXE.............",
+            "..............EeeeeeeeAAEAEEEXEXEXE.............",
+            "..............EeeeeeeeeeEEEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            "..............EeeeeeeeeeEXEXEXEXEXE.............",
+            ".............AEeeeeeeeeeEXEXEXEXEXEA............",
+            "............AAEEeeeeeeeeEXEXEXEXEEEAA...........",
+            "............EeAAEEeeeeeeEXEXEXEEEAEEE...........",
+            "............EeeeAAEEeeeeEXEXEEEAEEEXE...........",
+            "...........AEeeeeeAAEEeeEXEEEAEEEXEXEA..........",
+            "..........AAEEeeeeeeAAEEEEEAEEEXEXEEEAA.........",
+            "..........EeAAEEeeeeeeAAEAEEEXEXEEEAEEE.........",
+            "..........EeeeAAEEeeeeeeEEEXEXEEEAEEEXE.........",
+            "..........EeeeeeAAEEeeeeEXEXEEEAEEEXEXE.........",
+            "..........EeeeeeeeAAEEeeEXEEEAEEEXEXEXE.........",
+            "..........EeeeeeeeeeAAEEEEEAEEEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeAAEAEEEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEEEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EeeeeeeeeeeeeeEXEXEXEXEXEXEXE.........",
+            "..........EEeeeeeeeeeeeeEXEXEXEXEXEXEEE.........",
+            "............EEeeeeeeeeeeEXEXEXEXEXEEE...........",
+            "..............EEeeeeeeeeEXEXEXEXEEE.............",
+            "................EEeeeeeeEXEXEXEEE...............",
+            "..................EEeeeeEXEXEEE.................",
+            "....................EEeeEXEEE...................",
+            "......................EEEEE.....................",
+            "........................E.......................",
+        ],
+        colors: [
+            "T": SpriteColors.skyRoof,
+            "A": SpriteColors.skyWallDark,
+            "E": SpriteColors.skyWallDark,
+            "e": SpriteColors.skyWall,
+            "n": SpriteColors.skyWallLight,
+            "X": SpriteColors.skyWindow,
+            "x": SpriteColors.skyWindowBrt,
+            "S": SpriteColors.skySpire,
+            "R": SpriteColors.skyBeacon,
+        ]
+    )
+
+    // MARK: Flowers ground (32×32, tileable)
+
+    static let flowersGround = PixelArt(
+        rows: [
+            "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGyGGGGGGGpGGGGGGGGwGGGGGGGuGGGG",
+            "GyyyGGGGGpppGGGGGGwwwGGGGGuuuGGG",
+            "GGyGGGGGGGpGGGGGGGGwGGGGGGGuGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGGGpGGGGGGGuGGGGGGyGGGGGGGGG",
+            "GGGGGGpppGGGGGGuuuGGGGyyyGGGGGGG",
+            "GGGGGGGpGGGGGGGuGGGGGGGyGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGwGGGGGGGGyGGGGGGGGpGGGGGGGGuGG",
+            "GwwwGGGGGGyyyGGGGGGpppGGGGGGuuuG",
+            "GGwGGGGGGGGyGGGGGGGGpGGGGGGGGuGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGpGGGGGGGyGGGGGGGwGGGGGGGGGG",
+            "GGGGpppGGGGGGyyyGGGGGwwwGGGGGGGG",
+            "GGGGGpGGGGGGGyGGGGGGGwGGGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGuGGGGGGGpGGGGGGGGwGGGGGGGyGGGG",
+            "GuuuGGGGGpppGGGGGGwwwGGGGGyyyGGG",
+            "GGuGGGGGGGpGGGGGGGGwGGGGGGGyGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGGGGyGGGGGGGuGGGGGGpGGGGGGGGG",
+            "GGGGGGyyyGGGGGGuuuGGGGpppGGGGGGG",
+            "GGGGGGGyGGGGGGGuGGGGGGGpGGGGGGGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGwGGGGGGGGpGGGGGGGGyGGGGGGGGuGG",
+            "GwwwGGGGGGpppGGGGGGyyyGGGGGGuuuG",
+            "GGwGGGGGGGGpGGGGGGGGyGGGGGGGGuGG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GGGGpGGGGGGGuGGGGGGGyGGGGGGGwGGG",
+            "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        ],
+        colors: [
+            "G": SpriteColors.grass,
+            "g": SpriteColors.grassDark,
+            "p": SpriteColors.flowerPink,
+            "y": SpriteColors.flowerYellow,
+            "w": SpriteColors.flowerWhite,
+            "u": SpriteColors.flowerPurple,
+        ]
+    )
+
+    // MARK: Stone Path ground (32×32)
+
+    static let stonePathGround = PixelArt(
+        rows: [
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSSSsSGGsSSSsSSSGGSSSsSSSssSSSG",
+            "GSssSssSGsSssSssSGSssSsssSsSSsSG",
+            "GssSSsssGsssSSssSsSssSSSsSsSSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSssSSSsSGSsSSsSSsGSSSsSSsSSsSSG",
+            "GSSSssSssGSssSsSSSGSssSSSssSSsSG",
+            "GSssSsSSSGSsSSSssSGSsSSsSSSsSSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GsSSsSSSSGSSsSSSsSGSsSSsSsSSSsSG",
+            "GSssSsSSsGSsSsSSsSGSSSsSSSsSSsSG",
+            "GSSsSSSSSGsSSsSSsSGSsSsSsSSSsSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSSsSSsSGSsSsSSSsGsSsSSsSSsSSsG",
+            "GsSsSSSsSGSSsSSsSSGSsSsSsSsSSsSG",
+            "GSsSSsSsSGSSsSSSsSGSsSsSSsSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSsSsGSsSsSsSsGsSsSSsSSSsSSG",
+            "GsSSsSsSsGsSsSSsSSGSsSSSSsSsSSsG",
+            "GSSSsSsSsGsSSSsSSsGSsSsSsSsSsSSG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSSSsGSSSSssSSGSsSsSSsSSSssG",
+            "GssSsSsSSGSsSsSSSsGSSSsSSSsSSsSG",
+            "GSsSSsSSsGSsSSsSSsGSsSsSsSSSSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSsSsSsSsGsSSsSsSSGSsSSsSsSSsSSG",
+            "GsSSsSsSSGSSsSSsSSGSsSSsSsSSsSsG",
+            "GSsSsSSsSGSsSsSSsSGsSsSsSsSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+            "GSSsSsSsSGsSsSsSsSGSSsSSsSsSSsSG",
+            "GssSsSSSsGSSsSsSSsGSsSsSsSSsSSsG",
+            "GgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGg",
+        ],
+        colors: [
+            "G": SpriteColors.grass,
+            "g": SpriteColors.grassDark,
+            "S": SpriteColors.stone,
+            "s": SpriteColors.stoneLight,
+        ]
+    )
+
+    // MARK: Fence (48×48 decoration)
+
+    /// Iso fence — 48×48 upscale. Two vertical posts with two rails sloping -0.5
+    /// (upper-right → lower-left). Same direction as original 32×32 version.
+    static let fence = PixelArt(
+        rows: [
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "...................................ppp..........",
+            "...................................PPp..........",
+            "..................................pPPp..........",
+            "................................ppPPPp..........",
+            "..............................ppPP.PPp..........",
+            "............................ppPP...PPp..........",
+            "..........................ppPP....pPPp..........",
+            "........................ppPP....ppPPPp..........",
+            "......................ppPP....ppPP.PPp..........",
+            "....................ppPP....ppPP...PPp..........",
+            "...........ppp....ppPP....ppPP.....PPp..........",
+            "...........PPp..ppPP....ppPP.......PPp..........",
+            "...........PPpppPP....ppPP.........PPp..........",
+            "...........PPpPP....ppPP...........PPp..........",
+            "...........PPP....ppPP.............PPp..........",
+            "...........PPp..ppPP...............PPp..........",
+            "...........PPpppPP..............................",
+            "...........PPpPP................................",
+            "...........PPP..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "...........PPp..................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+            "................................................",
+        ],
+        colors: [
+            "P": SpriteColors.plank,
+            "p": SpriteColors.plankDark,
+        ]
+    )
+
+    // MARK: Lamp (32×32 decoration)
+
+    static let lamp = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            ".............YYYY...............",
+            ".............YLLY...............",
+            ".............YLLY...............",
+            ".............YYYY...............",
+            ".............HHHH...............",
+            ".............HHHH...............",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            "..............PP................",
+            ".............pPPp...............",
+            "............ppPPpp..............",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "Y": SpriteColors.lampGlowSoft,
+            "y": SpriteColors.lampGlow,
+            "L": SpriteColors.lampGlow,
+            "H": SpriteColors.lampHead,
+            "P": SpriteColors.lampPole,
+            "p": SpriteColors.shadow,
+        ]
+    )
+
+    // MARK: LV UP! badge (32×16) — used on the level-up toast
+
+    static let lvUpBadge = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "...G....G...G..G...G.GGG..G.....",
+            "...G....G...G..G...G.G..G.G.....",
+            "...G....G...G..G...G.G..G.G.....",
+            "...G....G...G..G...G.GGG..G.....",
+            "...G....G...G..G...G.G....G.....",
+            "...G.....G.G...G...G.G..........",
+            "...GGGG...G.....GGG..G....G.....",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+        ],
+        colors: [
+            "G": SpriteColors.leafLight,
+        ]
+    )
+
+    // MARK: Logo house (32×32) — used in Welcome step 1
+
+    static let logoHouse = PixelArt(
+        rows: [
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "...............RR...............",
+            "..............RrRR..............",
+            ".............RrrrRR.............",
+            "............RrrrrrRR............",
+            "...........RrrrrrrrRR...........",
+            "..........RrrrrrrrrrRR..........",
+            ".........RrrrrrrrrrrrRR.........",
+            "........RrrrrrrrrrrrrrRR........",
+            ".......RrrrrrrrrrrrrrrrRR.......",
+            "......RrrrrrrrrrrrrrrrrrRR......",
+            ".....RRRRRRRRRRRRRRRRRRRRRR.....",
+            ".....BBBBBBBBBBBBBBBBBBBBBB.....",
+            "......WWWWWWWWWWWWWWWWWWWW......",
+            "......WwwwwwwwwwwwwwwwwwwW......",
+            "......WwXXxxwwwwwwwwxXXwwW......",
+            "......WwXXxxwwwwwwwwxXXwwW......",
+            "......WwXXxxwwwwwwwwxXXwwW......",
+            "......WwwwwwwwwwwwwwwwwwwW......",
+            "......WwwwwwwwwDDDDwwwwwwW......",
+            "......WwwwwwwwDDDDDDwwwwwW......",
+            "......WwwwwwwwDDDDDDwwwwwW......",
+            "......WwwwwwwwDDdDDDwwwwwW......",
+            "......WwwwwwwwDDDDDDwwwwwW......",
+            "......BBBBBBBBBBBBBBBBBBBB......",
+            ".....gGgGGgGGGgGGgGGGgGGgg......",
+            "....gggggggggggggggggggggggg....",
+        ],
+        colors: [
+            "R": SpriteColors.leafDark,
+            "r": SpriteColors.leaf,
+            "B": SpriteColors.barkDark,
+            "W": SpriteColors.wallLight,
+            "w": SpriteColors.wall,
+            "X": SpriteColors.windowDark,
+            "x": SpriteColors.window,
+            "D": SpriteColors.door,
+            "d": SpriteColors.doorLight,
+            "G": SpriteColors.grass,
+            "g": SpriteColors.grassDark,
+        ]
+    )
+}
+
+// MARK: - Public sprite wrappers (for non-building UI like Welcome / LevelUp)
+
+/// 32×32 Tapistry brand logo house. Used on the Welcome onboarding step 1.
+struct LogoHouseView: View {
+    let size: CGFloat
+    var body: some View {
+        PixelSpriteView(art: Sprites.logoHouse, width: size)
+    }
+}
+
+/// "LV UP!" pixel-art badge — used on the level-up toast instead of the ⭐️ emoji.
+/// Pulses slowly via a scale-based repeating animation.
+struct LvUpBadgeView: View {
+    let width: CGFloat
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(SpriteColors.leafDark.opacity(0.85))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(SpriteColors.leaf, lineWidth: 1.5)
+                )
+            PixelSpriteView(art: Sprites.lvUpBadge, width: width * 0.88)
+        }
+        .frame(width: width, height: width * 0.5)
+        .scaleEffect(pulse ? 1.04 : 0.96)
+        .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulse)
+        .onAppear { pulse = true }
+    }
+}
+
+// MARK: - Isometric diamond shape (for ground clipping)
+
+private struct DiamondMask: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let cx = rect.midX, cy = rect.midY
+        let hw = rect.width / 2, hh = rect.height / 2
+        p.move(to: CGPoint(x: cx, y: cy - hh))
+        p.addLine(to: CGPoint(x: cx + hw, y: cy))
+        p.addLine(to: CGPoint(x: cx, y: cy + hh))
+        p.addLine(to: CGPoint(x: cx - hw, y: cy))
+        p.closeSubpath()
+        return p
+    }
+}
+
+// MARK: - Dispatcher
+
+/// Renders a building using pixel-art for all known building types.
+struct BuildingPixelView: View {
+    let building: BuildingType
+    let size: CGFloat
+
+    var body: some View {
+        switch building.renderSpec.kind {
+        case .tree:
+            TreePixelView(size: size)
+        case .house:
+            HousePixelView(size: size)
+        case .windmill:
+            WindmillPixelView(size: size)
+        case .shop:
+            ShopPixelView(size: size)
+        case .cafe:
+            CafePixelView(size: size)
+        case .fence:
+            PixelSpriteView(art: Sprites.fence, width: size)
+        case .lamp:
+            LampPixelView(size: size)
+        case .flowersGround:
+            FlowersGroundView(size: size)
+        case .stonePathGround:
+            GroundPixelView(art: Sprites.stonePathGround, size: size)
+        case .streetTree:
+            StreetTreePixelView(size: size)
+        case .apartment:
+            PixelSpriteView(art: Sprites.apartment, width: size)
+        case .cityhall:
+            // Sprite is drawn at its natural position; shift SE a touch
+            // so the wide façade centers on the tile instead of hugging
+            // the NW edge.
+            PixelSpriteView(art: Sprites.cityhall, width: size)
+                .offset(x: size / 8, y: size / 16)
+        case .hotel:
+            PixelSpriteView(art: Sprites.hotel, width: size)
+        case .skyscraper:
+            PixelSpriteView(art: Sprites.skyscraper, width: size)
+        case .emojiFallback:
+            Text(building.emoji).font(.system(size: size * building.renderSpec.emojiScale))
+        }
+    }
+}
+
+// MARK: - Ground (clipped to isometric diamond)
+
+/// Renders a ground-layer sprite masked to the isometric top-face diamond.
+private struct GroundPixelView: View {
+    let art: PixelArt
+    let size: CGFloat
+
+    var body: some View {
+        PixelSpriteView(art: art, width: size)
+            .frame(width: size, height: size / 2)  // top face aspect
+            .clipShape(DiamondMask())
+    }
+}
+
+// MARK: - Flowers (individual flower sway)
+
+/// Flowers ground layer where each individual flower sways left-right
+/// independently, with slightly staggered phases so the meadow ripples
+/// like a real breeze moving through. Grass background stays static.
+/// Period ≈ 5 s, each flower offset up to ±1 pixel.
+private struct FlowersGroundView: View {
+    let size: CGFloat
+
+    /// Flower positions: (col, row, color char). Row is the center row of
+    /// each 3×3 cross. Colors: y=yellow, p=pink, w=white, u=purple.
+    private static let flowers: [(col: Int, row: Int, color: Character)] = [
+        (2,  3, "y"), (10, 3, "p"), (19, 3, "w"), (27, 3, "u"),
+        (7,  7, "p"), (15, 7, "u"), (22, 7, "y"),
+        (2, 11, "w"), (11, 11, "y"), (20, 11, "p"), (29, 11, "u"),
+        (5, 15, "p"), (13, 15, "y"), (21, 15, "w"),
+        (2, 19, "u"), (10, 19, "p"), (19, 19, "w"), (27, 19, "y"),
+        (7, 23, "y"), (15, 23, "u"), (22, 23, "p"),
+        (2, 27, "w"), (11, 27, "p"), (20, 27, "y"), (29, 27, "u"),
+    ]
+
+    private static let flowerColors: [Character: Color] = [
+        "y": SpriteColors.flowerYellow,
+        "p": SpriteColors.flowerPink,
+        "w": SpriteColors.flowerWhite,
+        "u": SpriteColors.flowerPurple,
+    ]
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 20.0, paused: false)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate
+            Canvas { context, cs in
+                let px = cs.width / 32
+
+                // Static grass background — only G and g cells from the sprite.
+                for (r, row) in Sprites.flowersGround.rows.enumerated() {
+                    for (c, ch) in row.enumerated() {
+                        guard ch == "G" || ch == "g",
+                              let color = Sprites.flowersGround.colors[ch] else { continue }
+                        let rect = CGRect(x: CGFloat(c) * px,
+                                          y: CGFloat(r) * px,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+
+                // Animated flowers — each with its own phase.
+                let period = 5.0
+                let maxSway = 1.0 * px  // ±1 pixel of sway
+                for (i, f) in Self.flowers.enumerated() {
+                    guard let color = Self.flowerColors[f.color] else { continue }
+                    let phase = Double(i) * 0.4
+                    let sway = maxSway * CGFloat(sin(t * 2.0 * .pi / period + phase))
+
+                    // 5-pixel cross: center + 4 cardinals
+                    let cx = CGFloat(f.col) * px + sway
+                    let cy = CGFloat(f.row) * px
+                    for (dx, dy): (CGFloat, CGFloat) in [(0, 0), (0, -px), (0, px), (-px, 0), (px, 0)] {
+                        let rect = CGRect(x: cx + dx,
+                                          y: cy + dy,
+                                          width: px + 0.5,
+                                          height: px + 0.5)
+                        context.fill(Path(rect), with: .color(color))
+                    }
+                }
+            }
+            .frame(width: size, height: size / 2)
+            .clipShape(DiamondMask())
+        }
+    }
+}
+
+// MARK: - Well (water shimmer)
+
+/// Well with a soft horizontal highlight drifting across the water surface, hinting
+/// at ripples. The highlight is a thin bright strip whose horizontal position and
+/// opacity cycle on out-of-phase sin waves so it feels organic rather than metronomic.
+private struct WellPixelView: View {
+    let size: CGFloat
+
+    // Water rows in the 32×32 well sprite are rows 17–20 → mid-water at row 18.5.
+    // Left/right bounds of the water area ≈ cols 6..25 (inclusive) → 19 cols wide.
+    private var waterCenterY: CGFloat { size * (18.5 / 32.0 - 0.5) }
+    private var waterW: CGFloat { size * 19.0 / 32.0 }
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate
+            let drift = 0.35 * sin(t * 2.0 * .pi / 3.0)         // -0.35..0.35
+            let fade  = 0.5 + 0.5 * sin(t * 2.0 * .pi / 2.2)    // 0..1
+            PixelSpriteView(art: Sprites.well, width: size)
+                .overlay(
+                    Rectangle()
+                        .fill(Color.white.opacity(0.22 * fade))
+                        .frame(width: waterW * 0.35, height: size * 0.04)
+                        .offset(x: drift * waterW * 0.4, y: waterCenterY)
+                        .blendMode(.screen)
+                        .allowsHitTesting(false)
+                )
+        }
+    }
+}
+
+// MARK: - Shop (awning flap)
+
+/// Shop with a tiny rotational sway concentrated near the awning — 0.9° amplitude,
+/// period ≈ 2.1 s, anchored slightly above center so the base of the building stays
+/// planted while the cloth awning appears to catch a light breeze.
+/// Convenience store — static render (no awning animation, clean modern look).
+private struct ShopPixelView: View {
+    let size: CGFloat
+    var body: some View {
+        PixelSpriteView(art: Sprites.shop, width: size)
+    }
+}
+
+// MARK: - Farm (gentle wind sway)
+
+/// Farm crop with a small rotation wave — reads as wind catching the sprouts.
+/// Period ≈ 2.6 s, amplitude ±1.2°.
+private struct FarmPixelView: View {
+    let size: CGFloat
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate
+            let deg = 1.2 * sin(t * 2.0 * .pi / 2.6)
+            PixelSpriteView(art: Sprites.farm, width: size)
+                .rotationEffect(.degrees(deg), anchor: .bottom)
+        }
+    }
+}
+
+// MARK: - Tree (gentle breeze sway)
+
+/// Compact tree with gentle rotation around the trunk base, giving a
+/// "leaves in the breeze" feel. Period 5s, amplitude ±1.5° — 산들바람.
+private struct TreePixelView: View {
+    let size: CGFloat
+    @State private var sway: Double = 0
+
+    var body: some View {
+        PixelSpriteView(art: Sprites.tree, width: size)
+            .rotationEffect(
+                .degrees(sway),
+                anchor: .init(x: 0.5, y: 0.62)  // trunk base row 29/48
+            )
+            .onAppear {
+                withAnimation(.easeInOut(duration: 5.0).repeatForever(autoreverses: true)) {
+                    sway = 1.5
+                }
+            }
+    }
+}
+
+// MARK: - Street Tree (gentle breeze sway)
+
+/// Taller columnar street tree — same breeze sway as regular tree.
+private struct StreetTreePixelView: View {
+    let size: CGFloat
+    @State private var sway: Double = 0
+
+    var body: some View {
+        PixelSpriteView(art: Sprites.streetTree, width: size)
+            .rotationEffect(
+                .degrees(sway),
+                anchor: .init(x: 0.5, y: 0.60)  // trunk base row 28/48
+            )
+            .onAppear {
+                withAnimation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true)) {
+                    sway = 1.2
+                }
+            }
+    }
+}
+
+// MARK: - Cafe (coffee steam)
+
+private struct CafePixelView: View {
+    let size: CGFloat
+
+    // Rooftop mug: center_col = 22 (cup spans cols 16-28), cup top diamond
+    // apex around row 3. Steam emits from just above the cup top.
+    private var pixelSize: CGFloat { size / 48 }
+    private var cupCenterX: CGFloat { pixelSize * 22.0 - size / 2 }
+
+    var body: some View {
+        ZStack {
+            PixelSpriteView(art: Sprites.cafe, width: size)
+
+            ForEach(0..<3, id: \.self) { i in
+                SmokePuff(
+                    baseOffsetX: cupCenterX,
+                    travelHeight: size * 0.22,
+                    puffSize: pixelSize * 1.6,
+                    phaseOffset: Double(i) * 0.33,
+                    topOfHouseY: -size / 2 + pixelSize * 2
+                )
+            }
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+// MARK: - House (chimney smoke)
+
+private struct HousePixelView: View {
+    let size: CGFloat
+
+    // House grid 48×48. Chimney centered around col 17 on the left roof ridge.
+    private var pixelSize: CGFloat { size / 48 }
+    private var chimneyCenterX: CGFloat { pixelSize * 17.0 - size / 2 }
+
+    var body: some View {
+        ZStack {
+            PixelSpriteView(art: Sprites.house, width: size)
+
+            ForEach(0..<3, id: \.self) { i in
+                SmokePuff(
+                    baseOffsetX: chimneyCenterX,
+                    travelHeight: size * 0.35,
+                    puffSize: pixelSize * 2.2,
+                    phaseOffset: Double(i) * 0.33,
+                    topOfHouseY: -size / 2 + pixelSize * 2
+                )
+            }
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+private struct SmokePuff: View {
+    let baseOffsetX: CGFloat
+    let travelHeight: CGFloat
+    let puffSize: CGFloat
+    let phaseOffset: Double
+    let topOfHouseY: CGFloat
+    let duration: Double = 2.4
+
+    var body: some View {
+        TimelineView(.animation) { context in
+            let t = context.date.timeIntervalSinceReferenceDate / duration + phaseOffset
+            let p = t.truncatingRemainder(dividingBy: 1.0)
+            Circle()
+                .fill(Color.white.opacity(0.75))
+                .frame(width: puffSize, height: puffSize)
+                .offset(
+                    x: baseOffsetX + CGFloat(sin(p * .pi * 2)) * puffSize * 0.8,
+                    y: topOfHouseY - CGFloat(p) * travelHeight
+                )
+                .opacity((1.0 - p) * 0.75)
+                .blur(radius: 0.8)
+        }
+    }
+}
+
+// MARK: - Windmill (rotating blades)
+
+private struct WindmillPixelView: View {
+    let size: CGFloat
+    @State private var angle: Double = 0
+
+    // Tower + blades are both 48×48 and share the hub pixel at (29, 14)
+    // so no positional offset is needed between the two layers.
+    private let hubAnchor = UnitPoint(x: 29.5 / 48.0, y: 14.5 / 48.0)
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            PixelSpriteView(art: Sprites.windmillTower, width: size)
+
+            // Rotate blades around the hub, then compress horizontally so
+            // the wheel reads as a vertical disc (shaft pointing left-right)
+            // rather than a horizontal helicopter rotor.
+            PixelSpriteView(art: Sprites.windmillBlades, width: size)
+                .rotationEffect(.degrees(angle), anchor: hubAnchor)
+                .scaleEffect(x: 0.5, y: 1.0, anchor: hubAnchor)
+        }
+        .frame(width: size, height: size)
+        .onAppear {
+            withAnimation(.linear(duration: 4.5).repeatForever(autoreverses: false)) {
+                angle = -360   // counter-clockwise
+            }
+        }
+    }
+}
+
+// MARK: - Lamp (light flicker)
+
+private struct LampPixelView: View {
+    let size: CGFloat
+    @State private var flicker: Double = 1.0
+
+    var body: some View {
+        PixelSpriteView(art: Sprites.lamp, width: size)
+            .shadow(color: SpriteColors.lampGlow.opacity(flicker * 0.6), radius: 6)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                    flicker = 0.75
+                }
+            }
+    }
+}
